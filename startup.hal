@@ -1,0 +1,11 @@
+
+event startup
+begin
+
+	SetLangMode(LangRussian,"RUS",0);
+	
+	Report("†урнал платежей по проектам",ProjectPayPlanRClass,ProjectPayPlanRn,0,modTS);
+   
+
+	return;
+end;
