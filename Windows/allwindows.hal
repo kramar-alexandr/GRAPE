@@ -2802,7 +2802,8 @@ begin
     RadioButton(h3,v+=16,kAcceptanceStateApproved,0,"утверждено",AcceptanceStatus);
     RadioButton(h3,v+=16,kAcceptanceStateRejected,0,"отклонено",AcceptanceStatus);
   end;
-
+  
+	SpecialMenu("Пересчитать бюджет",' ',0,"RecalculateTBBUDsm");
   SpecialMenu("Добавить строку заголовка",' ',0,"HeaderLineTBBUDsm");
   SpecialMenu("Добавить итого",' ',0,"SubtotalTBBUDsm");
   if (HasApprovals) then begin

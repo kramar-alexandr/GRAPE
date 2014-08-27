@@ -1,0 +1,19 @@
+remote procedure CalculateBudget(var record TBBUVc);
+
+SetLangMode(LangRussian,"RUS",0);
+
+global procedure RecalculateTBBUDsm()
+begin
+	record TBBUVc TBBUr;
+	Integer wn;
+  
+  wn = CurWindow;
+  DeselectWindow(wn,false);
+  GetWindowRecord(wn,TBBUr);
+	
+	CalculateBudget(TBBUr);
+	
+	PutWindowRecord(wn,TBBUr);
+		
+	return;
+end;
