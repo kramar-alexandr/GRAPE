@@ -420,32 +420,28 @@ begin
 	record IPrsVc IPrsr;
 	record IPVc IPr;
 	row IPVc IPrw;
+	record OPrsVc OPrsr;
+	record OPVc OPr;
+	row OPVc OPrw;
 	integer mtrw,i;
   
   prcode = RepSpec.f1;
   todate = RepSpec.d1;
 	startreportnoheaderjob("Журнал платежей по проектам");
 		startformat(15);
-
-			outstring(270,0,"Приход",false);
-			outstring(290,0,"",false);
-			outstring(320,0,"",false);
-			outstring(350,0,"",false);
-			outstring(390,0,"Расход",false);
-		endformat;
-		startformat(15);
 			outstring(0,0,"Проект",false);
 			outstring(30,0,"Название",false);
 			outstring(70,0,"Код клиента",false);
-			outstring(270,0,"Дата оплаты",false);
-			outstring(290,0,"сч/ф №",false);
-			outstring(320,0,"Приход",false);
-			outstring(350,0,"Оплата",false);
-			//outstring(190,0,"Дата оплаты",false);
-			outstring(390,0,"сч/ф №",false);
-			outstring(420,0,"Расход",false);
-			outstring(450,0,"Выплата",false);
-			//outstring(380,0,"Дата оплаты",false);
+			outstring(100,0,"Дата ПУ",false);
+			outstring(120,0,"Менеджер",false);
+			outstring(140,0,"Планируемая дата оплаты",false);
+			outstring(180,0,"сч/ф №",false);
+			outstring(200,0,"Фактическая дата оплаты",false);
+			outstring(240,0,"Платежка №",false);
+			outstring(260,0,"Приход",false);
+			outstring(280,0,"Оплата",false);
+			outstring(320,0,"Расход",false);
+			outstring(340,0,"Выплата",false);
 			outstring(1,0,"Баланс",true);
 		endformat;
 		
@@ -481,29 +477,31 @@ begin
 						totbal = totbal + IVr.Sum4;
 						totdolg = totdolg + IVr.Sum4 - dolg;
 						totin = totin + IVr.Sum4;
+						
 						startformat(15);
 							outstring(0,"DblPRVc",PRr.Code,false);
 							outstring(30,0,PRr.Name,false);
 							outstring(70,"DblCUVc",PRr.CustCode,false);
-							outstring(270,0,IVr.PayDate,false);
-							outstring(290,"DblIVVc",IVr.SerNr,false);
-							outstring(320,0,IVr.Sum4,false);
-							outstring(350,0,IVr.Sum4 - dolg,false);
-							//outstring(190,0,IVr.PayDate,false);
-							outstring(250,0,"",false);
+							outstring(100,0,"Дата ПУ",false);
+							outstring(120,0,PRr.Leader2Name,false);
+							outstring(140,0,IVr.PayDate,false);
+							outstring(180,"DblIVVc",IVr.SerNr,false);
+							outstring(200,0,"",false);
+							outstring(240,0,"",false);
+							outstring(260,0,IVr.Sum4,false);
 							outstring(280,0,"",false);
-							outstring(330,0,"",false);
-							//outstring(380,0,"Просроченно",false);
+							outstring(320,0,"",false);
+							outstring(340,0,"",false);
 							outstring(1,0,totbal,true);
 						endformat;
 						
 						if(IVr.Sum4!=dolg)then begin
-							startformat(15);
+							/*startformat(15);
 								outstring(260,0,"Существующие оплаты:",true);
 								outstring(270,0,"Дата",false);
 								outstring(290,0,"Номер",false);
 								outstring(350,0,"",false);
-							endformat;
+							endformat;*/
 							IPrsr.IVNr = IVr.SerNr;
 							IPrsr.TransType = 1;
 							TrHs2 = true;
@@ -519,11 +517,27 @@ begin
 										For(i=0;i<mtrw;i=i+1) begin
 	  									matrowget(IPr,i,IPrw);
 	  									if(IPrw.InvoiceNr==IPrsr.IVNr and IPrw.PayDate==IPrsr.TransDate)then begin
-	  										startformat(15);
+	  										/*startformat(15);
 	  										
 	  											outstring(270,0,IPrw.PayDate,false);
 													outstring(290,"DblIPVc",IPr.SerNr,false);
 													outstring(350,0,IPrw.InvVal,false);
+												endformat;*/
+												startformat(15);
+													outstring(0,0,"",false);
+													outstring(30,0,"",false);
+													outstring(70,0,"",false);
+													outstring(100,0,"",false);
+													outstring(120,0,"",false);
+													outstring(140,0,"",false);
+													outstring(180,0,"",false);
+													outstring(200,0,IPrw.PayDate,false);
+													outstring(240,"DblIPVc",IPr.SerNr,false);
+													outstring(260,0,"",false);
+													outstring(280,0,IPrw.InvVal,false);
+													outstring(320,0,"",false);
+													outstring(340,0,"",false);
+													outstring(1,0,"",true);
 												endformat;
 	  									end;
 										end; 							
@@ -561,22 +575,64 @@ begin
 						totbal = totbal - VIr.PayVal;
 						ourtotdolg = ourtotdolg + VIr.PayVal - ourdolg;
 						totout = totout + VIr.PayVal;	
+						
 						startformat(15);
 							outstring(0,"DblPRVc",PRr.Code,false);
 							outstring(30,0,PRr.Name,false);
 							outstring(70,"DblCUVc",PRr.CustCode,false);
-							outstring(270,0,VIr.DueDate,false);
-							outstring(290,0,"",false);
-							outstring(320,0,"",false);
-							outstring(350,0,"",false);
-							//outstring(190,0,IVr.PayDate,false);
-							outstring(390,"DblVIVc",VIr.SerNr,false);
-							outstring(420,0,VIr.PayVal,false);
-							outstring(450,0,VIr.PayVal - ourdolg,false);
-							//outstring(380,0,"Просроченно",false);
+							outstring(100,0,"Дата ПУ",false);
+							outstring(120,0,PRr.Leader2Name,false);
+							outstring(140,0,VIr.DueDate,false);
+							outstring(180,"DblVIVc",VIr.SerNr,false);
+							outstring(200,0,"",false);
+							outstring(240,0,"",false);
+							outstring(260,0,"",false);
+							outstring(280,0,"",false);
+							outstring(320,0,VIr.PayVal,false);
+							outstring(340,0,"",false);
 							outstring(1,0,totbal,true);
 						endformat;
+						
+						//if(VIr.PayVal!=ourdolg)then begin
+							OPrsr.VINr = VIr.SerNr;
+							OPrsr.TransType = 1;
+							TrHs2 = true;
+							while(loopkey("VIKey",OPrsr,2,TrHs2))begin
+								testf2 = true;
+								if(OPrsr.VINr!=VIr.SerNr)then begin testf2 = false; TrHs2 = false; end;
+								if(OPrsr.TransType!=1)then begin testf2 = false; TrHs2 = false; end;
+								
+								if(testf2)then begin
+									OPr.SerNr = OPrsr.TransNr;
+									if(readfirstmain(OPr,1,true))then begin
+										mtrw = matrowcnt(OPr);
+										For(i=0;i<mtrw;i=i+1) begin
+	  									matrowget(OPr,i,OPrw);
+	  									if(OPrw.VISerNr==OPrsr.VINr and OPr.RegDate==OPrsr.TransDate)then begin
+												startformat(15);
+													outstring(0,0,"",false);
+													outstring(30,0,"",false);
+													outstring(70,0,"",false);
+													outstring(100,0,"",false);
+													outstring(120,0,"",false);
+													outstring(140,0,"",false);
+													outstring(180,0,"",false);
+													outstring(200,0,OPr.RegDate,false);
+													outstring(240,"DblOPVc",OPr.SerNr,false);
+													outstring(260,0,"",false);
+													outstring(280,0,"",false);
+													outstring(320,0,"",false);
+													outstring(340,0,OPrw.PInvVal,false);
+													outstring(1,0,"",true);
+												endformat;
+	  									end;
+										end; 							
+									end;
+								end;
+							end;
+							resetloop(OPrsr);
 					end;
+					Gray_Divider(0,1);
 				end;
 			end;
 			Black_divider(0,1);
