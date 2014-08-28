@@ -19,36 +19,46 @@ begin
 	rwcnt = 0;	
 	TrHs = True;
 	testf = true;
-  PRr.MotherCode = TBBUr.PRCode;
-  while(LoopKey("MotherCode",PRr,1,TrHs)) begin
-    testf = true;
-    if (PRr.MotherCode!=TBBUr.PRCode)then begin
-      testf = false;
-      TrHs = false;
-    end;
+  if(TBBUr.OKFlag>0)then begin
+  	messagebox(0,"“тверждено клиентом!");
+  end else begin
+		if(MatRowCnt(TBBUr)>0)then begin
+			messagebox(0, "Ѓюджет не пустой!");
+		end else begin		
+			PRr.MotherCode = TBBUr.PRCode;
+			while(LoopKey("MotherCode",PRr,1,TrHs)) begin
+				testf = true;
+				if (PRr.MotherCode!=TBBUr.PRCode)then begin
+					testf = false;
+					TrHs = false;
+				end;
 
-    if(testf) then begin
-    	TBBU2r.PRCode = PRr.Code;
-    	if(readfirstmain(TBBU2r,1,true))then begin
-    		rwcnt = MatRowCnt(TBBU2r);
-    		if(rwcnt>0)then begin
-    			TBBUrw.stp = 17;
-					TBBUrw.Spec = TBBU2r.PRName;
-					MatRowPut(TBBUr,rwnum,TBBUrw);
-					rwnum = rwnum + 1;
-					for (i=0;i<rwcnt;i=i+1) begin
+				if(testf) then begin
+					TBBU2r.PRCode = PRr.Code;
+					if(readfirstmain(TBBU2r,1,true))then begin
+						rwcnt = MatRowCnt(TBBU2r);
+					
+						if(rwcnt>0)then begin
+							TBBUrw.stp = 17;
+							TBBUrw.Spec = TBBU2r.PRName;
+							MatRowPut(TBBUr,rwnum,TBBUrw);
+							rwnum = rwnum + 1;
+							for (i=0;i<rwcnt;i=i+1) begin
 
-						MatRowGet(TBBU2r,i,TBBU2rw);
-						//TBBUDchrsum(TBBUr,rwnum,false,GenOptRec.UseDiscount);		
-						TBBUSumup(TBBUr);
-								
-						MatRowPut(TBBUr,rwnum,TBBU2rw);	
-						rwnum = rwnum + 1;
+								MatRowGet(TBBU2r,i,TBBU2rw);
+								TBBUSumup(TBBUr);
+						
+								MatRowPut(TBBUr,rwnum,TBBU2rw);	
+								rwnum = rwnum + 1;
+							end;
+						end;
 					end;
-	    	end;
-    	end;
+				end;
+			end;
 		end;
 	end;
+	
+
 			
 	
 	
