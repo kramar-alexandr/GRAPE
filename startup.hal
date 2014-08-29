@@ -5,7 +5,9 @@ begin
 	SetLangMode(LangRussian,"RUS",0);
 	
 	Report("Журнал платежей по проектам",ProjectPayPlanRClass,ProjectPayPlanRn,0,modTS);
-   
-
+  
+  StrSetBegin(3); /* Try to keep them in alphabetical order */
+	  StrSetText(AllowTakeOutCheckFlagBudget,"Разрешить снимать ОК с бюджета");
+	EndStrSet;
 	return;
 end;

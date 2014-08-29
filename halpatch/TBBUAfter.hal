@@ -23,6 +23,7 @@ external procedure TBBUSumup(var record TBBUVc);
 external function Boolean GetItemNameStr(Integer,var string,string,string,string);
 remote updating procedure GenProInvoices(var record RcVc,Boolean);
 
+SetLangMode(LangRussian,"RUS",0);
 
 //Function that don't allow take out OKFlag
 /*global
@@ -53,8 +54,7 @@ end;*/
 /*
 global 
 function Boolean TBBUDClassDeleteRowTest(Integer wn,Integer rownr)
-begin
-  record TBBUVc TBBUr;
+begin  record TBBUVc TBBUr;
   Boolean res;
   Integer updatemode;
 
@@ -381,6 +381,39 @@ begin
   TBBUAcceptanceStarted = res;
   return;
 end;
+
+global
+function Boolean TBBUDClassOKFlagButtonAction(Integer wn,Integer value)
+BEGIN
+  Boolean res;
+  record TBBUVc TBBUr;
+  
+  res = true;
+  
+  GetWindowRecord(wn,TBBUr);
+  
+  if (WindowState(wn)==Rs_normal) then begin
+    if (TBBUr.OKFlag!=0) then begin
+      res = false;
+      if (UserCanAction("AllowTakeOutCheckFlagBudget",false)) then begin
+        res = true;
+      end;
+    end;
+  end;  
+  if (WindowState(wn)==Rs_update) then begin
+    GetPrevWindowRecord(wn,TBBUr);
+    if (TBBUr.OKFlag!=0) then begin
+      res = false;
+    end;
+  end;
+  
+ 	/*if(TBBUr.OKFlag==1)then begin
+		res = UserCanAction("AllowTakeOutCheckFlagBudget",false);
+  end;*/
+    
+  TBBUDClassOKFlagButtonAction = res;
+  RETURN;
+END;
 
 global
 function Boolean TBBUDClassBudStockedButtonAction(Integer wn,Integer value)
