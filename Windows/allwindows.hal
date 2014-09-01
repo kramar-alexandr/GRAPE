@@ -2240,7 +2240,7 @@ begin
       EditField(h2,v=vm,135,"№ сч/ф постав.",Normal,InvoiceNr,false,0);
       EditField(h2,v+=vs,135,"Подписи",Normal,OKPersons,false,UserSClass);
       EditField(h2,v+=vs,135,"Объекты",Normal,Objects,false,ObjSClass);
-      EditField(h2,v+=vs,135,"Ссылка",Normal,RefStr,false,0);
+      EditField(h2,v+=vs,135,"Назв. проэкта",Normal,Comment,false,0);//*** Edit by Victor 1.09
     end else begin
       EditField(h2,v=6,22,"Усл. платежа",Normal,PayDeal,false,PDSClass);
       EnterSkip(Math);
@@ -2252,7 +2252,7 @@ begin
       EditField(h3,v+=vs,82,"Дата скидки",Normal,RebDate,false,PasteCurDate);
       EditField(h3,v+=vs,82,"Скидка",Normal,RebVal,true,0);
       //EditField(h3,v+=vs,82,"Кредит. сч/ф",Normal,CredInv,false,APSClass);
-      EditField(h3,v+=vs,82,"PR",Normal,PRCode,false,PRSClass);// Edit ************************** Tuesday, 19 August 2014 10:55:50
+      EditField(h3,v+=vs,82,"Проект",Normal,PRCode,false,PRSClass);// Edit ****** Tuesday, 19 August 2014 10:55:50 *** Edit By Victor 1.09.14
     end else begin
       EditField(h3,v=6,90,"Кредит. сч/ф",Normal,CredInv,false,APSClass);
       EditField(h3,v+=vs,90,"Банк. счет",Normal,BankAcc,false,0);
@@ -2362,9 +2362,10 @@ begin
         end;
         MatText(3,270,"",true);
       end;
+      MatCol(t=kInvoiceRowTypeNormal,140,"Ссылка",0,RefStr,false,0);
       if (HasSimAccruals) then begin
         Flip(flipnr); flipnr = flipnr + 1;
-        MatCol(t=kInvoiceRowTypeNormal,140,"Комментарий",0,Comment,false,0);
+        
         MatCol(t,-260,"Сумма",0,Sum,true,0);   // From dict
         MatCol(t,-180,"Расх.буд.пер.",0,PeriodCode,false,AutSimPerSClass);   // From dict
         MatCol(t,-80,"НДС",0,VATVal,true,0);   // From dict
@@ -2899,6 +2900,7 @@ if (HasTouchScreenLook==false) then begin
   if (HasLocalization("RUS")) then begin
     EditField(h3,v+=vs,-20,"К пл/рсч док-ту",Normal,ReceiptInfo,false,0);
   end;
+  EditField(h3,v+=vs,-20,"Назв. проекта",Normal,InvComment,false,0);// Edit by Victor 01.09
   CheckBox(h4,v=6,0,"Спорные",DisputedFlag);
   if (StandardHansa) then begin
     CheckBox(h4,v+=16,0,"Обновить склад",UpdStockFlag);
@@ -3380,7 +3382,7 @@ if (HasTouchScreenLook==false) then begin
     EditField(h1,v+=vs,80,"Авторизация",Normal,AuthorizationCode,false,0);
   end;
   EditField(h1,v+=vs,80,"Счет дебиторов",Normal,ARAcc,false,AccSClass);
-  EditField(h1,v+=vs,-20,"Комментарий",Normal,InvComment,false,0);
+  //EditField(h1,v+=vs,-20,"Комментарий",Normal,InvComment,false,0); //Edit by Victor 01.09.14
   if (StandardHansa==false) then begin
     EditField(h2,v=vm,80,"Группа продаж",ViewOnly,SalesGroup,true,0);
     EditField(h2,v+=vs,80,"Язык",Normal,LangCode,false,LangSClass);
