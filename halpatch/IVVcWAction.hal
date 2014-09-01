@@ -1,3 +1,11 @@
+external function Boolean FindLocalSerialPortDevice(Integer,LongInt,string,var record LSerialPortDeviceVc);
+external procedure DisplayIVItem2(record IVVc,Integer,var Boolean,var record LSerialPortDeviceVc);
+remote function Boolean IVVc_PasteQuantityRemote(var record IVVc,Integer,string,string,var Boolean,var record LSerialPortDeviceVc);
+remote procedure IVVc_PasteRebCode(var record IVVc);
+remote procedure IVVc_PasteDelCountry(var record IVVc,string);
+remote procedure IVVc_PasteInvCountry(var record IVVc,string);
+external procedure WindowFieldGotoForTouchScreen(Integer,Integer,string,Boolean);
+remote function Boolean SerialNrForOneItem(string,var record SerBalVc);
 external function Boolean IVDClasstouchscreenitemEFAfter(Integer,Integer,Boolean);
 external procedure SetPOSWindowDisplay(string,string);
 external function Boolean IVPrintReceipt(Integer,var record IVVc,var record IVVc,Integer,Boolean,Boolean,Integer,Integer);
@@ -12,15 +20,15 @@ external function boolean POSButtonsForWindow(integer,var record POSButtonsVc);
 external procedure SendArtStat(string,string,string,val,val,val,Date,Integer);
 external procedure ExtractObj(string,var Integer,var string);
 remote procedure IVVc_PasteTaxTemplateCode(var record IVVc,Integer,var Boolean);
-remote procedure IVVc_PasteLoyaltyCardNr(var record IVVc);
+remote procedure IVVc_PasteLoyaltyCardNr(var record IVVc,record LocalMachineBlock);
 remote procedure IVVc_PasteRegion(var record IVVc,string);
 remote procedure IVVc_PasteSalesMan(var record IVVc,string);
 remote procedure IVVc_PasteLocation(var record IVVc,Integer);
-external function string 255 FindTaxAuthIDControlCode(string,record IVVc);
+//external function string 255 FindTaxAuthIDControlCode(string,record IVVc);
 external function Boolean IVDClassCreditedRowEFAfter(Integer,Integer,Boolean);
-external function string 255 FindTaxAuthID(string,LongInt,Date);
+//external function string 255 FindTaxAuthID(string,LongInt,Date);
 external function Boolean IVDClassServiceDelDateEFAfter(Integer,Integer);
-remote procedure IVVc_PasteSerialNr(var record IVVc,Integer,Boolean);
+remote function Boolean IVVc_PasteSerialNr(var record IVVc,Integer,Boolean);
 external function Boolean TouchScreenLook();
 external function Boolean ReadFirstItem(string,var record INVc,Boolean,Boolean);
 remote function string 255 CurDrawerCode(string);
@@ -43,7 +51,7 @@ remote procedure IVVc_PastePriceList(var record IVVc);
 remote procedure IVVc_PastePayDeal(var record IVVc,string,string);
 remote procedure IVVc_PasteCurncyCode(var record IVVc,string,Integer,Boolean,Boolean);
 external procedure IVVc_PasteLangCode(Integer,var record IVVc);
-remote procedure IVVc_PasteInvDate(var record IVVc,var Integer,var Integer);
+remote procedure IVVc_PasteInvDate(var record IVVc,record LocalMachineBlock,var Integer,var Integer);
 remote procedure IVVc_PasteTransDate(var record IVVc,var Integer,var Integer);
 remote procedure IVVc_PasteDelAddrCode(var record IVVc);
 remote procedure IVVc_PasteFrPrice(var record IVVc);
@@ -52,12 +60,11 @@ external procedure GetSalesGroup(string,var string);
 remote function Boolean IVVc_PasteSum(var record IVVc,Integer,var Boolean,Integer);
 remote procedure IVVc_PasteVATCode(var record IVVc,Integer,string,var Boolean);
 remote function Boolean IVVc_PasteArtCode(var record IVVc,Integer,var string,var string,Boolean,var Integer);
-remote procedure IVVc_PasteQuant(var record IVVc,Integer,Boolean,var Boolean,string);
-remote function Boolean PasteCust2InInv(var record IVVc,string,Boolean,var string,var string,var string,var string,var string);
+remote function Boolean PasteCust2InInv(var record IVVc,record LocalMachineBlock,string,Boolean,var string,var string,var string,var string,var string);
 external function Boolean IVDchrsum(var record IVVc,Integer);
 remote procedure IVSumup(var record IVVc,Boolean);
 external procedure IVDchsum(var record IVVc,Integer);
-external function Boolean SetUnitFactor(string,var val,val,val,val,var val,var val,var val,Boolean);
+external function Boolean SetUnitFactor(string,var val,val,val,val,var val,var val,var val,var string,Boolean);
 external function val CalculateSerialNrQuantity(string,string,string,Boolean,val,val,val,val);
 external procedure DisplayIVItem(record IVVc,Integer);
 remote procedure PastePDInInv(var record IVVc,string,Boolean);
@@ -100,7 +107,7 @@ BEGIN
     unitprice = IVrw.UnitFactPrice;
     qty = IVrw.Quant;
     price = IVrw.Price;
-    if (SetUnitFactor(IVrw.UnitCode,unitqty,IVrw.UnitXval,IVrw.UnitYval,IVrw.UnitZval,unitprice,qty,price,false)) then begin
+    if (SetUnitFactor(IVrw.UnitCode,unitqty,IVrw.UnitXval,IVrw.UnitYval,IVrw.UnitZval,unitprice,qty,price,IVrw.UnitComment,false)) then begin
       IVrw.UnitFactQuant = unitqty;
       IVrw.UnitFactPrice = unitprice;
       IVrw.Quant = qty;
@@ -138,7 +145,7 @@ BEGIN
     unitprice = IVrw.UnitFactPrice;
     qty = IVrw.Quant;
     price = IVrw.Price;
-    if (SetUnitFactor(IVrw.UnitCode,unitqty,IVrw.UnitXval,IVrw.UnitYval,IVrw.UnitZval,unitprice,qty,price,false)) then begin
+    if (SetUnitFactor(IVrw.UnitCode,unitqty,IVrw.UnitXval,IVrw.UnitYval,IVrw.UnitZval,unitprice,qty,price,IVrw.UnitComment,false)) then begin
       IVrw.UnitFactQuant = unitqty;
       IVrw.UnitFactPrice = unitprice;
       IVrw.Quant = qty;
@@ -176,7 +183,7 @@ BEGIN
     unitprice = IVrw.UnitFactPrice;
     qty = IVrw.Quant;
     price = IVrw.Price;
-    if (SetUnitFactor(IVrw.UnitCode,unitqty,IVrw.UnitXval,IVrw.UnitYval,IVrw.UnitZval,unitprice,qty,price,false)) then begin
+    if (SetUnitFactor(IVrw.UnitCode,unitqty,IVrw.UnitXval,IVrw.UnitYval,IVrw.UnitZval,unitprice,qty,price,IVrw.UnitComment,false)) then begin
       IVrw.UnitFactQuant = unitqty;
       IVrw.UnitFactPrice = unitprice;
       IVrw.Quant = qty;
@@ -257,22 +264,31 @@ begin
 end;
 
 global
-function Boolean IVVc_PasteQuantity(record IVVc IVr,Integer rownr)
-BEGIN
+function Boolean IVVc_PasteQuantity2(var record IVVc IVr,Integer rownr,var Boolean serportf,var record LSerialPortDeviceVc LSPDr)
+begin
   Boolean res;
-  Boolean chsum;
-  record ModuleBlock OptFeature;
   record LocalMachineBlock LMb;
+  
+  BlockLoad(LMb);
+  res = IVVc_PasteQuantityRemote(IVr,rownr,LMb.LocalMachineCode,LMb.DefReturnLocation,serportf,LSPDr);
+  serportf = FindLocalSerialPortDevice(kSerialPortDeviceClassDisplay,-1,LMb.LocalMachineCode,LSPDr);
+  IVVc_PasteQuantity2 = res;
+  
+  return;
+end;
 
-  BlockLoad(OptFeature);
-  if (OptFeature.NoQtyDepPrices==0) then begin
-    BlockLoad(LMb);
-    IVVc_PasteQuant(IVr,rownr,true,chsum,LMb.DefReturnLocation);
-  end;
-  IVSumup(IVr,true);
-  IVVc_PasteQuantity = true;
-  RETURN;
-END;
+global
+function Boolean IVVc_PasteQuantity(var record IVVc IVr,Integer rownr)
+begin
+  Boolean res;
+  record LSerialPortDeviceVc LSPDr;
+  Boolean serportf;
+  
+  res = IVVc_PasteQuantity2(IVr,rownr,serportf,LSPDr);
+  IVVc_PasteQuantity = res;
+  
+  return;
+end;
 
 global
 procedure IVPasteItem(string artcode,Integer wn,LongInt defqty)
@@ -410,13 +426,15 @@ END;
 function Boolean IVDClassQuantEFAfter(Integer wn,Integer fn,Integer rownr,Integer changed)
 begin  
   record IVVc IVr;
-
+  Boolean serportf;
+  record LSerialPortDeviceVc LSPDr;
+  
   if (changed!=0) then begin
 //    DeselectWindow(wn,false);//what for ? 
     GetWindowRecord(wn,IVr);
-    IVVc_PasteQuantity(IVr,rownr);
+    IVVc_PasteQuantity2(IVr,rownr,serportf,LSPDr);
     PutWindowRecord(wn,IVr);
-    DisplayIVItem(IVr,rownr);
+    DisplayIVItem2(IVr,rownr,serportf,LSPDr);
   end;
   IVDClassQuantEFAfter = true;
   return;
@@ -473,36 +491,19 @@ begin
   return;
 end;
 
-function Boolean IVDClassPRCodeEFAfter(Integer wn,Boolean changedf)
-begin  
-  record IVVc IVr;
-  record PRVc PRr;
-
-  if (changedf) then begin  
-    DeselectWindow(wn,false);    
-    GetWindowRecord(wn,IVr);
-    PRr.Code = IVr.PRCode;
-    if(ReadFirstMain(PRr,1,true))then begin
-    	IVr.InvComment = PRr.Name;
-    end;
-     
-    PutWindowRecord(wn,IVr);
-  end;
-  IVDClassPRCodeEFAfter = true;
-  return;
-end;
-
 global
 function Boolean IVDClassCustCodeEFAfter(Integer wn,Integer rownr,Integer changed)
 begin
   record IVVc IVr;
   string 255 warning,errstr,prepstr,invdatewarn,transdatewarn;
+  record LocalMachineBlock LMb;
 
   GetWindowRecord(wn,IVr);
   if ((changed!=0) or ((blank(IVr.Addr0)) and (nonblank(IVr.CustCode)))) then begin
     DeselectWindow(wn,false);
+    BlockLoad(LMb);
     GetWindowRecord(wn,IVr);    
-    if (PasteCust2InInv(IVr,WindEFstr(wn),true,warning,errstr,prepstr,invdatewarn,transdatewarn)) then begin
+    if (PasteCust2InInv(IVr,LMb,WindEFstr(wn),true,warning,errstr,prepstr,invdatewarn,transdatewarn)) then begin
     end else begin
       Beep;
     end;
@@ -615,11 +616,12 @@ function Boolean IVDClassInvDateEFAfter(Integer wn,Integer rownr,Integer changed
 begin
   record IVVc IVr;
   Integer err1,err2;
+  record LocalMachineBlock LMb;
   
   if (changed!=0) then begin
     DeselectWindow(wn,false);
     GetWindowRecord(wn,IVr);
-    IVVc_PasteInvDate(IVr,err1,err2);
+    IVVc_PasteInvDate(IVr,LMb,err1,err2);
     if (err1!=0) then begin
       MessageBox(err1,"");
     end;
@@ -776,17 +778,31 @@ begin
   return;
 end;
 
-function Boolean IVDClassPriceListEFAfter(Integer wn,Integer rownr,Integer changed)
+function Boolean IVDClassPriceListEFAfter(Integer wn,Boolean changedf)
 begin  
   record IVVc IVr;
 
-  if (changed!=0) then begin  
+  if (changedf) then begin  
     DeselectWindow(wn,false);
     GetWindowRecord(wn,IVr);
     IVVc_PastePriceList(IVr);
     PutWindowRecord(wn,IVr);
   end;  
   IVDClassPriceListEFAfter = true;
+  return;
+end;
+
+function Boolean IVDClassRebCodeEFAfter(Integer wn,Boolean changedf)
+begin  
+  record IVVc IVr;
+
+  if (changedf) then begin  
+    DeselectWindow(wn,false);
+    GetWindowRecord(wn,IVr);
+    IVVc_PasteRebCode(IVr);
+    PutWindowRecord(wn,IVr);
+  end;  
+  IVDClassRebCodeEFAfter = true;
   return;
 end;
 
@@ -895,11 +911,12 @@ end;
 function Boolean IVDClassLoyaltyCardNrEFAfter(Integer wn,Boolean changedf)
 begin
   record IVVc IVr;
+  record LocalMachineBlock LMb;
   
   if (changedf) then begin
     DeselectWindow(wn,false);
     GetWindowRecord(wn,IVr);
-    IVVc_PasteLoyaltyCardNr(IVr);
+    IVVc_PasteLoyaltyCardNr(IVr,LMb);
     PutWindowRecord(wn,IVr);
   end;
   IVDClassLoyaltyCardNrEFAfter = true;
@@ -952,6 +969,8 @@ begin
   Boolean foundpos;
   Integer action;
   val prevRetValue;
+  record SerBalVc SBr;
+  record LocalMachineBlock LMb;
   
   suspended = StringToInt(GetWindowString(wn,"Suspended"));
   input = GetWindowString(wn,"ivcashcommand");
@@ -980,6 +999,7 @@ begin
   foundpos = POSButtonsForWindow(wn,POSBr);
   IVr.Suspended = suspended;
   BlockLoad(GenOptRec);
+  BlockLoad(LMb);
   rwcnt = MatRowCnt(IVr);
   action = GetPOSCommand(input,value1,value2,decimalptfctr);
   switch (action) begin
@@ -1085,7 +1105,7 @@ begin
       end;
     case kPOSCommandsTypeLoyaltyCard:
       IVr.LoyaltyCardNr = value1;
-      IVVc_PasteLoyaltyCardNr(IVr);
+      IVVc_PasteLoyaltyCardNr(IVr,LMb);
       save_record = true;
     case kPOSCommandsTypeLoyaltyPointsPayment:
     case kPOSCommandsTypeRebate:
@@ -1195,6 +1215,7 @@ begin
             if (IVVc_PasteQuantity(IVr,selrownr)) then begin    
               PutWindowRecord(wn,IVr);    
               IVDClass_RefreshStringList(wn,IVr);
+              DisplayIVItem(IVr,selrownr);
 //              IVSumupSoftEditFields(wn,IVr);
 //              DisplayIVCashItem(IVr,selrownr);
             end;    
@@ -1223,7 +1244,7 @@ begin
       end;
     case kPOSCommandsTypeLoyaltyCard:
       IVr.LoyaltyCardNr = value1;
-      IVVc_PasteLoyaltyCardNr(IVr);
+      IVVc_PasteLoyaltyCardNr(IVr,LMb);
 /*
     case kPOSCommandsTypeVolumetricBarCodeScan:
       if (VolBarcodeScan_IVCashVc(IVCashr,value1)) then begin
@@ -1246,9 +1267,18 @@ begin
       if (found==false) then begin
         found = ReadFirstItem(tstr,INr,true,false);
       end;
+      if (found==false) then begin
+        found = SerialNrForOneItem(value1,SBr);
+        if (found) then begin
+          sernrf = 1;
+        end;
+      end;
       if (found) then begin
         PutWindowString(wn,"touchscreenitem",value1);
         PutWindowString(wn,"touchscreenitemqty",1.00);
+        if (sernrf!=0) then begin
+          PutWindowString(wn,"ivcashcommandlastitemsernrf","true");
+        end;
         DeselectWindow(wn,false);
         IVDClasstouchscreenitemEFAfter(wn,0,true);
         goto LIVDClassivcashcommandOnEnterKey1;
@@ -1305,9 +1335,54 @@ begin
   end;
 LIVDClassivcashcommandOnEnterKey1:;  
   DeselectWindow(wn,false);
-  WindowFieldGoto(wn,IVr,-1,"ivcashcommand",false);
+  //WindowFieldGoto(wn,IVr,-1,"ivcashcommand",false);
+  WindowFieldGotoForTouchScreen(wn,-1,"ivcashcommand",false);
 LIVDClassivcashcommandOnEnterKey:;  
   IVDClassivcashcommandOnEnterKey = res;
+  return;
+end;
+
+function Boolean IVDClassInvCountryEFAfter(Integer wn,Boolean changedf)
+begin  
+  record IVVc IVr;
+
+  if (changedf) then begin  
+    GetWindowRecord(wn,IVr);
+    IVVc_PasteInvCountry(IVr,WindEFstr(wn))
+    PutWindowRecord(wn,IVr);
+  end;
+  IVDClassInvCountryEFAfter = true;
+  return;
+end;
+
+function Boolean IVDClassDelCountryEFAfter(Integer wn,Boolean changedf)
+begin  
+  record IVVc IVr;
+
+  if (changedf) then begin  
+    GetWindowRecord(wn,IVr);
+    IVVc_PasteDelCountry(IVr,WindEFstr(wn))
+    PutWindowRecord(wn,IVr);
+  end;
+  IVDClassDelCountryEFAfter = true;
+  return;
+end;
+
+function Boolean IVDClassPRCodeEFAfter(Integer wn,Boolean changedf)	//Edit by Victor 01.09.14
+begin  
+  record IVVc IVr;
+  record PRVc PRr;
+
+  if (changedf) then begin  
+    DeselectWindow(wn,false);    
+    GetWindowRecord(wn,IVr);
+    PRr.Code = IVr.PRCode;
+    if(ReadFirstMain(PRr,1,true))then begin
+    	IVr.InvComment = PRr.Name;
+    end;
+    PutWindowRecord(wn,IVr);
+  end;
+  IVDClassPRCodeEFAfter = true;
   return;
 end;
 
@@ -1328,7 +1403,8 @@ BEGIN
     case "SalesAcc": res = IVDClassSalesAccEFAfter(wn,fn,rownr,changed);
     case "CUPNr": res = IVDClassCUPNrEFAfter(wn,rownr,changed);
     case "CuAccCode": res = IVDClassCuAccCodeEFAfter(wn,rownr,changed);
-    case "PriceList": res = IVDClassPriceListEFAfter(wn,rownr,changed);
+    case "PriceList": res = IVDClassPriceListEFAfter(wn,changed!=0);
+    case "RebCode": res = IVDClassRebCodeEFAfter(wn,changed!=0);
     case "Commision": res = IVDClassCommisionEFAfter(wn,rownr,changed);
     case "PayDeal": res = IVDClassPayDealEFAfter(wn,fn,rownr,changed);
     case "CurncyCode": res = IVDClassCurncyCodeEFAfter(wn,rownr,changed);
@@ -1363,7 +1439,9 @@ BEGIN
     case "Location": res = IVDClassLocationEFAfter(wn,rownr,changed!=0);
     case "Region": res = IVDClassRegionEFAfter(wn,changed!=0);
     case "LoyaltyCardNr": res = IVDClassLoyaltyCardNrEFAfter(wn,changed);
-    case "PRCode": res = IVDClassPRCodeEFAfter(wn,changed);
+    case "InvCountry": res = IVDClassInvCountryEFAfter(wn,changed!=0);
+    case "DelCountry": res = IVDClassDelCountryEFAfter(wn,changed!=0);
+    case "PRCode": res = IVDClassPRCodeEFAfter(wn,changed); //Edit by Victor 01.09.14
   end;
   IVDClassAfterEditField = res;
   RETURN;
@@ -1689,7 +1767,7 @@ BEGIN
     end;
   end;
   switch (fieldname) begin
-    case "PriceList": res = IVDClassPriceListEFAfter(wn,rownr,changed);
+    case "PriceList": res = IVDClassPriceListEFAfter(wn,changed!=0);
     case "Commision": res = IVDClassCommisionEFAfter(wn,rownr,changed);
     case "LangCode": res = IVDClassLangCodeEFAfter(wn,rownr,changed);
     case "DiscPerc": res = IVDClassDiscPercEFAfter(wn,rownr,changed);
@@ -2051,6 +2129,7 @@ begin
   record IVVc IVr;
   row IVVc IVrw;
   record ObjVc Objr;
+  record PRVc PRr;
   Integer nwn,pos;
   
   switch (fieldname) begin
@@ -2066,7 +2145,26 @@ begin
           end;
         end;
       end;
+    case "PRCode":
+      GetWindowRecord(wn,IVr);
+      if (nonblank(IVr.PRCode)) then begin
+        PRr.Code = IVr.PRCode;
+        if (ReadFirstMain(PRr,1,true)) then begin
+          nwn = OpenWindow("PRDClass",1,0,"","",PRr);
+          res = true;
+        end;
+      end;
   end;
   IVDClassOpenRecord = res;
+  return;
+end;
+
+global
+function Boolean IVMobilePOSDClassAfterEditField(Integer wn,string fieldname,Integer fn, Integer rownr,Integer changed)
+begin
+  Boolean res;
+
+  res = IVDClassAfterEditField(wn,fieldname,fn,rownr,changed);
+  IVMobilePOSDClassAfterEditField = res;
   return;
 end;

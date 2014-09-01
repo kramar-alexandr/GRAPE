@@ -1,3 +1,4 @@
+remote procedure VIVc_PastePRCode(var record VIVc,Integer);
 external function Boolean ValidInternationalCreditorReference(string);
 remote function Integer EditingAcceptanceRejectedAllowed(Integer,string,string,Integer,string);
 remote function Boolean VIVc_CalculateRate(var record VIVc,Integer);
@@ -31,11 +32,12 @@ remote procedure VICalcVals(var record VIVc);
 external function Boolean AllowCurChange(string,Boolean);
 remote function Boolean VIVc_PasteAccNumber(var record VIVc,string,Boolean,Integer);
 remote function Boolean VIVc_PasteBarCode(var record VIVc,Integer,var string);
-remote function Boolean VIVc_PasteVECode(var record VIVc,Integer,Boolean,var string);
+remote function Boolean VIVc_PasteVECode(var record VIVc,Integer,Boolean,Boolean,var string);
 remote procedure AutoObj(var string);
 external function string 20 FindWithHoldAcc(string,string);
 external function Boolean IsDigit(string);
-external function Boolean IsCapitalLetter(string); 
+external function Boolean IsCapitalLetter(string);
+external function Boolean UserCanChangePendingRecord(Integer);
 
 function Boolean VIDClassFrRateEFAfter(Integer wn,Boolean changedf)
 begin
@@ -283,6 +285,10 @@ begin
         VIr.VATBaseRate1 = orgVIr.VATBaseRate1;
         VIr.VATBaseRate2 = orgVIr.VATBaseRate2;
         switch (orgVIr.InvType) begin
+          case kInvoiceTypeCashInvoiceReceiptPRT:
+            if (nonblank(orgVIr.APAcc)) then begin
+              VIr.APAcc = orgVIr.APAcc;
+            end;
           case kInvoiceTypeCash:
             if (nonblank(orgVIr.APAcc)) then begin
               VIr.APAcc = orgVIr.APAcc;
@@ -316,6 +322,26 @@ begin
     res = false;
   end;
   VIDClassVEFactoringEFAfter = res;
+  return;
+end;
+
+function Boolean VIDClassPRCodeEFAfter(Integer wn,var record VIVc VIr,Integer rownr,Boolean changedf)
+begin
+  Boolean res;
+  record PRVc PRr;
+  
+  if (changedf) then begin  
+    VIVc_PastePRCode(VIr,rownr);
+    
+    PRr.Code = VIr.PRCode;									//Edit by Victor 01.09.14
+    if(ReadfirstMain(PRr,1,true))then begin
+    	VIr.Comment = PRr.Name;
+    end;
+    
+    PutWindowRecord(wn,VIr);
+    res = false;
+  end;
+  VIDClassPRCodeEFAfter = res;
   return;
 end;
 
@@ -417,45 +443,47 @@ begin
     GetWindowRecord(wn,VIr);
     switch (GetVATLaw) begin
       case vatArgentinean:
-        l = len(VIr.InvoiceNr);
-        if (l<15) then begin
-          for (i=0;i<l;i=i+1) begin
-            c = Mid(VIr.InvoiceNr,i,1);
-            if (IsLetter(c)==false) then begin
-              goto LVIDClassInvoiceNrEFAfter1;
+        if (VIr.ExportFlag==kExportFlagDomestic) then begin
+          l = len(VIr.InvoiceNr);
+          if (l<15) then begin
+            for (i=0;i<l;i=i+1) begin
+              c = Mid(VIr.InvoiceNr,i,1);
+              if (IsLetter(c)==false) then begin
+                goto LVIDClassInvoiceNrEFAfter1;
+              end;
+              t1 = t1 & c;
             end;
-            t1 = t1 & c;
-          end;
 LVIDClassInvoiceNrEFAfter1:;          
-          for (i=len(t1)+1;i<l;i=i+1) begin
-            c = Mid(VIr.InvoiceNr,i,1);
-            if (IsDigit(c)==false) then begin
-              goto LVIDClassInvoiceNrEFAfter2;
+            for (i=len(t1)+1;i<l;i=i+1) begin
+              c = Mid(VIr.InvoiceNr,i,1);
+              if (IsDigit(c)==false) then begin
+                goto LVIDClassInvoiceNrEFAfter2;
+              end;
+              t2 = t2 & c;
             end;
-            t2 = t2 & c;
-          end;
 LVIDClassInvoiceNrEFAfter2:;          
-          for (i=len(t1)+1+len(t2)+1;i<l;i=i+1) begin
-            c = Mid(VIr.InvoiceNr,i,1);
-            if (IsDigit(c)==false) then begin
-              goto LVIDClassInvoiceNrEFAfter3;
+            for (i=len(t1)+1+len(t2)+1;i<l;i=i+1) begin
+              c = Mid(VIr.InvoiceNr,i,1);
+              if (IsDigit(c)==false) then begin
+                goto LVIDClassInvoiceNrEFAfter3;
+              end;
+              t3 = t3 & c;
             end;
-            t3 = t3 & c;
-          end;
-          if (len(t2)<4) then begin
-             M4PadString(t2,4,"0",true,t2);
-          end;
-          if (len(t3)<8) then begin
-             M4PadString(t3,8,"0",true,t3);
-          end;
-          if (IsCapitalLetter(t1)==false) then begin
-            t1 = chr(asc(t1)-32);            
-          end;
-          VIr.InvoiceNr = t1 & "-" & t2 & "-" & t3;
+            if (len(t2)<4) then begin
+               M4PadString(t2,4,"0",true,t2);
+            end;
+            if (len(t3)<8) then begin
+               M4PadString(t3,8,"0",true,t3);
+            end;
+            if (IsCapitalLetter(t1)==false) then begin
+              t1 = chr(asc(t1)-32);            
+            end;
+            VIr.InvoiceNr = t1 & "-" & t2 & "-" & t3;
 LVIDClassInvoiceNrEFAfter3:;          
-        end;
-        if (ValidSuppInvNo_Argentina(VIr.InvoiceNr)==false) then begin
-          MessageBox(20858,"");
+          end;
+          if (ValidSuppInvNo_Argentina(VIr.InvoiceNr)==false) then begin
+            MessageBox(20858,"");
+          end;
         end;
         VI2r.InvoiceNr = VIr.InvoiceNr;
         VI2r.VECode = VIr.VECode;    
@@ -479,7 +507,7 @@ begin
 
   if (changedf!=0) then begin  
     GetWindowRecord(wn,VIr);
-    if (VIVc_PasteVECode(VIr,WindowState(wn),true,vewarn)==false) then begin
+    if (VIVc_PasteVECode(VIr,WindowState(wn),true,true,vewarn)==false) then begin
       Beep;
     end;
     if (nonblank(vewarn)) then begin    
@@ -630,10 +658,13 @@ function Boolean VIDClassTaxTemplateCodeEFAfter(Integer wn,Integer rownr,Integer
 begin
   record VIVc VIr;
   Boolean res;
+  val ct;
 
   if (changedf!=0) then begin 
     GetWindowRecord(wn,VIr);
     VIVc_PasteTaxTemplate(VIr,rownr);    
+    VICalcVals(VIr);
+    VISumup(VIr,ct);  
     PutWindowString(wn,"NettVal",CalculateVINettVal(VIr,false));
     PutWindowRecord(wn,VIr);
     res = false;
@@ -652,33 +683,11 @@ begin
     GetWindowRecord(wn,VIr);
     VICalcVals(VIr);
     VISumup(VIr,ct);  
-      
     PutWindowString(wn,"NettVal",CalculateVINettVal(VIr,false));
     PutWindowRecord(wn,VIr);
     res = false;
   end;
   VIDClassSumEFAfter = res;
-  return;
-end;
-
-function Boolean VIDClassPRCodeEFAfter(Integer wn,Integer changedf)
-begin
-  record VIVc VIr;
-  record PRVc PRr;
-  Boolean res;
-  
-  if (changedf!=0) then begin 
-    GetWindowRecord(wn,VIr);
-    
-    PRr.Code = VIr.PRCode;
-    if(ReadfirstMain(PRr,1,true))then begin
-    	VIr.Comment = PRr.Name;
-    end;
-    
-    PutWindowRecord(wn,VIr);
-    res = true;
-  end;
-  VIDClassPRCodeEFAfter = res;
   return;
 end;
 
@@ -816,6 +825,7 @@ BEGIN
     case "Sum": res = VIDClassSumEFAfter(wn,rownr,changed);
     case "Objects": res = VIDClassObjectsEFAfter(wn,rownr,changed);
     case "Item": res = VIDClassItemEFAfter(wn,rownr,changed);   
+    case "PRCode": res = VIDClassPRCodeEFAfter(wn,VIr,rownr,changed!=0);
     otherwise res = false;
   end;   
   VIDClassAfterEditField_stp1 = res;     
@@ -873,6 +883,9 @@ BEGIN
       case "VEFactoring": 
         GetWindowRecord(wn,VIr);
         res = VIDClassVEFactoringEFAfter(wn,VIr,rownr,changed);
+      case "PRCode": 
+        GetWindowRecord(wn,VIr);
+        res = VIDClassPRCodeEFAfter(wn,VIr,rownr,changed!=0);
       case "RefStr": res = VIDClassRefStrEFAfter(wn,changed);
       case "PayVal": res = VIDClassPayValEFAfter(wn,changed);
       case "WithHoldingTax": res = VIDClassWithHoldingTaxEFAfter(wn,changed!=0);
@@ -886,7 +899,6 @@ BEGIN
       case "BaseRate2": res = VIDClassBaseRate2EFAfter(wn,changed!=0);
       case "ToRateB1": res = VIDClassToRateB1EFAfter(wn,changed!=0);
       case "ToRateB2": res = VIDClassToRateB2EFAfter(wn,changed!=0);
-      case "PRCode": res = VIDClassPRCodeEFAfter(wn,changed);
     end;
   end else begin
     GetWindowRecord(wn,VIr);
@@ -936,36 +948,27 @@ function Boolean VIDClassOKFlagButtonAction(Integer wn,Integer value)
 BEGIN
   Boolean res;
   record VIVc VIr;
-  Integer normalmode,updatemode,err;
+  Integer err;
  
   res = true;
-  normalmode = 0;//Rs_normal
-  updatemode = 2;//Rs_update
-  if (WindowState(wn)==normalmode or WindowState(wn)==Rs_insert) then begin
-    GetWindowRecord(wn,VIr);
+  GetWindowRecord(wn,VIr);
+  err = TestAcceptanceStatus(VIr.AcceptanceStatus);  
+  if (err!=0) then begin
+    MessageBox(err,"");
+    res = false;
+  end;
+  if (WindowState(wn)==Rs_normal) then begin
     if (VIr.OKFlag!=0) then begin
       res = false;
       if (UserCanAction("UnOKAll",false)) then begin
         res = true;
       end;
-    end else begin
-      err = TestAcceptanceStatus(VIr.AcceptanceStatus);
-      if (err!=0) then begin
-        MessageBox(err,"");
-        res = false;
-      end;
     end;
   end;  
-  if (WindowState(wn)==updatemode) then begin
+  if (WindowState(wn)==Rs_update) then begin
     GetPrevWindowRecord(wn,VIr);
     if (VIr.OKFlag!=0) then begin
       res = false;
-    end else begin
-      err = TestAcceptanceStatus(VIr.AcceptanceStatus);
-      if (err!=0) then begin
-        MessageBox(err,"");
-        res = false;
-      end;
     end;
   end;  
   VIDClassOKFlagButtonAction = res;
@@ -977,12 +980,10 @@ function Boolean VIDClassPrelBookButtonAction(Integer wn,Integer value)
 BEGIN
   Boolean res;
   record VIVc VIr;
-  Integer normalmode,updatemode,err;
+  Integer err;
  
   res = true;
-  normalmode = 0;//Rs_normal
-  updatemode = 2;//Rs_update
-  if (WindowState(wn)==normalmode) then begin
+  if (WindowState(wn)==Rs_normal) then begin
     GetWindowRecord(wn,VIr);
     err = TestAcceptanceStatus(VIr.AcceptanceStatus);
     if (err!=0) then begin
@@ -996,7 +997,7 @@ BEGIN
       res = false;
     end;
   end;  
-  if (WindowState(wn)==updatemode) then begin
+  if (WindowState(wn)==Rs_update) then begin
     GetPrevWindowRecord(wn,VIr);
     err = TestAcceptanceStatus(VIr.AcceptanceStatus);
     if (err!=0) then begin
@@ -1037,13 +1038,12 @@ begin
   record VIVc VIr;
   row VIVc VIrw;
   Boolean res;
-  Integer updatemode,rwcnt;
+  Integer rwcnt;
 
   res = true;
-  updatemode = 2;//Rs_update
-  if (WindowState(wn)==updatemode) then begin
+  if (WindowState(wn)==Rs_update) then begin
     GetPrevWindowRecord(wn,VIr);
-    if (VIAcceptanceStarted(VIr)) then begin
+    if (VIAcceptanceStarted(VIr) and UserCanAction("ChangeRecordMatrixWhenPending",false)==false) then begin
       res = false;
     end;
     if (VIr.OKFlag!=0) then begin
@@ -1093,7 +1093,6 @@ BEGIN
   record VIVc VI2r;
   record VIVc VIr;
   row VIVc VIrw;
-  Integer normalmode,updatemode;
   Integer rwcnt,orwcnt;
   record APVc APr;
   record AcceptSetBlock AcceptSet;
@@ -1107,10 +1106,8 @@ BEGIN
       goto LVIDClassActiveEditField;
     end;
   end;
-  normalmode = 0;//Rs_normal
-  updatemode = 2;//Rs_update  
   GetWindowRecord(wn,VIr);
-  if (WindowState(wn)==updatemode) then begin
+  if (WindowState(wn)==Rs_update or WindowState(wn)==Rs_normal) then begin
     res = false;
     GetPrevWindowRecord(wn,VI2r);    
     switch (fieldname) begin
@@ -1123,10 +1120,15 @@ BEGIN
       case "Comment": ;
       case "RefStr": ;
       case "RcvDate": ;
+      case "SerNr": res = true;
       otherwise
-        if (VIAcceptanceStarted(VI2r)) then begin res = false; goto LVIDClassActiveEditField; end;
+        if (VIAcceptanceStarted(VI2r) and UserCanChangePendingRecord(rownr)==false) then begin
+          res = false;
+          goto LVIDClassActiveEditField;
+        end;
     end;
     if (VI2r.PrelBook!=0) then begin
+      res = false;
       if (rownr<0) then begin
         switch (fieldname) begin
           case "SerNr": goto LVIDClassActiveEditField;
@@ -1252,7 +1254,7 @@ begin
   if (VIr.OKFlag!=0) then begin
     res = false;
   end;
-  if (VIAcceptanceStarted(VIr)) then begin
+  if (VIAcceptanceStarted(VIr) and UserCanAction("ChangeRecordMatrixWhenPending",false)==false) then begin
     res = false;
   end;
   VIDClassInsertRowTest = res;
@@ -1265,7 +1267,6 @@ begin
   record VIVc VIr;
   row VIVc VIrw;
   Boolean res;
-  Integer updatemode;
   
   if (rownr<0) then begin
     goto LVIDClassOverStrikeTest;
@@ -1420,18 +1421,15 @@ function Boolean VIDClassAPonTRButtonAction(Integer wn,Integer value)
 begin
   Boolean res;
   record VIVc VIr;
-  Integer normalmode,updatemode;
   
   res = true;
-  normalmode = 0;//Rs_normal
-  updatemode = 2;//Rs_update
-  if (WindowState(wn)==normalmode) then begin
+  if (WindowState(wn)==Rs_normal) then begin
     GetWindowRecord(wn,VIr);
     if (VIr.OKFlag!=0) then begin
       res = false;
     end;
   end;  
-  if (WindowState(wn)==updatemode) then begin
+  if (WindowState(wn)==Rs_update) then begin
     GetPrevWindowRecord(wn,VIr);
     if (VIr.OKFlag!=0) then begin
       res = false;

@@ -1,3 +1,6 @@
+external procedure PUCalcPerc(val,string,var val);
+remote function val IVVc_CalcTax2perCustomer(record RPCUTaxVc,var record IVVc);
+remote procedure IVVc_PastePrice(var record IVVc,record IVVc,Integer,var string);
 remote function Boolean IVVc_PasteCredOfficialSerNr(var record IVVc,Integer,var string);
 remote function Integer EditingAcceptanceRejectedAllowed(Integer,string,string,Integer,string);
 external updating function Boolean IVDClassivcashcommandOnEnterKey(Integer,Integer);
@@ -42,10 +45,11 @@ remote function Boolean IVVc_PasteUnitFactQuant(var record IVVc,Integer);
 remote procedure IVVc_PasteUnitCode(var record IVVc,Integer);
 external procedure IVDchsum(var record IVVc,Integer);
 external function Boolean AllowCurChange(string,Boolean);
-remote procedure IVSumup(var record IVVc,Boolean);
+forward procedure IVSumup(var record IVVc,Boolean);
 remote function Boolean FindLastInvoiceRowForSerial(LongInt,string ,string,var row IVVc);
 external function Integer ArgEInvLock(record IVVc,integer);
-external function Integer GetArgIVType(integer,string);
+external function Integer GetArgIVType(integer,string,string,string);
+external function Boolean UserCanChangePendingRecord(Integer);
 
 global
 function Boolean IVDClassNoInterestFlagButtonAction(Integer wn,Integer value)
@@ -207,7 +211,7 @@ begin
       end;
   end;
   if (res==false and (locklevel==kArgentinianInvoiceLockNormal or locklevel==kArgentinianInvoiceLockPartial)) then begin //common rules for locklevel Normal & Partial
-    exporttype = (GetArgIVType(IVr.InvType,IVr.OfficialSerNr)>=19);
+    exporttype = (GetArgIVType(IVr.InvType,IVr.CustCode,IVr.BranchID,IVr.OfficialSerNr)>=19);
     switch (fieldname) begin
       case "SalesMan": res = (UserCanAction("AllowSalesmanChange",false));
       case "LangCode": res = (exporttype==false);
@@ -218,6 +222,7 @@ begin
       case "LastRemndr": res = true;
       case "LastRemDate": res = true;
       case "InvComment": res = true;
+      case "ReceiptInfo": res = true;
       case "ShipAddr0": res = true;
       case "ShipAddr1": res = true;
       case "ShipAddr2": res = true;
@@ -272,10 +277,22 @@ BEGIN
   string 255 tstr;
   
   res = true;
-  if (IVAcceptanceStarted(IVr)) then begin res = false; goto LIVDClassActiveEditField; end;
+  if (IVAcceptanceStarted(IVr) and UserCanChangePendingRecord(rownr)==false) then begin
+    res = false;
+    goto LIVDClassActiveEditField;
+  end;
   switch (fieldname) begin
 //    case "CreditedRow": res = false;
     case "TAX2Prc": res = false;
+    case "TaxAuthID": res = HasLocalization("BOL")==false;
+    case "VATNr": res = HasLocalization("PRT")==false;
+    case "Addr0": res = HasLocalization("PRT")==false;
+    case "Addr1": res = HasLocalization("PRT")==false;
+    case "Addr2": res = HasLocalization("PRT")==false;
+    case "Addr3": res = HasLocalization("PRT")==false;
+    case "InvAddr3": res = HasLocalization("PRT")==false;
+    case "InvAddr4": res = HasLocalization("PRT")==false;
+    case "InvCountry": res = HasLocalization("PRT")==false;
     case "CuAccCode":
       if (rownr>=0) then begin
         MatRowGet(IVr,rownr,IVrw);
@@ -302,7 +319,7 @@ BEGIN
         res = false;
       end;
       if (IVr.CredManNr>0) then begin res = false; end;
-    //case "PRCode": 		//Edit by Victor 1.09.14
+    //case "PRCode": 		//Edit by Victor 01.09.14
       //if (IVr.InvType!=kInvoiceTypeCredit and IVr.InvType!=kInvoiceTypeCreditSpecialSales) then begin res = false; end;
     case "FrRate": 
       if (AllowCurChange(IVr.CurncyCode,false)==false) then begin res = false; end;
@@ -316,22 +333,41 @@ BEGIN
       if (AllowCurChange(IVr.CurncyCode,true)==false) then begin res = false; end;
     case "PriceList": 
       if (UserCanAction("ChangePrices",true)==false) then begin res = false; end;
+    case "RebCode": 
+      if (UserCanAction("ChangeDiscountMatrixonIV",false)==false) then begin res = false; end;
     case "Recepy": 
       if (IVr.OrderNr!=-1) then begin res = false; end;
     case "Spec": 
-      BlockLoad(ARAccb);
-      if (UserCanAction("ChangeIVItemSpec",ARAccb.CashSalesToFiscalControlUnit==0)==false) then begin res = false; end;
+      if (HasLocalization("PRT")) then begin
+        MatRowGet(IVr,rownr,IVrw);
+        if (nonblank(IVrw.ArtCode)) then begin
+          res = false;
+        end;
+      end else begin
+        BlockLoad(ARAccb);
+        if (UserCanAction("ChangeIVItemSpec",ARAccb.CashSalesToFiscalControlUnit==0)==false) then begin res = false; end;
+      end;
+    case "OfficialSerNr2": 
+      if (HasLocalization("PRT")) then begin
+        res = IVr.Status==kRecordStatusManual or IVr.Status==kRecordStatusRecovered;
+      end;
     case "BasePrice": 
       if (UserCanAction("ChangingCostOnInvoiceRow",true)==false) then begin res = false; end;
+      if (rownr>=0) then begin
+        MatRowGet(IVr,rownr,IVrw);
+        if (IVrw.stp==kInvoiceRowTypePrepayment) then begin res = false; end;
+      end;
     case "BasePriceB2": 
       if (UserCanAction("ChangingCostOnInvoiceRow",true)==false) then begin res = false; end;
     case "Price": 
       BlockLoad(ARAccb);
       if (UserCanAction("ChangeUnitPrices",ARAccb.CashSalesToFiscalControlUnit==0)==false) then begin res = false; end;
-      if (IVr.COCUSerNr>0 or IVr.RoyaltyIVFlag!=0) then begin
-        if (updatef) then begin
-          if (rownr<MatRowCnt(IV2r)) then begin
-            res = false;
+      if (res) then begin
+        if (IVr.COCUSerNr>0 or IVr.RoyaltyIVFlag!=0) then begin
+          if (updatef) then begin
+            if (rownr<MatRowCnt(IV2r)) then begin
+              res = false;
+            end;
           end;
         end;
       end;
@@ -475,7 +511,9 @@ BEGIN
         end;
       end;
     case "RetnValue": 
-      if (IVr.InvType!=kInvoiceTypeCash) then begin res = false; end;
+      if (IVr.InvType!=kInvoiceTypeCash and IVr.InvType!=kInvoiceTypeCashInvoiceReceiptPRT) then begin res = false; end;
+    case "BranchID": 
+      res = UserCanAction("AllowIVBranchIDChange",false);
     case "InvDate": 
       BlockLoad(ARAccb);
       if (ARAccb.ChronologyforInvNo!=0) then begin res = false; end;
@@ -541,18 +579,26 @@ BEGIN
       MatRowGet(IVr,rownr,IVrw);
       if (IVrw.stp==kInvoiceRowTypeDebtorsTransfer) then begin res = false; end;
     case "CAE":
+      res = false;
       if (UserCanAction("EditingCAEandCAEExpiry",false)) then begin
+        res = true;
         BlockLoad(IEb);
         if (ERecordStatus(IEb.CustomerCode,IVr.CustCode,IVr.SerNr,"IVVc",tstr)==6) then begin        
           res = true;
         end;
+      end else begin
+        res = false; 
       end;
     case "CAEExpiry":
+      res = false;
       if (UserCanAction("EditingCAEandCAEExpiry",false)) then begin
+        res = true;
         BlockLoad(IEb);
         if (ERecordStatus(IEb.CustomerCode,IVr.CustCode,IVr.SerNr,"IVVc",tstr)==6) then begin        
           res = true;
         end;
+      end else begin
+        res = false; 
       end;
   end;
 LIVDClassActiveEditField:;  
@@ -583,11 +629,13 @@ BEGIN
   end else begin
     res = false;
     GetPrevWindowRecord(wn,IVr);
-    arglock = ArgEInvLock(IVr,wn);
+    if (HasLocalization("ARG")) then begin
+      arglock = ArgEInvLock(IVr,wn);
 
-    if (arglock!=kArgentinianInvoiceLockNone) then begin
-      res = ArgEInvActiveField(IVr,arglock,fieldname,rownr);
-      goto LIVDClassActiveEditField;
+      if (arglock!=kArgentinianInvoiceLockNone) then begin
+        res = ArgEInvActiveField(IVr,arglock,fieldname,rownr);
+        goto LIVDClassActiveEditField;
+      end;
     end;
     if (IVr.OKFlag!=0) then begin
       switch (fieldname) begin
@@ -595,10 +643,12 @@ BEGIN
           if (UserCanAction("AllowSalesmanChange",false)) then begin
             res = true;
           end;
+        case "TaxAuthID": res = HasLocalization("BOL")==false;
         case "PayDate": res = true;
         case "LastRemndr": res = true;
         case "LastRemDate": res = true;
         case "InvComment": res = true;
+        case "ReceiptInfo": res = true;
         case "ShipAddr0": res = GetVATLaw!=vatPortuguese;
         case "ShipAddr1": res = GetVATLaw!=vatPortuguese;
         case "ShipAddr2": res = GetVATLaw!=vatPortuguese;
@@ -630,74 +680,6 @@ BEGIN
   end;
 LIVDClassActiveEditField:;
   IVDClassActiveEditField = res;
-  RETURN;
-END;
-
-global
-procedure GetFreeTxtData(string custcode,var string vatcode,var string salesacc,Integer aexport)
-BEGIN
-  record AccBlock ARAccRec;
-
-  BlockLoad(ARAccRec);
-  vatcode = "";
-  salesacc = "";
-  switch (aexport) begin
-    case 4:   vatcode = ARAccRec.VATCodeExp;
-    case 3:   vatcode = ARAccRec.VATCodeEU;
-    case 2:   vatcode = ARAccRec.VATCodeExp;
-    case 1:   vatcode = ARAccRec.VATCodeEU;
-    otherwise vatcode = ARAccRec.VATCodeDom;
-  end;
-  switch (aexport) begin
-    case 4:   salesacc = ARAccRec.ExpSalesAcc;
-    case 3:   salesacc = ARAccRec.EUSalesAcc;
-    case 2:   salesacc = ARAccRec.ExpSalesAcc;
-    case 1:   salesacc = ARAccRec.EUSalesAcc;
-    otherwise salesacc = ARAccRec.DomSalesAcc;
-  end;
-  RETURN;
-END;
-
-procedure CalcUnitPrice(val pricep,val qtyp,val unitqtyp,var val unitpricep)
-BEGIN
-  val temp;
-  
-  temp = qtyp/unitqtyp;
-  unitpricep = pricep*temp;
-  RETURN;
-END;
-
-global
-procedure IVVc_PastePrice(var record IVVc IVp,record IVVc IV2p,Integer rownr,var string warning)
-BEGIN
-  row IVVc IVrw;
-  row IVVc oldIVrw;
-  string 10 salesacc,vatcode;
-  val t,oldprice;
-
-  MatRowGet(IVp,rownr,IVrw);
-  if ((IVrw.stp==kInvoiceRowTypeNormal) or (IVrw.stp==kInvoiceRowTypeStructuredItemComponent) or (IVrw.stp==11)) then begin
-    if ((blank(IVrw.ArtCode)) and (IVrw.Price!=0)) then begin
-      GetFreeTxtData(IVp.CustCode,vatcode,salesacc,IVp.ExportFlag);
-      IVrw.VATCode = vatcode;
-      IVrw.SalesAcc = salesacc;
-      CalcUnitPrice(IVrw.Price,IVrw.Quant,IVrw.UnitFactQuant,t);
-      IVrw.UnitFactPrice = t;      
-      MatRowPut(IVp,rownr,IVrw);
-    end;
-    if (IVDchrsum(IVp,rownr)) then begin
-      IVDchsum(IVp,rownr);
-    end;  
-    IVSumup(IVp,true);      
-  end;
-  if (IVp.InvType==kInvoiceTypeCredit or IVp.InvType==kInvoiceTypeCreditSpecialSales) and (nonblank(IVp.PRCode)) then begin
-    if (RecordValid(IV2p)) then begin
-      MatRowGet(IV2p,rownr,oldIVrw);
-      if (oldIVrw.Price!=IVrw.Price) then begin
-        warning = USetStr(20404);
-      end;
-    end;
-  end;
   RETURN;
 END;
 
@@ -867,7 +849,7 @@ BEGIN
       case "PayDeal":
         if (TouchScreenLook) then begin
           GetWindowRecord(wn,IVr);
-          if (IVr.InvType==kInvoiceTypeCash) then begin
+          if (IVr.InvType==kInvoiceTypeCash or IVr.InvType==kInvoiceTypeCashInvoiceReceiptPRT) then begin
             if (IVr.Sum4>0) then begin
               WindowFieldGoto(wn,IVr,-1,"CashValue",true);
               res = false;
@@ -1077,7 +1059,7 @@ LAddTAX2Base:;
 END;
 
 global
-procedure IV2Sumup(record IVVc IVp,record SMVc SMr,Integer vatcnt,record SMVc SMTax2r,Boolean calcperceppercuf,Integer inclVATCalcRuleSkip,var val s0,var val s1,var val s2,var val s3,var val s4,var val TotGP)
+procedure IV2Sumup2(record IVVc IVp,record SMVc SMr,Integer vatcnt,record SMVc SMTax2r,Boolean calcperceppercuf,Integer inclVATCalcRuleSkip,var val s0,var val s1,var val s2,var val s3,var val s4,var val TotGP,var string cashpaymode)
 BEGIN
   Integer i,rwcnt;
   row IVVc IVrw;
@@ -1102,7 +1084,7 @@ BEGIN
         s4 = s4 + IVrw.Sum;
       end;
     end else begin
-    tax1reb = IVrw.TAX1Reb;
+      tax1reb = IVrw.TAX1Reb;
 //    tax1reb = 0;
 //    Tax1Rebr.Code = IVrw.VATCode;
 //    Tax1Rebr.CustCode = IVp.CustCode;
@@ -1209,6 +1191,17 @@ retention change
       s4 = IVrw.Sum + s4;
     end;    
 */    
+    if (IVrw.ovst==0) and (IVrw.stp==kInvoiceRowTypeDownpayment) then begin    
+      AddTAX2Base(calcperceppercuf,SMTax2r,IVrw.TAX2Code,IVrw.TAX2Prc,IVrw.TAX2Reb,IVrw.Sum,IVp.InclVAT,IVrw.VATCode);        
+    end;
+    if (IVrw.stp==kInvoiceRowTypeCashPayment) then begin
+      if (HasLocalization("AUS")) then begin
+        if (IVrw.Sum>=IVp.Sum4) then begin
+          cashpaymode = IVrw.PayMode;
+        end;
+      end;
+    end;
+
     if (IVrw.ovst==0) and ((IVrw.stp==kInvoiceRowTypeNormal) or (IVrw.stp==kInvoiceRowTypeStructuredItemComponent) or (IVrw.stp==kInvoiceRowTypeDebtorsTransfer) or (IVrw.stp==kInvoiceRowTypeInterest) or (IVrw.stp==kInvoiceRowTypeCorrection) or (IVrw.stp==kInvoiceRowTypeRetention) or (IVrw.stp==kInvoiceRowTypeMultiBuyDiscount)) then begin    
 /*    
     if ((IVrw.stp==kInvoiceRowTypeNormal) or (IVrw.stp==kInvoiceRowTypeInterest) or (IVrw.stp==kInvoiceRowTypeCorrection) or (IVrw.stp==kInvoiceRowTypeVoid) or (IVrw.stp==kInvoiceRowTypeRetention)) then begin    
@@ -1235,7 +1228,9 @@ retention change
         IVrw.rowGP = 0;
         IVrw.BasePrice = 0;
       end;
-      TotGP = TotGP + IVrw.rowGP;
+      if (blank(IVp.PriceList) or IVrw.stp!=kInvoiceRowTypeStructuredItemComponent) then begin
+        TotGP = TotGP + IVrw.rowGP;
+      end;
       switch (IVp.InclVAT) begin/* 0-rndoff 1-sumexvat 2-sumnondtbl 3-vat 4-sumtopay */
         case 0:
           s1 = IVrw.Sum + s1;
@@ -1347,6 +1342,15 @@ retention change
   RETURN;  
 END;
 
+global
+procedure IV2Sumup(record IVVc IVp,record SMVc SMr,Integer vatcnt,record SMVc SMTax2r,Boolean calcperceppercuf,Integer inclVATCalcRuleSkip,var val s0,var val s1,var val s2,var val s3,var val s4,var val TotGP)
+begin
+  string 255 cashpaymode;
+
+  IV2Sumup2(IVp,SMr,vatcnt,SMTax2r,calcperceppercuf,inclVATCalcRuleSkip,s0,s1,s2,s3,s4,TotGP,cashpaymode);
+  return;
+end;
+
 procedure AddTax2Row(record SMVc tmpSMTax2r,string tax2code,val sum,val tax2reb)
 BEGIN
   row SMVc SMrw;
@@ -1371,108 +1375,6 @@ BEGIN
 LAddTax2Row:;  
   RETURN;
 END;
-
-global
-function Boolean RPCUTax_TaxedAmount(val tax2base,val tax2baseb1,string region,record RPCUTaxVc RPCUTaxr)
-begin
-  Boolean res;
-  row RPCUTaxVc RPCUTaxrw;
-  Integer i,rwcnt;
-  
-  res = true;
-  rwcnt = MatRowCnt(RPCUTaxr);
-  for (i=0;i<rwcnt;i=i+1) begin
-    MatRowGet(RPCUTaxr,i,RPCUTaxrw);
-    if (region==RPCUTaxrw.Region) then begin
-      if (RPCUTaxrw.BaseMin>0) then begin
-        if (tax2baseb1<=RPCUTaxrw.BaseMin) then begin
-          res = false;
-        end;
-      end;      
-      goto LTaxedAmount;
-    end;
-  end;  
-LTaxedAmount:;  
-  RPCUTax_TaxedAmount = res;
-  return;
-end;
-
-function val IVVc_CalcTax2perCustomer(record RPCUTaxVc RPCUTaxr,var record IVVc IVp)
-begin
-  val res;
-  Integer i,rwcnt;
-  row IVVc IVrw;
-  val tax2base,tax2baseb1,tax1reb,tax1sum,t;
-  record INVc INr;
-  record SMVc VATr;
-  Integer vatcnt;
-  
-  SetupVATBase(VATr,vatcnt);
-  rwcnt = MatRowCnt(IVp);
-
-// IV2Sumup should look in item and make another SetupVATBase and SMr
-
-  for (i=0;i<rwcnt;i=i+1) begin
-    MatRowGet(IVp,i,IVrw);
-    switch (IVrw.stp) begin
-      case kInvoiceRowTypeStructuredItemComponent:
-        goto LkInvoiceRowTypeNormal1;
-      case kInvoiceRowTypeDebtorsTransfer:
-        goto LkInvoiceRowTypeNormal1;
-      case kInvoiceRowTypeNormal:
-LkInvoiceRowTypeNormal1:;
-        if (IVrw.Perceptions!=0) then begin       
-          if ((IVp.ExportFlag==0) or (IVp.ExportFlag==3) or (IVp.ExportFlag==4)) then begin
-            AddVATBase(VATr,IVrw.VATCode,IVrw.Sum,tax1reb,vatcnt,IVp.InclVAT,IVp.NoTAXonVAT);
-            tax2base = tax2base + IVrw.Sum;
-          end;
-        end;
-    end;
-  end;
-  CalcVATBaseVAT(VATr,IVp.InclVAT,IVp.NoTAXonVAT,vatcnt,t,tax1sum);  
-  switch (IVp.InclVAT) begin
-    case 0:
-      switch (IVp.NoTAXonVAT) begin
-        case 2:
-        case 1:
-        otherwise
-          tax2base = tax2base - t;
-      end;
-    otherwise
-      tax2base = tax2base - t;
-  end;
-/*
-  for (i=0;i<rwcnt;i=i+1) begin
-    MatRowGet(IVp,i,IVrw);
-    switch (IVrw.stp) begin
-      case kInvoiceRowTypePerceptionTax: ;
-      otherwise
-        if (IVrw.Perceptions!=0) then begin
-          tax2base = tax2base + IVrw.Sum;
-        end;
-    end;
-  end;
-*/
-  tax2baseb1 = MulRateToBase1(IVp.CurncyCode,tax2base,IVp.FrRate,IVp.ToRateB1,IVp.ToRateB2,IVp.BaseRate1,IVp.BaseRate2,DefaultCurRoundOff);
-  for (i=0;i<rwcnt;i=i+1) begin
-    MatRowGet(IVp,i,IVrw);
-    if (IVrw.stp==kInvoiceRowTypePerceptionTax) then begin
-      if (RPCUTax_TaxedAmount(tax2base,tax2baseb1,IVrw.CuAccCode,RPCUTaxr)) then begin
-        IVrw.Price = tax2base;
-        IVrw.Sum = (tax2base*IVrw.TAX2Prc)/100.00;
-        res = res + Round(IVrw.Sum,SetRoundModeD(2));
-        MatRowPut(IVp,i,IVrw);
-      end else begin
-        IVrw.Price = tax2base;
-        IVrw.Sum = (tax2base*0.00)/100.00;
-        res = res + Round(IVrw.Sum,SetRoundModeD(2));
-        MatRowPut(IVp,i,IVrw);
-      end;
-    end;
-  end;
-  IVVc_CalcTax2perCustomer = res;
-  return;
-end;
 
 global
 function val CalcTax2BaseTax2(Boolean calcperceppercuf,record SMVc SMTax2r,Integer InclVAT)
@@ -1520,7 +1422,7 @@ begin
   row WHITVc WHITrw;
   record INVc INr;
   Integer wi,wrwcnt;
-  val whtotal;
+  val whtotal,basev;
 
   BlockLoad(ISb);
   if (ISb.Withholdings!=0) then begin
@@ -1533,7 +1435,12 @@ begin
             wrwcnt = MatRowCnt(WHITr);
             for (wi=0;wi<wrwcnt;wi=wi+1) begin
               MatRowGet(WHITr,wi,WHITrw);
-              whsum[WHITrw.WHTax] = whsum[WHITrw.WHTax] + IVrw.Sum;
+              if (nonblank(WHITrw.TAXBase)) then begin
+                PUCalcPerc(IVrw.Sum,WHITrw.TAXBase,basev);
+                whsum[WHITrw.WHTax] = whsum[WHITrw.WHTax] + basev;
+              end else begin
+                whsum[WHITrw.WHTax] = whsum[WHITrw.WHTax] + IVrw.Sum;
+              end;
             end;
           end;
         end;
@@ -1560,7 +1467,9 @@ procedure IVSumup_TaxTemplate(var record IVVc IVp,Boolean roundofvat)
 begin
   Integer i,rwcnt;
   row IVVc IVrw;
+  Integer ti,trwcnt;
   record TaxMatrixVc TMr;
+  row TaxMatrixVc TMrw;
   record TaxMatrixVc sumTMr;
   roundmode roundlines,rndtotal,rndvat;
   val t;
@@ -1596,12 +1505,19 @@ LkInvoiceRowTypeNormal:;
       case kInvoiceRowTypeCorrection:
         if ((IVp.ExportFlag==0) or (IVp.ExportFlag==3) or (IVp.ExportFlag==4)) then begin
           UnpackRowFieldMatrix(IVrw,"TaxMatrix",TMr);
+          trwcnt = MatRowCnt(TMr);
+          for (ti=0;ti<trwcnt;ti=ti+1) begin
+            MatRowGet(TMr,ti,TMrw);
+            TMrw.BaseSum = -TMrw.BaseSum;
+            TMrw.VATSum = -TMrw.VATSum;
+            MatRowPut(TMr,ti,TMrw);
+          end;
           AddRowTaxMatrixToSumTaxMatrix(TMr,sumTMr,IVp.InclVAT);
         end;
         switch (IVp.InvType) begin
           case kInvoiceTypeCreditSpecialSales: goto LkInvoiceTypeCredit;
           case kInvoiceTypeCredit:
-            LkInvoiceTypeCredit:;
+LkInvoiceTypeCredit:;
             IVp.Sum1 = IVp.Sum1 - IVrw.Sum;
             IVp.TotGP = IVp.TotGP - IVrw.rowGP;
           otherwise
@@ -1728,7 +1644,7 @@ begin
   val s0,s1,s2,s3,s4,TotGP;
   val tax1sum,tax2sum,t;
   roundmode roundlines,rndtotal,rndvat;
-  string 255 tstr;
+  string 255 tstr,cashpaymode;
   val FrBase,FrGP,FrPrice;
   val ts3,ttax1sum,tax2base;
   record RPCUTaxVc RPCUTaxr;
@@ -1747,8 +1663,10 @@ begin
   s4 = IVp.Sum4;
   tax1sum = IVp.TAX1Sum;
   tax2sum = IVp.TAX2Sum;
-  calcperceppercuf = FindRPCUTax(IVp.CustCode,IVp.InvDate,RPCUTaxr);
-  IV2Sumup(IVp,SMr,vatcnt,SMTax2r,calcperceppercuf,0,s0,s1,s2,s3,s4,TotGP);  
+  if (HasLocalization("ARG")) then begin
+    calcperceppercuf = FindRPCUTax(IVp.CustCode,IVp.InvDate,RPCUTaxr);
+  end;
+  IV2Sumup2(IVp,SMr,vatcnt,SMTax2r,calcperceppercuf,0,s0,s1,s2,s3,s4,TotGP,cashpaymode);
   IVp.Sum0 = s0;
   IVp.Sum1 = s1;
   IVp.Sum2 = s2;
@@ -1756,10 +1674,12 @@ begin
   IVp.Sum4 = s4;
   IVp.TotGP = TotGP;  
   CalcVATBaseVAT(SMr,IVp.InclVAT,IVp.NoTAXonVAT,vatcnt,s3,tax1sum);  
-  if (calcperceppercuf) then begin
-    tax2sum = IVVc_CalcTax2perCustomer(RPCUTaxr,IVp);  
-  end else begin
-    tax2sum = CalcTax2BaseTax2(false,SMTax2r,IVp.InclVAT);  
+  if (HasLocalization("ARG")) then begin
+    if (calcperceppercuf) then begin
+      tax2sum = IVVc_CalcTax2perCustomer(RPCUTaxr,IVp);  
+    end else begin
+      tax2sum = CalcTax2BaseTax2(false,SMTax2r,IVp.InclVAT);  
+    end;
   end;
   IVp.TAX1Sum = Round(tax1sum,DefaultRoundMode);
   IVp.TAX2Sum = Round(tax2sum,DefaultRoundMode);  
@@ -1770,7 +1690,11 @@ begin
 //  SpecialVAT(IVp.PayDeal,s3);
   SpecialVAT2(IVp.pdvrebt,s3);
 //  SpecialVAT2(IVp.pdvrebt,s3);
-  GetCurncyRoundoff(IVp.CurncyCode,IVp.PayDeal,"IVVc",rndtotal,roundlines,rndvat);
+  if (nonblank(cashpaymode)) then begin
+    GetCurncyRoundoff(IVp.CurncyCode,cashpaymode,"IVVc",rndtotal,roundlines,rndvat);
+  end else begin
+    GetCurncyRoundoff(IVp.CurncyCode,IVp.PayDeal,"IVVc",rndtotal,roundlines,rndvat);
+  end;
   if (roundof) then begin
     s3 = Round(s3,rndvat);
   end;
