@@ -415,7 +415,7 @@ begin
 	val totbal,dolg,balb1,totdolg,ourtotdolg,ourdolg,totin,totout;
 	record ARVc ARr;
 	record APVc APr;
-	date todate;
+	date todate,frdate;
 	string 20 sortkey;
 	record IPrsVc IPrsr;
 	record IPVc IPr;
@@ -426,7 +426,9 @@ begin
 	integer mtrw,i;
   
   prcode = RepSpec.f1;
-  todate = RepSpec.d1;
+  
+  frdate = RepSpec.sStartDate;
+  todate = RepSpec.sEndDate;
 	startreportnoheaderjob("Журнал платежей по проектам");
 		startformat(15);
 			outstring(0,0,"Проект",false);

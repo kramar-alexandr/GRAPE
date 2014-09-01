@@ -13,8 +13,9 @@ begin
   WindowBegin("Определите отчет по платежам по проектам",ProjectPayPlanRClass,CGRcW,RcType);
   SetWRect(20,80,400,270);
   vs = 20; h = 120; h1 = 50; h2 = 200;
-  EditField(h,v,120,"Дата",Normal,d1,false,pastecurdate);
-  EditField(h,v+=vs,120,"Прект",Normal,f1,false,PRSClass);
+  PeriodField(h,v,"Период");
+  //EditField(h,v,120,"Дата",Normal,d1,false,pastecurdate);
+  EditField(h,v+=vs,120,"Проект",Normal,f1,false,PRSClass);
 
   EndWindow;
 end;
