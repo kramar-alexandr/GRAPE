@@ -18,57 +18,11 @@ external procedure CalcProc(val,val,var val);
 external procedure RecordActionTBBU_Print(var record TBBUVc,string);
 external procedure CalcSum(val,val,val,val,var val,Integer);
 external procedure CalcExtra(val,string,var val);
-remote procedure GetPRItemCost(string,string,string,string,Integer,var val);
 external procedure TBBUSumup(var record TBBUVc);
 external function Boolean GetItemNameStr(Integer,var string,string,string,string);
 remote updating procedure GenProInvoices(var record RcVc,Boolean);
-
-SetLangMode(LangRussian,"RUS",0);
-
-//Function that don't allow take out OKFlag
-/*global
-function Boolean TBBUDClassOKFlagButtonAction(Integer wn,Integer value)
-begin
-  Boolean res;
-  record TBBUVc TBBUr;
-  Integer normalmode,updatemode;
+external function Boolean UserCanChangePendingRecord(Integer);
  
-  res = true;
-  normalmode = 0;//Rs_normal
-  updatemode = 2;//Rs_update
-  if (WindowState(wn)==updatemode) then begin
-    GetPrevWindowRecord(wn,TBBUr);
-    if (TBBUr.OKFlag!=0) then begin
-      res = false;
-    end;
-  end;
-  if (WindowState(wn)==normalmode) then begin
-    GetWindowRecord(wn,TBBUr);
-    if (TBBUr.OKFlag!=0) then begin
-      res = false;
-    end;
-  end;	  
-  TBBUDClassOKFlagButtonAction = res;
-  return;
-end;*/
-/*
-global 
-function Boolean TBBUDClassDeleteRowTest(Integer wn,Integer rownr)
-begin  record TBBUVc TBBUr;
-  Boolean res;
-  Integer updatemode;
-
-  res = true;
-  updatemode = 2;//Rs_update
-  if (WindowState(wn)==updatemode) then begin
-    GetPrevWindowRecord(wn,TBBUr);
-    if (TBBUr.OKFlag!=0) then begin res = false; end;
-  end;
-  TBBUDClassDeleteRowTest = res;
-  return;
-end;
-*/
-
 function Boolean TBBUDClassBudTypeEFAfter(Integer wn,Integer fn,Integer rownr,Integer changedf)
 begin  
   record TBBUVc TBBUr;
@@ -539,11 +493,9 @@ BEGIN
   Boolean res;
   record TBBUVc TBBUr;
   row TBBUVc TBBUrw;
-  Integer nwn;
-  Integer updatemode;
-
-  updatemode = 2;//Rs_update
-    
+  Integer nwn,updatemode;
+  
+  updatemode = 2;
   res = true;
   nwn = FindWindow("SelectApproverWClass");
   if (nwn>0) then begin
@@ -562,7 +514,7 @@ BEGIN
   	end;
   end;
   
-  if (TBBUAcceptanceStarted(TBBUr)) then begin res = false; end;
+  if (TBBUAcceptanceStarted(TBBUr) and UserCanChangePendingRecord(rownr)==false) then begin res = false; end;
   switch (fieldname) begin
     case "Cost": 
       if (rownr>=0) then begin
@@ -585,6 +537,13 @@ BEGIN
       switch (TBBUrw.stp) begin
         case kInvoiceRowTypeStructuredItemComponent:
           res = false;
+      end;
+    case "Comment": 
+      if (HasLocalization("PRT")) then begin
+        MatRowGet(TBBUr,rownr,TBBUrw);
+        if (nonblank(TBBUrw.ArtCode)) then begin
+          res = false;
+        end;
       end;
   end;
 LTBBUDClassActiveEditField:;
@@ -763,7 +722,7 @@ begin
   Integer updatemode;
 
   updatemode = 2;//Rs_update
-  
+
   res = true;
   switch (WindowState(wn)) begin
     case Rs_update:
@@ -782,7 +741,7 @@ begin
   	end;
   end;
   
-  if (TBBUAcceptanceStarted(TBBUr)) then begin
+  if (TBBUAcceptanceStarted(TBBUr) and UserCanAction("ChangeRecordMatrixWhenPending",false)==false) then begin
     res = false;
   end;
   if (res) then begin
@@ -841,7 +800,7 @@ begin
     case Rs_normal:
       GetWindowRecord(wn,TBBUr);    
   end;
-  if (TBBUAcceptanceStarted(TBBUr)) then begin
+  if (TBBUAcceptanceStarted(TBBUr) and UserCanAction("ChangeRecordMatrixWhenPending",false)==false) then begin
     res = false;
   end;
   
