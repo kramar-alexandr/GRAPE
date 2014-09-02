@@ -2362,7 +2362,7 @@ begin
         end;
         MatText(3,270,"",true);
       end;
-      MatCol(t=kInvoiceRowTypeNormal,140,"Ссылка",0,RefStr,false,0);
+      MatCol(t=kInvoiceRowTypeNormal,140,"Коммент.",0,Comment,false,0);
       if (HasSimAccruals) then begin
         Flip(flipnr); flipnr = flipnr + 1;
         
