@@ -412,7 +412,7 @@ begin
 	boolean TrHs2,testf2;
 	record IVVc IVr;
 	record VIVc VIr;
-	val totbal,dolg,balb1,totdolg,ourtotdolg,ourdolg,totin,totout;
+	val totbal,dolg,balb1,totdolg,ourtotdolg,ourdolg,totin,totout,prihod,oplata;
 	record ARVc ARr;
 	record APVc APr;
 	date todate,frdate;
@@ -424,6 +424,8 @@ begin
 	record OPVc OPr;
 	row OPVc OPrw;
 	integer mtrw,i;
+	record BaseCurBlock BCb;
+
   
   prcode = RepSpec.f1;
   
@@ -466,6 +468,13 @@ begin
 					if(testf1)then begin
 						//CalcInvStat(IVr,bal,balb1);
 						dolg = 0;
+						//Edit***********************Vitalii 11:52 02.09.2014
+						BlockLoad(BCb);
+						if (IVr.CurncyCode != BCb.BaseCur1) then begin
+							prihod = IVr.Sum4/IVr.FrRate*IVr.ToRateB1; 
+						end else begin
+							prihod = IVr.Sum4;
+						end;
 						ARr.InvoiceNr = IVr.SerNr;
 						if (ReadFirstMain(ARr,1,true)) then begin
 							dolg = ARr.RVal;
@@ -473,12 +482,12 @@ begin
 							if(IVr.OKFlag==1)then begin
 								dolg = 0;
 							end else begin
-								dolg = IVr.Sum4;
+								dolg = prihod;
 							end;
 						end;
-						totbal = totbal + IVr.Sum4;
-						totdolg = totdolg + IVr.Sum4 - dolg;
-						totin = totin + IVr.Sum4;
+						totbal = totbal + prihod;
+						totdolg = totdolg + prihod - dolg;
+						totin = totin + prihod;
 						
 						startformat(15);
 							outstring(0,"DblPRVc",PRr.Code,false);
@@ -490,14 +499,14 @@ begin
 							outstring(180,"DblIVVc",IVr.SerNr,false);
 							outstring(200,0,"",false);
 							outstring(240,0,"",false);
-							outstring(260,0,IVr.Sum4,false);
+							outstring(260,0,prihod,false);
 							outstring(280,0,"",false);
 							outstring(320,0,"",false);
 							outstring(340,0,"",false);
 							outstring(1,0,totbal,true);
 						endformat;
 						
-						if(IVr.Sum4!=dolg)then begin
+						if(prihod!=dolg)then begin
 							/*startformat(15);
 								outstring(260,0,"Существующие оплаты:",true);
 								outstring(270,0,"Дата",false);
@@ -536,7 +545,12 @@ begin
 													outstring(200,0,IPrw.PayDate,false);
 													outstring(240,"DblIPVc",IPr.SerNr,false);
 													outstring(260,0,"",false);
-													outstring(280,0,IPrw.InvVal,false);
+													//Edit***********************Vitalii 11:53 02.09.2014
+													if (IVr.CurncyCode != BCb.BaseCur1) then begin
+														outstring(280,0,IPrw.InvVal/IVr.FrRate*IVr.ToRateB1,false);
+													end else begin
+														outstring(280,0,IPrw.InvVal,false);
+													end;
 													outstring(320,0,"",false);
 													outstring(340,0,"",false);
 													outstring(1,0,"",true);
@@ -563,20 +577,26 @@ begin
 					
 					if(testf1)then begin
 						//CalcInvStat(IVr,bal,balb1);
-						ourdolg = 0;
+						ourdolg = 0; 
+						//Edit***********************Vitalii 11:52 02.09.2014
+						if (VIr.CurncyCode != BCb.BaseCur1) then begin
+							oplata = VIr.PayVal/VIr.FrRate*VIr.ToRateB1; 
+						end else begin
+							oplata = VIr.PayVal;
+						end;
 						APr.InvoiceNr = VIr.SerNr;
 						if (ReadFirstMain(APr,1,true)) then begin
-							ourdolg = VIr.PayVal;
+							ourdolg = oplata;
 						end else begin
 							if(VIr.OKFlag==1)then begin
 								ourdolg = 0;
 							end else begin
-								ourdolg = VIr.PayVal;
+								ourdolg = oplata;
 							end;
 						end;
-						totbal = totbal - VIr.PayVal;
-						ourtotdolg = ourtotdolg + VIr.PayVal - ourdolg;
-						totout = totout + VIr.PayVal;	
+						totbal = totbal - oplata;
+						ourtotdolg = ourtotdolg + oplata - ourdolg;
+						totout = totout + oplata;	
 						
 						startformat(15);
 							outstring(0,"DblPRVc",PRr.Code,false);
@@ -590,12 +610,12 @@ begin
 							outstring(240,0,"",false);
 							outstring(260,0,"",false);
 							outstring(280,0,"",false);
-							outstring(320,0,VIr.PayVal,false);
+							outstring(320,0,oplata,false);
 							outstring(340,0,"",false);
 							outstring(1,0,totbal,true);
 						endformat;
 						
-						//if(VIr.PayVal!=ourdolg)then begin
+						//if(oplata!=ourdolg)then begin
 							OPrsr.VINr = VIr.SerNr;
 							OPrsr.TransType = 1;
 							TrHs2 = true;
@@ -624,7 +644,12 @@ begin
 													outstring(260,0,"",false);
 													outstring(280,0,"",false);
 													outstring(320,0,"",false);
-													outstring(340,0,OPrw.PInvVal,false);
+													//Edit***********************Vitalii 11:52 02.09.2014
+													if (VIr.CurncyCode != BCb.BaseCur1) then begin
+														outstring(340,0,OPrw.PInvVal/VIr.FrRate*VIr.ToRateB1,false);
+													end else begin
+														outstring(340,0,OPrw.PInvVal,false);
+													end;
 													outstring(1,0,"",true);
 												endformat;
 	  									end;
