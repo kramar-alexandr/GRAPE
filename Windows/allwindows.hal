@@ -2362,10 +2362,10 @@ begin
         end;
         MatText(3,270,"",true);
       end;
-      MatCol(t=kInvoiceRowTypeNormal,140,"Коммент.",0,Comment,false,0);
+      
       if (HasSimAccruals) then begin
         Flip(flipnr); flipnr = flipnr + 1;
-        
+        MatCol(t=kInvoiceRowTypeNormal,140,"Коммент.",0,Comment,false,0); //Edited back by Victor 02.09.14
         MatCol(t,-260,"Сумма",0,Sum,true,0);   // From dict
         MatCol(t,-180,"Расх.буд.пер.",0,PeriodCode,false,AutSimPerSClass);   // From dict
         MatCol(t,-80,"НДС",0,VATVal,true,0);   // From dict
