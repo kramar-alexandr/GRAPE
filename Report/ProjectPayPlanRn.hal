@@ -413,9 +413,7 @@ begin
 	boolean oncef,oncef1,oncef2;
 	record IVVc IVr;
 	record VIVc VIr;
-	val totbal,dolg,balb1,totdolg,ourtotdolg,ourdolg,totin,totout;
-//!!!---------
-val prihod,oplata,rashod,vuplata,balans,totp,toto,totr,totv;
+val prihod,oplata,rashod,vuplata,balans,totp,toto,totr,totv,dolg;
 	record ARVc ARr;
 	record APVc APr;
 	date todate,frdate;
@@ -581,26 +579,11 @@ val prihod,oplata,rashod,vuplata,balans,totp,toto,totr,totv;
 						ReadFirstMain(IVr,1,true);
  						if ((IVr.PayDate<frdate) and
 								(Blank(prcode) or (NonBlank(prcode) and (IVr.PRCode == prcode)))) then begin
-							/*if (IVr.CurncyCode != BCb.BaseCur1) then begin
-								prihod = IVr.Sum4/IVr.FrRate*IVr.ToRateB1; 
-							end else begin
-								prihod = IVr.Sum4;
-							end;*/
 							if (IVr.CurncyCode != BCb.BaseCur1) then begin
 								oplata = IPrw.InvVal/IVr.FrRate*IVr.ToRateB1; 
 							end else begin
 								oplata = IPrw.InvVal;
 							end;
-							ARr.InvoiceNr = IVr.SerNr;
-							/*if (ReadFirstMain(ARr,1,true)) then begin
-								dolg = ARr.RVal;
-							end else begin
-								if(IVr.OKFlag==1)then begin
-									dolg = 0;
-								end else begin
-									dolg = prihod;
-								end;
-							end;*/
 							balans = balans + oplata;
 							toto = toto + oplata;
 							if (nonblank(prcode)) then begin
@@ -653,26 +636,11 @@ val prihod,oplata,rashod,vuplata,balans,totp,toto,totr,totv;
 						ReadFirstMain(VIr,1,true);
 						if ((VIr.DueDate<frdate) and
 								(Blank(prcode) or (NonBlank(prcode) and (VIr.PRCode == prcode)))) then begin
-							/*if (VIr.CurncyCode != BCb.BaseCur1) then begin
-								oplata = VIr.PayVal/VIr.FrRate*VIr.ToRateB1; 
-							end else begin
-								oplata = VIr.PayVal;
-							end;*/
 							if (VIr.CurncyCode != BCb.BaseCur1) then begin
 								vuplata = OPrw.RecVal/VIr.FrRate*VIr.ToRateB1; 
 							end else begin
 								vuplata = OPrw.RecVal;
 							end;
-							APr.SerNr = VIr.SerNr;
-							/*if (ReadFirstMain(APr,1,true)) then begin
-								ourdolg = oplata;
-							end else begin
-								if(VIr.OKFlag==1)then begin
-									ourdolg = 0;
-								end else begin
-									ourdolg = oplata;
-								end;
-							end;*/
 							balans = balans - vuplata;
 							totv = totv + vuplata;	
 							if (nonblank(prcode)) then begin
@@ -823,7 +791,6 @@ val prihod,oplata,rashod,vuplata,balans,totp,toto,totr,totv;
 					if(VIr.PRCode!=PRr.Code)then begin testf1 = false; TrHs1 = false; end;
 					if(nonblank(todate) and VIr.DueDate>todate)then begin testf1 = false; TrHs1 = false; end;
 					if(testf1)then begin
-						ourdolg = 0; 
 						//Edit***********************Vitalii 11:52 02.09.2014
 						if (VIr.CurncyCode != BCb.BaseCur1) then begin
 							rashod = VIr.PayVal/VIr.FrRate*VIr.ToRateB1; 
@@ -909,8 +876,6 @@ val prihod,oplata,rashod,vuplata,balans,totp,toto,totr,totv;
 			outstring(320,0,totr,false);
 			outstring(340,0,totv,false);
 			outstring(250,0,"",false);
-			//outstring(420,0,totout,false);
-			//outstring(450,0,ourtotdolg,false);
 			outstring(1,0,balans,true);
 		endformat;
 	endjob;
