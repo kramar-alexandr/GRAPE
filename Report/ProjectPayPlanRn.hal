@@ -410,14 +410,17 @@ begin
 	boolean TrHs,testf;
 	boolean TrHs1,testf1;
 	boolean TrHs2,testf2;
+	boolean oncef,oncef1,oncef2;
 	record IVVc IVr;
 	record VIVc VIr;
-	val totbal,dolg,balb1,totdolg,ourtotdolg,ourdolg,totin,totout,prihod,oplata;
+	val totbal,dolg,balb1,totdolg,ourtotdolg,ourdolg,totin,totout;
+//!!!---------
+val prihod,oplata,rashod,vuplata,balans,totp,toto,totr,totv;
 	record ARVc ARr;
 	record APVc APr;
 	date todate,frdate;
 	string 20 sortkey;
-	record IPrsVc IPrsr;
+	record IPrsVc IPrsr,IPrsr2;
 	record IPVc IPr;
 	row IPVc IPrw;
 	record OPrsVc OPrsr;
@@ -425,10 +428,8 @@ begin
 	row OPVc OPrw;
 	integer mtrw,i;
 	record BaseCurBlock BCb;
-
-  
+	
   prcode = RepSpec.f1;
-  
   frdate = RepSpec.sStartDate;
   todate = RepSpec.sEndDate;
 	startreportnoheaderjob("Журнал платежей по проектам");
@@ -448,28 +449,289 @@ begin
 			outstring(340,0,"Выплата",false);
 			outstring(1,0,"Баланс",true);
 		endformat;
-		
-		PRr.Code = prcode;
+		//Edit***********************Vitalii 13:54 02.09.2014
+		BlockLoad(BCb);
+		ARr.DueDate = "";
 		TrHs = true;
-		while(loopmain(PRr,1,TrHs))begin
+		oncef = true;
+		while (LoopKey("DueDate",ARr,1,TrHs)) begin
+			testf = true;
+			testf1 = true;
+			if (ARr.DueDate >= frdate) then begin testf1 = false; TrHs = false; end;
+			if (testf1) then begin
+				IVr.SerNr = ARr.InvoiceNr;
+				if (ReadFirstMain(IVr,1,true)) then begin
+					if (nonblank(prcode) and (IVr.PRCode != prcode)) then begin testf = false; end;
+					if (testf) then begin
+						if (oncef) then begin
+							Black_Divider(0,480);
+							startformat(15);
+							outstring(15,0,"Не оплаченые сч/ф клиента на заданный период:",false);
+							endformat;
+							oncef = false;
+						end;
+						if (IVr.CurncyCode != BCb.BaseCur1) then begin
+							prihod = ARr.RVal/IVr.FrRate*IVr.ToRateB1; 
+						end else begin
+							prihod = ARr.RVal;
+						end;
+						balans = balans + prihod;
+						totp = totp + prihod;
+						if (nonblank(prcode)) then begin
+							PRr.Code = prcode;
+						end else begin
+							PRr.Code = IVr.PRCode;
+						end;
+						ReadFirstMain(PRr,1,true);
+						startformat(15);
+							outstring(0,"DblPRVc",PRr.Code,false);
+							outstring(30,0,PRr.Name,false);
+							outstring(70,"DblCUVc",PRr.CustCode,false);
+							outstring(100,0,"Дата ПУ",false);
+							outstring(120,0,PRr.Leader2Name,false);
+							outstring(140,0,ARr.DueDate,false);
+							outstring(180,"DblIVVc",IVr.SerNr,false);
+							outstring(200,0,"",false);
+							outstring(240,0,"",false);
+							outstring(260,0,prihod,false);
+							outstring(280,0,"",false);
+							outstring(320,0,"",false);
+							outstring(340,0,"",false);
+							outstring(1,0,balans,true);
+						endformat;
+					end;
+				end;
+			end;
+		end;
+		APr.DueDate = "";
+		TrHs = true;
+		oncef1 = true;
+		while (loopkey("DueDate",APr,1,TrHs)) begin
+			testf = true;
+			testf1 = true;
+			if (APr.DueDate >= frdate) then begin testf1 = false; TrHs = false; end;
+			if (testf1) then begin
+				VIr.SerNr = APr.SerNr;
+				if (ReadFirstMain(VIr,1,true)) then begin
+					if (nonblank(prcode) and (VIr.PRCode != prcode)) then begin testf = false; end;
+					if (testf) then begin
+						if (oncef1) then begin
+							Black_Divider(0,480);
+							startformat(15);
+							outstring(15,0,"Не оплаченые сч/ф поставщика на заданный период:",false);
+							endformat;
+							oncef1 = false;
+						end;
+						if (VIr.CurncyCode != BCb.BaseCur1) then begin
+							rashod = APr.RVal/VIr.FrRate*VIr.ToRateB1; 
+						end else begin
+							rashod = APr.RVal;
+						end;
+						balans = balans - rashod;
+						totr = totr + rashod;
+						if (nonblank(prcode)) then begin
+							PRr.Code = prcode;
+						end else begin
+							PRr.Code = VIr.PRCode;
+						end;
+						ReadFirstMain(PRr,1,true);
+						startformat(15);
+							outstring(0,"DblPRVc",PRr.Code,false);
+							outstring(30,0,PRr.Name,false);
+							outstring(70,"DblCUVc",PRr.CustCode,false);
+							outstring(100,0,"Дата ПУ",false);
+							outstring(120,0,PRr.Leader2Name,false);
+							outstring(140,0,APr.DueDate,false);
+							outstring(180,"DblVIVc",VIr.SerNr,false);
+							outstring(200,0,"",false);
+							outstring(240,0,"",false);
+							outstring(260,0,"",false);
+							outstring(280,0,"",false);
+							outstring(320,0,rashod,false);
+							outstring(340,0,"",false);
+							outstring(1,0,balans,true);
+						endformat;
+					end;
+				end;
+			end;
+		end;
+		IPrsr.TransType = 1;
+		IPrsr.TransDate = frdate;
+		TrHs = true; 
+		oncef2 = true;
+		while (loopkey("TransDate",IPrsr,2,TrHs)) begin
+			testf = true;
+			if(IPrsr.TransDate>todate)then begin testf = false; TrHs = false; end;
+			if(IPrsr.TransType!=1)then begin testf = false; end;
+			if(testf)then begin
+				if (oncef2) then begin
+					Black_Divider(0,480);
+					startformat(15);
+					outstring(15,0,"Задолженности, оплаченые в заданный период:",false);
+					endformat;
+					oncef2 = false;
+				end;
+				IPr.SerNr = IPrsr.TransNr;
+				ReadFirstMain(IPr,1,true);
+				mtrw = matrowcnt(IPr);
+				for (i=0;i<mtrw;i=i+1) begin
+					matrowget(IPr,i,IPrw);
+					if (IPrw.InvoiceNr == IPrsr.IVNr) then begin
+						IVr.SerNr = IPrw.InvoiceNr;
+						ReadFirstMain(IVr,1,true);
+ 						if ((IVr.PayDate<frdate) and
+								(Blank(prcode) or (NonBlank(prcode) and (IVr.PRCode == prcode)))) then begin
+							/*if (IVr.CurncyCode != BCb.BaseCur1) then begin
+								prihod = IVr.Sum4/IVr.FrRate*IVr.ToRateB1; 
+							end else begin
+								prihod = IVr.Sum4;
+							end;*/
+							if (IVr.CurncyCode != BCb.BaseCur1) then begin
+								oplata = IPrw.InvVal/IVr.FrRate*IVr.ToRateB1; 
+							end else begin
+								oplata = IPrw.InvVal;
+							end;
+							ARr.InvoiceNr = IVr.SerNr;
+							/*if (ReadFirstMain(ARr,1,true)) then begin
+								dolg = ARr.RVal;
+							end else begin
+								if(IVr.OKFlag==1)then begin
+									dolg = 0;
+								end else begin
+									dolg = prihod;
+								end;
+							end;*/
+							balans = balans + oplata;
+							toto = toto + oplata;
+							if (nonblank(prcode)) then begin
+								PRr.Code = prcode;
+							end else begin
+								PRr.Code = IVr.PRCode;
+							end;
+							ReadFirstMain(PRr,1,true);
+							startformat(15);
+								outstring(0,"DblPRVc",PRr.Code,false);
+								outstring(30,0,PRr.Name,false);
+								outstring(70,"DblCUVc",PRr.CustCode,false);
+								outstring(100,0,"Дата ПУ",false);
+								outstring(120,0,PRr.Leader2Name,false);
+								outstring(140,0,IVr.PayDate,false);
+								outstring(180,"DblIVVc",IVr.SerNr,false);
+								outstring(240,"DblIPVc",IPr.SerNr,false);
+								outstring(280,0,oplata,false);
+								outstring(1,0,balans,true);
+							endformat;
+							Gray_Divider(0,1);
+						end;
+					end;
+				end;
+			end;
+		end;
+		resetloop(IPrsr);
+		OPrsr.TransType = 1;
+		OPrsr.TransDate = frdate;
+		TrHs = true;
+		while (loopkey("TransDate",OPrsr,2,TrHs)) begin
+			testf = true;
+			if(OPrsr.TransDate>todate)then begin testf = false; TrHs = false; end;
+			if(OPrsr.TransType!=1)then begin testf = false; end;
+			if(testf)then begin
+				if (oncef2) then begin
+					Black_Divider(0,480);
+					startformat(15);
+					outstring(15,0,"Задолженности, оплаченые в заданный период:",false);
+					endformat;
+					oncef2 = false;
+				end;
+				OPr.SerNr = OPrsr.TransNr;
+				ReadFirstMain(OPr,1,true);
+				mtrw = matrowcnt(OPr);
+				for (i=0;i<mtrw;i=i+1) begin
+					matrowget(OPr,i,OPrw);
+					if (OPrw.VISerNr == OPrsr.VINr) then begin
+						VIr.SerNr = OPrw.VISerNr;
+						ReadFirstMain(VIr,1,true);
+						if ((VIr.DueDate<frdate) and
+								(Blank(prcode) or (NonBlank(prcode) and (VIr.PRCode == prcode)))) then begin
+							/*if (VIr.CurncyCode != BCb.BaseCur1) then begin
+								oplata = VIr.PayVal/VIr.FrRate*VIr.ToRateB1; 
+							end else begin
+								oplata = VIr.PayVal;
+							end;*/
+							if (VIr.CurncyCode != BCb.BaseCur1) then begin
+								vuplata = OPrw.RecVal/VIr.FrRate*VIr.ToRateB1; 
+							end else begin
+								vuplata = OPrw.RecVal;
+							end;
+							APr.SerNr = VIr.SerNr;
+							/*if (ReadFirstMain(APr,1,true)) then begin
+								ourdolg = oplata;
+							end else begin
+								if(VIr.OKFlag==1)then begin
+									ourdolg = 0;
+								end else begin
+									ourdolg = oplata;
+								end;
+							end;*/
+							balans = balans - vuplata;
+							totv = totv + vuplata;	
+							if (nonblank(prcode)) then begin
+								PRr.Code = prcode;
+							end else begin
+								PRr.Code = VIr.PRCode;
+							end;
+							ReadFirstMain(PRr,1,true);
+							startformat(15);
+								outstring(0,"DblPRVc",PRr.Code,false);
+								outstring(30,0,PRr.Name,false);
+								outstring(70,"DblCUVc",PRr.CustCode,false);
+								outstring(100,0,"Дата ПУ",false);
+								outstring(120,0,PRr.Leader2Name,false);
+								outstring(140,0,VIr.DueDate,false);
+								outstring(180,"DblVIVc",VIr.SerNr,false);
+								outstring(200,0,OPr.RegDate,false);
+								outstring(240,"DblOPVc",OPr.SerNr,false);
+								outstring(260,0,"",false);
+								outstring(280,0,"",false);
+								outstring(340,0,vuplata,false);
+								outstring(1,0,balans,true);
+							endformat;
+							Gray_Divider(0,1);
+						end;
+					end;
+				end;
+			end;
+		end;
+		resetloop(OPrsr);
+		if (!oncef) or (!oncef1) or (!oncef2) then begin
+			Black_Divider(0,480);
+			StartFormat(15);
+			outstring(15,0,frdate & " - " & todate,false);
+			EndFormat;
+		end;
+		if (nonblank(prcode)) then begin
+			PRr.Code = prcode;
+		end else begin
+			PRr.Code = IVr.PRCode;
+		end;
+		ReadFirstMain(PRr,1,true);
+		TrHs = true;
+		while (loopmain(PRr,1,TrHs)) begin
 			testf = true;
 			if(nonblank(prcode) and PRr.Code!=prcode)then begin testf = false; TrHs = false; end;
-			
 			if(testf)then begin
 				IVr.PRCode = PRr.Code;
+				//Edit***********************Vitalii 15:31 02.09.2014
+				IVr.PayDate = frdate;
 				TrHs1 = true;
 				resetloop(IVr);
-				while(loopkey("PRCodePayDate",IVr,2,TrHs1))begin
+				while (loopkey("PRCodePayDate",IVr,2,TrHs1)) begin
 					testf1 = true;
 					if(IVr.PRCode!=PRr.Code)then begin testf1 = false; TrHs1 = false; end;
 					if(nonblank(todate) and IVr.PayDate>todate)then begin testf1 = false; TrHs1 = false; end;
-					
-					
 					if(testf1)then begin
-						//CalcInvStat(IVr,bal,balb1);
 						dolg = 0;
 						//Edit***********************Vitalii 11:52 02.09.2014
-						BlockLoad(BCb);
 						if (IVr.CurncyCode != BCb.BaseCur1) then begin
 							prihod = IVr.Sum4/IVr.FrRate*IVr.ToRateB1; 
 						end else begin
@@ -485,10 +747,8 @@ begin
 								dolg = prihod;
 							end;
 						end;
-						totbal = totbal + prihod;
-						totdolg = totdolg + prihod - dolg;
-						totin = totin + prihod;
-						
+						balans = balans + prihod;
+						totp = totp + prihod;
 						startformat(15);
 							outstring(0,"DblPRVc",PRr.Code,false);
 							outstring(30,0,PRr.Name,false);
@@ -503,24 +763,16 @@ begin
 							outstring(280,0,"",false);
 							outstring(320,0,"",false);
 							outstring(340,0,"",false);
-							outstring(1,0,totbal,true);
+							outstring(1,0,balans,true);
 						endformat;
-						
 						if(prihod!=dolg)then begin
-							/*startformat(15);
-								outstring(260,0,"Существующие оплаты:",true);
-								outstring(270,0,"Дата",false);
-								outstring(290,0,"Номер",false);
-								outstring(350,0,"",false);
-							endformat;*/
 							IPrsr.IVNr = IVr.SerNr;
 							IPrsr.TransType = 1;
 							TrHs2 = true;
-							while(loopkey("IVKey",IPrsr,2,TrHs2))begin
+							while (loopkey("IVKey",IPrsr,2,TrHs2)) begin
 								testf2 = true;
 								if(IPrsr.IVNr!=IVr.SerNr)then begin testf2 = false; TrHs2 = false; end;
 								if(IPrsr.TransType!=1)then begin testf2 = false; TrHs2 = false; end;
-								
 								if(testf2)then begin
 									IPr.SerNr = IPrsr.TransNr;
 									if(readfirstmain(IPr,1,true))then begin
@@ -528,12 +780,12 @@ begin
 										For(i=0;i<mtrw;i=i+1) begin
 	  									matrowget(IPr,i,IPrw);
 	  									if(IPrw.InvoiceNr==IPrsr.IVNr and IPrw.PayDate==IPrsr.TransDate)then begin
-	  										/*startformat(15);
-	  										
-	  											outstring(270,0,IPrw.PayDate,false);
-													outstring(290,"DblIPVc",IPr.SerNr,false);
-													outstring(350,0,IPrw.InvVal,false);
-												endformat;*/
+												if (IVr.CurncyCode != BCb.BaseCur1) then begin
+													oplata = IPrw.InvVal/IVr.FrRate*IVr.ToRateB1;
+												end else begin
+													oplata = IPrw.InvVal;
+												end;
+												toto = toto + oplata;
 												startformat(15);
 													outstring(0,0,"",false);
 													outstring(30,0,"",false);
@@ -546,11 +798,7 @@ begin
 													outstring(240,"DblIPVc",IPr.SerNr,false);
 													outstring(260,0,"",false);
 													//Edit***********************Vitalii 11:53 02.09.2014
-													if (IVr.CurncyCode != BCb.BaseCur1) then begin
-														outstring(280,0,IPrw.InvVal/IVr.FrRate*IVr.ToRateB1,false);
-													end else begin
-														outstring(280,0,IPrw.InvVal,false);
-													end;
+													outstring(280,0,oplata,false);
 													outstring(320,0,"",false);
 													outstring(340,0,"",false);
 													outstring(1,0,"",true);
@@ -565,39 +813,26 @@ begin
 					end;
 					Gray_Divider(0,1);
 				end;
-				
 				VIr.PRCode = PRr.Code;
+			//Edit***********************Vitalii 15:33 02.09.2014
+				VIr.DueDate = frdate;
 				TrHs1 = true;
 				resetloop(VIr);
-				while(loopkey("PRCodeDueDate",VIr,2,TrHs1))begin
+				while (loopkey("PRCodeDueDate",VIr,2,TrHs1)) begin
 					testf1 = true;
 					if(VIr.PRCode!=PRr.Code)then begin testf1 = false; TrHs1 = false; end;
 					if(nonblank(todate) and VIr.DueDate>todate)then begin testf1 = false; TrHs1 = false; end;
-					
-					
 					if(testf1)then begin
-						//CalcInvStat(IVr,bal,balb1);
 						ourdolg = 0; 
 						//Edit***********************Vitalii 11:52 02.09.2014
 						if (VIr.CurncyCode != BCb.BaseCur1) then begin
-							oplata = VIr.PayVal/VIr.FrRate*VIr.ToRateB1; 
+							rashod = VIr.PayVal/VIr.FrRate*VIr.ToRateB1; 
 						end else begin
-							oplata = VIr.PayVal;
+							rashod = VIr.PayVal;
 						end;
-						APr.InvoiceNr = VIr.SerNr;
-						if (ReadFirstMain(APr,1,true)) then begin
-							ourdolg = oplata;
-						end else begin
-							if(VIr.OKFlag==1)then begin
-								ourdolg = 0;
-							end else begin
-								ourdolg = oplata;
-							end;
-						end;
-						totbal = totbal - oplata;
-						ourtotdolg = ourtotdolg + oplata - ourdolg;
-						totout = totout + oplata;	
-						
+						APr.SerNr = VIr.SerNr;
+						balans = balans - rashod;
+						totr = totr + rashod;	
 						startformat(15);
 							outstring(0,"DblPRVc",PRr.Code,false);
 							outstring(30,0,PRr.Name,false);
@@ -610,20 +845,17 @@ begin
 							outstring(240,0,"",false);
 							outstring(260,0,"",false);
 							outstring(280,0,"",false);
-							outstring(320,0,oplata,false);
+							outstring(320,0,rashod,false);
 							outstring(340,0,"",false);
-							outstring(1,0,totbal,true);
+							outstring(1,0,balans,true);
 						endformat;
-						
-						//if(oplata!=ourdolg)then begin
 							OPrsr.VINr = VIr.SerNr;
 							OPrsr.TransType = 1;
 							TrHs2 = true;
-							while(loopkey("VIKey",OPrsr,2,TrHs2))begin
+							while (loopkey("VIKey",OPrsr,2,TrHs2)) begin
 								testf2 = true;
 								if(OPrsr.VINr!=VIr.SerNr)then begin testf2 = false; TrHs2 = false; end;
 								if(OPrsr.TransType!=1)then begin testf2 = false; TrHs2 = false; end;
-								
 								if(testf2)then begin
 									OPr.SerNr = OPrsr.TransNr;
 									if(readfirstmain(OPr,1,true))then begin
@@ -631,6 +863,12 @@ begin
 										For(i=0;i<mtrw;i=i+1) begin
 	  									matrowget(OPr,i,OPrw);
 	  									if(OPrw.VISerNr==OPrsr.VINr and OPr.RegDate==OPrsr.TransDate)then begin
+												if (VIr.CurncyCode != BCb.BaseCur1) then begin
+													vuplata = OPrw.PInvVal/VIr.FrRate*VIr.ToRateB1;
+												end else begin
+													vuplata = OPrw.PInvVal;
+												end;
+												totv = totv + vuplata;
 												startformat(15);
 													outstring(0,0,"",false);
 													outstring(30,0,"",false);
@@ -664,23 +902,17 @@ begin
 			end;
 			Black_divider(0,1);
 		end;
-		
-		gray_divider(0,1);
 		startformat(15);
 			outstring(0,0,"Всего",false);
-			outstring(270,0,"",false);
-			outstring(290,0,"",false);
-			outstring(320,0,totin,false);
-			outstring(350,0,totdolg,false);
-			//outstring(190,0,IVr.PayDate,false);
+			outstring(260,0,totp,false);
+			outstring(280,0,toto,false);
+			outstring(320,0,totr,false);
+			outstring(340,0,totv,false);
 			outstring(250,0,"",false);
-			outstring(420,0,totout,false);
-			outstring(450,0,ourtotdolg,false);
-			//outstring(380,0,"Просроченно",false);
-			outstring(1,0,totbal,true);
+			//outstring(420,0,totout,false);
+			//outstring(450,0,ourtotdolg,false);
+			outstring(1,0,balans,true);
 		endformat;
-		
 	endjob;
-	
 return;
 end;
