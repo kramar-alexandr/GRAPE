@@ -448,7 +448,6 @@ begin
 			outstring(340,0,"Выплата",false);
 			outstring(1,0,"Баланс",true);
 		endformat;
-		//Edit***********************Vitalii 13:54 02.09.2014
 		BlockLoad(BCb);
 		ARr.DueDate = "";
 		TrHs = true;
@@ -601,8 +600,12 @@ begin
 								outstring(120,0,PRr.Leader2Name,false);
 								outstring(140,0,IVr.PayDate,false);
 								outstring(180,"DblIVVc",IVr.SerNr,false);
+								outstring(200,0,"",false);
 								outstring(240,"DblIPVc",IPr.SerNr,false);
+								outstring(260,0,"",false);
 								outstring(280,0,oplata,false);
+								outstring(320,0,"",false);
+								outstring(340,0,"",false);
 								outstring(1,0,balans,true);
 							endformat;
 							Gray_Divider(0,1);
@@ -662,6 +665,7 @@ begin
 								outstring(240,"DblOPVc",OPr.SerNr,false);
 								outstring(260,0,"",false);
 								outstring(280,0,"",false);
+								outstring(320,0,"",false);
 								outstring(340,0,vuplata,false);
 								outstring(1,0,balans,true);
 							endformat;
@@ -690,7 +694,6 @@ begin
 			if(nonblank(prcode) and PRr.Code!=prcode)then begin testf = false; TrHs = false; end;
 			if(testf)then begin
 				IVr.PRCode = PRr.Code;
-				//Edit***********************Vitalii 15:31 02.09.2014
 				IVr.PayDate = frdate;
 				TrHs1 = true;
 				resetloop(IVr);
@@ -700,7 +703,6 @@ begin
 					if(nonblank(todate) and IVr.PayDate>todate)then begin testf1 = false; TrHs1 = false; end;
 					if(testf1)then begin
 						dolg = 0;
-						//Edit***********************Vitalii 11:52 02.09.2014
 						if (IVr.CurncyCode != BCb.BaseCur1) then begin
 							prihod = IVr.Sum4/IVr.FrRate*IVr.ToRateB1; 
 						end else begin
@@ -766,7 +768,6 @@ begin
 													outstring(200,0,IPrw.PayDate,false);
 													outstring(240,"DblIPVc",IPr.SerNr,false);
 													outstring(260,0,"",false);
-													//Edit***********************Vitalii 11:53 02.09.2014
 													outstring(280,0,oplata,false);
 													outstring(320,0,"",false);
 													outstring(340,0,"",false);
@@ -783,7 +784,6 @@ begin
 					Gray_Divider(0,1);
 				end;
 				VIr.PRCode = PRr.Code;
-			//Edit***********************Vitalii 15:33 02.09.2014
 				VIr.DueDate = frdate;
 				TrHs1 = true;
 				resetloop(VIr);
@@ -792,7 +792,6 @@ begin
 					if(VIr.PRCode!=PRr.Code)then begin testf1 = false; TrHs1 = false; end;
 					if(nonblank(todate) and VIr.DueDate>todate)then begin testf1 = false; TrHs1 = false; end;
 					if(testf1)then begin
-						//Edit***********************Vitalii 11:52 02.09.2014
 						if (VIr.CurncyCode != BCb.BaseCur1) then begin
 							rashod = VIr.PayVal/VIr.FrRate*VIr.ToRateB1; 
 						end else begin
@@ -850,7 +849,6 @@ begin
 													outstring(260,0,"",false);
 													outstring(280,0,"",false);
 													outstring(320,0,"",false);
-													//Edit***********************Vitalii 11:52 02.09.2014
 													if (VIr.CurncyCode != BCb.BaseCur1) then begin
 														outstring(340,0,OPrw.PInvVal/VIr.FrRate*VIr.ToRateB1,false);
 													end else begin
@@ -872,11 +870,18 @@ begin
 		end;
 		startformat(15);
 			outstring(0,0,"Всего",false);
+			outstring(30,0,"",false);
+			outstring(70,0,"",false);
+			outstring(100,0,"",false);
+			outstring(120,0,"",false);
+			outstring(140,0,"",false);
+			outstring(180,0,"",false);
+			outstring(200,0,"",false);
+			outstring(240,0,"",false);
 			outstring(260,0,totp,false);
 			outstring(280,0,toto,false);
 			outstring(320,0,totr,false);
 			outstring(340,0,totv,false);
-			outstring(250,0,"",false);
 			outstring(1,0,balans,true);
 		endformat;
 	endjob;
