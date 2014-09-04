@@ -407,18 +407,18 @@ global procedure ProjectPayPlanRn(record RCVc RepSpec)
 begin
 	record PRVc PRr;
 	string 50 prcode;
+	string 10 datePU;
 	boolean TrHs,testf;
 	boolean TrHs1,testf1;
 	boolean TrHs2,testf2;
 	boolean oncef,oncef1,oncef2;
 	record IVVc IVr;
 	record VIVc VIr;
-val prihod,oplata,rashod,vuplata,balans,totp,toto,totr,totv,dolg;
+	val prihod,oplata,rashod,vuplata,balans,totp,toto,totr,totv,dolg;
 	record ARVc ARr;
 	record APVc APr;
 	date todate,frdate;
-	string 20 sortkey;
-	record IPrsVc IPrsr,IPrsr2;
+	record IPrsVc IPrsr;
 	record IPVc IPr;
 	row IPVc IPrw;
 	record OPrsVc OPrsr;
@@ -430,6 +430,7 @@ val prihod,oplata,rashod,vuplata,balans,totp,toto,totr,totv,dolg;
   prcode = RepSpec.f1;
   frdate = RepSpec.sStartDate;
   todate = RepSpec.sEndDate;
+	datePU = DateToString(frdate,"MMM'YYYY");
 	startreportnoheaderjob("Журнал платежей по проектам");
 		startformat(15);
 			outstring(0,0,"Проект",false);
@@ -485,7 +486,7 @@ val prihod,oplata,rashod,vuplata,balans,totp,toto,totr,totv,dolg;
 							outstring(0,"DblPRVc",PRr.Code,false);
 							outstring(30,0,PRr.Name,false);
 							outstring(70,"DblCUVc",PRr.CustCode,false);
-							outstring(100,0,"Дата ПУ",false);
+							outstring(100,0,datePU,false);
 							outstring(120,0,PRr.Leader2Name,false);
 							outstring(140,0,ARr.DueDate,false);
 							outstring(180,"DblIVVc",IVr.SerNr,false);
@@ -537,7 +538,7 @@ val prihod,oplata,rashod,vuplata,balans,totp,toto,totr,totv,dolg;
 							outstring(0,"DblPRVc",PRr.Code,false);
 							outstring(30,0,PRr.Name,false);
 							outstring(70,"DblCUVc",PRr.CustCode,false);
-							outstring(100,0,"Дата ПУ",false);
+							outstring(100,0,datePU,false);
 							outstring(120,0,PRr.Leader2Name,false);
 							outstring(140,0,APr.DueDate,false);
 							outstring(180,"DblVIVc",VIr.SerNr,false);
@@ -562,19 +563,12 @@ val prihod,oplata,rashod,vuplata,balans,totp,toto,totr,totv,dolg;
 			if(IPrsr.TransDate>todate)then begin testf = false; TrHs = false; end;
 			if(IPrsr.TransType!=1)then begin testf = false; end;
 			if(testf)then begin
-				if (oncef2) then begin
-					Black_Divider(0,480);
-					startformat(15);
-					outstring(15,0,"Задолженности, оплаченые в заданный период:",false);
-					endformat;
-					oncef2 = false;
-				end;
 				IPr.SerNr = IPrsr.TransNr;
 				ReadFirstMain(IPr,1,true);
 				mtrw = matrowcnt(IPr);
 				for (i=0;i<mtrw;i=i+1) begin
 					matrowget(IPr,i,IPrw);
-					if (IPrw.InvoiceNr == IPrsr.IVNr) then begin
+					if ((IPrw.InvoiceNr == IPrsr.IVNr) and (IPrw.InvoiceNr!=-1)) then begin
 						IVr.SerNr = IPrw.InvoiceNr;
 						ReadFirstMain(IVr,1,true);
  						if ((IVr.PayDate<frdate) and
@@ -592,11 +586,18 @@ val prihod,oplata,rashod,vuplata,balans,totp,toto,totr,totv,dolg;
 								PRr.Code = IVr.PRCode;
 							end;
 							ReadFirstMain(PRr,1,true);
+							if (oncef2) then begin
+								Black_Divider(0,480);
+								startformat(15);
+								outstring(15,0,"Задолженности, оплаченые в заданный период:",false);
+								endformat;
+								oncef2 = false;
+							end;
 							startformat(15);
 								outstring(0,"DblPRVc",PRr.Code,false);
 								outstring(30,0,PRr.Name,false);
 								outstring(70,"DblCUVc",PRr.CustCode,false);
-								outstring(100,0,"Дата ПУ",false);
+								outstring(100,0,datePU,false);
 								outstring(120,0,PRr.Leader2Name,false);
 								outstring(140,0,IVr.PayDate,false);
 								outstring(180,"DblIVVc",IVr.SerNr,false);
@@ -619,19 +620,12 @@ val prihod,oplata,rashod,vuplata,balans,totp,toto,totr,totv,dolg;
 			if(OPrsr.TransDate>todate)then begin testf = false; TrHs = false; end;
 			if(OPrsr.TransType!=1)then begin testf = false; end;
 			if(testf)then begin
-				if (oncef2) then begin
-					Black_Divider(0,480);
-					startformat(15);
-					outstring(15,0,"Задолженности, оплаченые в заданный период:",false);
-					endformat;
-					oncef2 = false;
-				end;
 				OPr.SerNr = OPrsr.TransNr;
 				ReadFirstMain(OPr,1,true);
 				mtrw = matrowcnt(OPr);
 				for (i=0;i<mtrw;i=i+1) begin
 					matrowget(OPr,i,OPrw);
-					if (OPrw.VISerNr == OPrsr.VINr) then begin
+					if ((OPrw.VISerNr == OPrsr.VINr) and (OPrw.VISerNr!=-1)) then begin
 						VIr.SerNr = OPrw.VISerNr;
 						ReadFirstMain(VIr,1,true);
 						if ((VIr.DueDate<frdate) and
@@ -649,11 +643,18 @@ val prihod,oplata,rashod,vuplata,balans,totp,toto,totr,totv,dolg;
 								PRr.Code = VIr.PRCode;
 							end;
 							ReadFirstMain(PRr,1,true);
+							if (oncef2) then begin
+								Black_Divider(0,480);
+								startformat(15);
+								outstring(15,0,"Задолженности, оплаченые в заданный период:",false);
+								endformat;
+								oncef2 = false;
+							end;
 							startformat(15);
 								outstring(0,"DblPRVc",PRr.Code,false);
 								outstring(30,0,PRr.Name,false);
 								outstring(70,"DblCUVc",PRr.CustCode,false);
-								outstring(100,0,"Дата ПУ",false);
+								outstring(100,0,datePU,false);
 								outstring(120,0,PRr.Leader2Name,false);
 								outstring(140,0,VIr.DueDate,false);
 								outstring(180,"DblVIVc",VIr.SerNr,false);
@@ -721,7 +722,7 @@ val prihod,oplata,rashod,vuplata,balans,totp,toto,totr,totv,dolg;
 							outstring(0,"DblPRVc",PRr.Code,false);
 							outstring(30,0,PRr.Name,false);
 							outstring(70,"DblCUVc",PRr.CustCode,false);
-							outstring(100,0,"Дата ПУ",false);
+							outstring(100,0,datePU,false);
 							outstring(120,0,PRr.Leader2Name,false);
 							outstring(140,0,IVr.PayDate,false);
 							outstring(180,"DblIVVc",IVr.SerNr,false);
@@ -804,7 +805,7 @@ val prihod,oplata,rashod,vuplata,balans,totp,toto,totr,totv,dolg;
 							outstring(0,"DblPRVc",PRr.Code,false);
 							outstring(30,0,PRr.Name,false);
 							outstring(70,"DblCUVc",PRr.CustCode,false);
-							outstring(100,0,"Дата ПУ",false);
+							outstring(100,0,datePU,false);
 							outstring(120,0,PRr.Leader2Name,false);
 							outstring(140,0,VIr.DueDate,false);
 							outstring(180,"DblVIVc",VIr.SerNr,false);
