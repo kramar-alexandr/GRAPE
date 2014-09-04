@@ -695,6 +695,7 @@ BEGIN
   val fr,to1,to2,br1,br2;
   string 10 curncy;  
   Integer res;
+	record TBBUVc TBBUr;
 
   BlockLoad(SRRec);
   RecordNew(IVp);
@@ -703,15 +704,16 @@ BEGIN
   IVp.LangCode = PRp.LangCode;
   IVp.InvDate = CurrentDate;
   IVp.TransDate = CurrentDate;
-  IVp.CurncyCode = PRp.CurncyCode;
-  curncy = IVp.CurncyCode;
-  GetFullCurncyRate(curncy,IVp.TransDate,fr,to1,to2,br1,br2);
-  IVp.CurncyCode = curncy;
-  IVp.FrRate = fr;
-  IVp.ToRateB1 = to1; 
-  IVp.ToRateB2 = to2;
-  IVp.BaseRate1 = br1;
-  IVp.BaseRate2 = br2;
+//Edit***********************Vitalii 17:06 04.09.2014
+	TBBUr.PRCode = PRp.Code;
+	ReadFirstMain(TBBUr,1,true);
+  IVp.CurncyCode = TBBUr.CurncyCode;
+  IVp.FrRate = TBBUr.FrRate;
+  IVp.ToRateB1 = TBBUr.ToRateB1; 
+  IVp.ToRateB2 = TBBUr.ToRateB2;
+  IVp.BaseRate1 = TBBUr.BaseRate1;
+  IVp.BaseRate2 = TBBUr.BaseRate2;
+//EndEdit***********************Vitalii 17:06 04.09.2014
   IVp.Prntdf = 0;
   IVp.OrderNr = -1;
   IVp.SVONr = -1;
