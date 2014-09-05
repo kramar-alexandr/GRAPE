@@ -430,7 +430,6 @@ begin
   prcode = RepSpec.f1;
   frdate = RepSpec.sStartDate;
   todate = RepSpec.sEndDate;
-	datePU = DateToString(frdate,"MMM'YYYY");
 	startreportnoheaderjob("Журнал платежей по проектам");
 		startformat(15);
 			outstring(0,0,"Проект",false);
@@ -481,6 +480,7 @@ begin
 							PRr.Code = IVr.PRCode;
 						end;
 						ReadFirstMain(PRr,1,true);
+						datePU = DateToString(PRr.StartDate,"MMM'YYYY");
 						startformat(15);
 							outstring(0,"DblPRVc",PRr.Code,false);
 							outstring(30,0,PRr.Name,false);
@@ -533,6 +533,7 @@ begin
 							PRr.Code = VIr.PRCode;
 						end;
 						ReadFirstMain(PRr,1,true);
+						datePU = DateToString(PRr.StartDate,"MMM'YYYY");
 						startformat(15);
 							outstring(0,"DblPRVc",PRr.Code,false);
 							outstring(30,0,PRr.Name,false);
@@ -585,6 +586,7 @@ begin
 								PRr.Code = IVr.PRCode;
 							end;
 							ReadFirstMain(PRr,1,true);
+							datePU = DateToString(PRr.StartDate,"MMM'YYYY");
 							if (oncef2) then begin
 								Black_Divider(0,480);
 								startformat(15);
@@ -646,6 +648,7 @@ begin
 								PRr.Code = VIr.PRCode;
 							end;
 							ReadFirstMain(PRr,1,true);
+							datePU = DateToString(PRr.StartDate,"MMM'YYYY");
 							if (oncef2) then begin
 								Black_Divider(0,480);
 								startformat(15);
@@ -688,6 +691,7 @@ begin
 			PRr.Code = IVr.PRCode;
 		end;
 		ReadFirstMain(PRr,1,true);
+		datePU = DateToString(PRr.StartDate,"MMM'YYYY");
 		TrHs = true;
 		while (loopmain(PRr,1,TrHs)) begin
 			testf = true;
