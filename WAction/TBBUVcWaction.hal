@@ -1,7 +1,5 @@
 remote procedure CalculateBudget(var record TBBUVc);
 
-SetLangMode(LangRussian,"RUS",0);
-
 global procedure RecalculateTBBUDsm()
 begin
 	record TBBUVc TBBUr;
