@@ -458,7 +458,7 @@ begin
 			if (testf1) then begin
 				IVr.SerNr = ARr.InvoiceNr;
 				if (ReadFirstMain(IVr,1,true)) then begin
-					if (nonblank(prcode) and (IVr.PRCode != prcode)) then begin testf = false; end;
+					if ((nonblank(prcode) and (IVr.PRCode != prcode)) or Blank(IVr.PRCode)) then begin testf = false; end;
 					if (testf) then begin
 						if (oncef) then begin
 							Black_Divider(0,480);
@@ -486,7 +486,7 @@ begin
 							outstring(30,0,PRr.Name,false);
 							outstring(70,"DblCUVc",PRr.CustCode,false);
 							outstring(100,0,datePU,false);
-							outstring(120,0,PRr.Leader2Name,false);
+							outstring(120,0,PRr.LeaderName,false);
 							outstring(140,0,ARr.DueDate,false);
 							outstring(180,"DblIVVc",IVr.SerNr,false);
 							outstring(200,0,"",false);
@@ -511,7 +511,7 @@ begin
 			if (testf1) then begin
 				VIr.SerNr = APr.SerNr;
 				if (ReadFirstMain(VIr,1,true)) then begin
-					if (nonblank(prcode) and (VIr.PRCode != prcode)) then begin testf = false; end;
+					if ((nonblank(prcode) and (VIr.PRCode != prcode)) or Blank(VIr.PRCode)) then begin testf = false; end;
 					if (testf) then begin
 						if (oncef1) then begin
 							Black_Divider(0,480);
@@ -539,7 +539,7 @@ begin
 							outstring(30,0,PRr.Name,false);
 							outstring(70,"DblCUVc",PRr.CustCode,false);
 							outstring(100,0,datePU,false);
-							outstring(120,0,PRr.Leader2Name,false);
+							outstring(120,0,PRr.LeaderName,false);
 							outstring(140,0,APr.DueDate,false);
 							outstring(180,"DblVIVc",VIr.SerNr,false);
 							outstring(200,0,"",false);
@@ -599,10 +599,10 @@ begin
 								outstring(30,0,PRr.Name,false);
 								outstring(70,"DblCUVc",PRr.CustCode,false);
 								outstring(100,0,datePU,false);
-								outstring(120,0,PRr.Leader2Name,false);
+								outstring(120,0,PRr.LeaderName,false);
 								outstring(140,0,IVr.PayDate,false);
 								outstring(180,"DblIVVc",IVr.SerNr,false);
-								outstring(200,0,"",false);
+								outstring(200,0,IPrw.PayDate,false);
 								outstring(240,"DblIPVc",IPr.SerNr,false);
 								outstring(260,0,"",false);
 								outstring(280,0,oplata,false);
@@ -661,7 +661,7 @@ begin
 								outstring(30,0,PRr.Name,false);
 								outstring(70,"DblCUVc",PRr.CustCode,false);
 								outstring(100,0,datePU,false);
-								outstring(120,0,PRr.Leader2Name,false);
+								outstring(120,0,PRr.LeaderName,false);
 								outstring(140,0,VIr.DueDate,false);
 								outstring(180,"DblVIVc",VIr.SerNr,false);
 								outstring(200,0,OPr.RegDate,false);
@@ -729,7 +729,7 @@ begin
 							outstring(30,0,PRr.Name,false);
 							outstring(70,"DblCUVc",PRr.CustCode,false);
 							outstring(100,0,datePU,false);
-							outstring(120,0,PRr.Leader2Name,false);
+							outstring(120,0,PRr.LeaderName,false);
 							outstring(140,0,IVr.PayDate,false);
 							outstring(180,"DblIVVc",IVr.SerNr,false);
 							outstring(200,0,"",false);
@@ -784,8 +784,8 @@ begin
 							end;
 							resetloop(IPrsr);
 						end;
+						Gray_Divider(0,1);
 					end;
-					Gray_Divider(0,1);
 				end;
 				VIr.PRCode = PRr.Code;
 				VIr.DueDate = frdate;
@@ -809,7 +809,7 @@ begin
 							outstring(30,0,PRr.Name,false);
 							outstring(70,"DblCUVc",PRr.CustCode,false);
 							outstring(100,0,datePU,false);
-							outstring(120,0,PRr.Leader2Name,false);
+							outstring(120,0,PRr.LeaderName,false);
 							outstring(140,0,VIr.DueDate,false);
 							outstring(180,"DblVIVc",VIr.SerNr,false);
 							outstring(200,0,"",false);
@@ -820,58 +820,58 @@ begin
 							outstring(340,0,"",false);
 							outstring(1,0,balans,true);
 						endformat;
-							OPrsr.VINr = VIr.SerNr;
-							OPrsr.TransType = 1;
-							TrHs2 = true;
-							while (loopkey("VIKey",OPrsr,2,TrHs2)) begin
-								testf2 = true;
-								if(OPrsr.VINr!=VIr.SerNr)then begin testf2 = false; TrHs2 = false; end;
-								if(OPrsr.TransType!=1)then begin testf2 = false; TrHs2 = false; end;
-								if(testf2)then begin
-									OPr.SerNr = OPrsr.TransNr;
-									if(readfirstmain(OPr,1,true))then begin
-										mtrw = matrowcnt(OPr);
-										For(i=0;i<mtrw;i=i+1) begin
-	  									matrowget(OPr,i,OPrw);
-	  									if(OPrw.VISerNr==OPrsr.VINr and OPr.RegDate==OPrsr.TransDate)then begin
+						OPrsr.VINr = VIr.SerNr;
+						OPrsr.TransType = 1;
+						TrHs2 = true;
+						while (loopkey("VIKey",OPrsr,2,TrHs2)) begin
+							testf2 = true;
+							if(OPrsr.VINr!=VIr.SerNr)then begin testf2 = false; TrHs2 = false; end;
+							if(OPrsr.TransType!=1)then begin testf2 = false; TrHs2 = false; end;
+							if(testf2)then begin
+								OPr.SerNr = OPrsr.TransNr;
+								if(readfirstmain(OPr,1,true))then begin
+									mtrw = matrowcnt(OPr);
+									For(i=0;i<mtrw;i=i+1) begin
+  									matrowget(OPr,i,OPrw);
+  									if(OPrw.VISerNr==OPrsr.VINr and OPr.RegDate==OPrsr.TransDate)then begin
+											if (VIr.CurncyCode != BCb.BaseCur1) then begin
+												vuplata = OPrw.PInvVal/VIr.FrRate*VIr.ToRateB1;
+											end else begin
+												vuplata = OPrw.PInvVal;
+											end;
+											totv = totv + vuplata;
+											startformat(15);
+												outstring(0,0,"",false);
+												outstring(30,0,"",false);
+												outstring(70,0,"",false);
+												outstring(100,0,"",false);
+												outstring(120,0,"",false);
+												outstring(140,0,"",false);
+												outstring(180,0,"",false);
+												outstring(200,0,OPr.RegDate,false);
+												outstring(240,"DblOPVc",OPr.SerNr,false);
+												outstring(260,0,"",false);
+												outstring(280,0,"",false);
+												outstring(320,0,"",false);
 												if (VIr.CurncyCode != BCb.BaseCur1) then begin
-													vuplata = OPrw.PInvVal/VIr.FrRate*VIr.ToRateB1;
+													outstring(340,0,OPrw.PInvVal/VIr.FrRate*VIr.ToRateB1,false);
 												end else begin
-													vuplata = OPrw.PInvVal;
+													outstring(340,0,OPrw.PInvVal,false);
 												end;
-												totv = totv + vuplata;
-												startformat(15);
-													outstring(0,0,"",false);
-													outstring(30,0,"",false);
-													outstring(70,0,"",false);
-													outstring(100,0,"",false);
-													outstring(120,0,"",false);
-													outstring(140,0,"",false);
-													outstring(180,0,"",false);
-													outstring(200,0,OPr.RegDate,false);
-													outstring(240,"DblOPVc",OPr.SerNr,false);
-													outstring(260,0,"",false);
-													outstring(280,0,"",false);
-													outstring(320,0,"",false);
-													if (VIr.CurncyCode != BCb.BaseCur1) then begin
-														outstring(340,0,OPrw.PInvVal/VIr.FrRate*VIr.ToRateB1,false);
-													end else begin
-														outstring(340,0,OPrw.PInvVal,false);
-													end;
-													outstring(1,0,"",true);
-												endformat;
-	  									end;
-										end; 							
-									end;
+												outstring(1,0,"",true);
+											endformat;
+  									end;
+									end; 							
 								end;
 							end;
-							resetloop(OPrsr);
+						end;
+						resetloop(OPrsr);
+						Gray_Divider(0,1);
 					end;
-					Gray_Divider(0,1);
 				end;
 			end;
-			Black_divider(0,1);
 		end;
+		Black_divider(0,1);
 		startformat(15);
 			outstring(0,0,"Всего",false);
 			outstring(30,0,"",false);
