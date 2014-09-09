@@ -953,6 +953,8 @@ begin
   RecordField(AcceptanceBy,M4List,200,UserVc);
   RecordField(AcceptanceFYI,M4List,200,UserVc);
   RecordField(OKFlag,M4Mark,0,0);// Edit ************************** Tuesday, 19 August 2014 09:28:49
+  RecordField(GPTot,M423Val,0,0); //Edit***************************Sasha2,10:05 08.09.2014
+  RecordField(GPTotPercent,M423Val,0,0); //Edit***************************Sasha2,10:05 08.09.2014
   ArrayBegin(Math,-,1);
   ArrayField(ArtCode,M4Code,20,INVc);
   ArrayField(Spec,M4Str,100,0);
@@ -982,6 +984,7 @@ begin
   ArrayField(PRStageSign,M4Code,10,UserVc);
   ArrayField(MotherArtCode,M4Code,20,INVc);
   ArrayField(RecipeQuant,M4Qty,0,0);
+  ArrayField(VATCode,M4Code,10,VATCodeBlock); //Edit***************************Sasha2,12:00 08.09.2014
   EndArray;
   MainKeyBegin(MainKey,1);
   StoreInBaseKey;
