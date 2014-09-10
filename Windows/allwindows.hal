@@ -2747,6 +2747,13 @@ begin
     MatCol(t=kInvoiceRowTypeStructuredItemComponent,-115,"Маржа",0,GM,false,0);
     MatCol(t,-50,"№ сч/ф",0,Invoiced,true,0);
   end;
+  Flip(6);//Add by	 Victor 09.09.14
+  t=1;
+  MatCol(t=1,-210,"Цена",0,Price,true,0);
+  MatCol(t,-140,"%",0,Discount,true,0);
+  MatCol(t,-110,"Сумма",0,Sum,true,0);
+  MatCol(t,-30,"НДС",0,VATCode,false,VATCodeSClass);
+  
   DeleteRowTest;
   EndMatrix;
   vs = 22;
@@ -2757,12 +2764,14 @@ begin
   if (IsEnterprise) then begin
     v=v+ vs; VTab(-35,v,-16,v+vs,ToolFlip,5,"E");
     EditField(63,-25,40,"Валюта",Normal,CurncyCode,false,CurncyCodeSClass);
-    EditField(210,-45,80, "Время",Normal,SumTime,true,0);
+    EditField(63,-45,80, "Время",Normal,SumTime,true,0);
     EditField(210,-25,80, "Материалы",Normal,SumMaterial,true,0);
-    EditField(400,-45,80, "Складир. товары",Normal,SumStocked,true,0);
+    EditField(210,-45,80, "Складир. товары",Normal,SumStocked,true,0);
     EditField(400,-25,80, "Покупки",Normal,SumOther,true,0);
   end;
-  EditField(580,-45,80, "Наценка бюджета",Normal,Markup,true,0);
+  v=v+ vs; VTab(-35,v,-16,v+vs,ToolFlip,6,"F");
+  EditField(400,-45,80, "Наценка бюджета",Normal,Markup,true,0);
+  EditField(580,-45,80, "НДС",Normal,Sum3,true,0);
   EditField(580,-25,80, "Итого сумма",Normal,TotSum,true,0);
   if (HasMultiCurrency or HasBase2) then begin
     Tile(tnr,70,false,tnr,FrRate); tnr = tnr + 1;

@@ -22,6 +22,7 @@ external procedure TBBUSumup(var record TBBUVc);
 external function Boolean GetItemNameStr(Integer,var string,string,string,string);
 remote updating procedure GenProInvoices(var record RcVc,Boolean);
 external function Boolean UserCanChangePendingRecord(Integer);
+remote procedure IVVc_PasteVATCode(var record IVVc,Integer,string,var Boolean);
  
 function Boolean TBBUDClassBudTypeEFAfter(Integer wn,Integer fn,Integer rownr,Integer changedf)
 begin  
@@ -299,6 +300,26 @@ begin
   return;
 end;
 
+function Boolean TBBUDClassVATCodeEFAfter(Integer wn,Integer fn,Integer rownr,Integer changed)	////Edit by Victor 09.09.14
+begin  
+  record TBBUVc TBBUr;
+  Boolean chsum;
+  record GeneralOptionBlock GOb;
+	
+	BlockLoad(GOb);
+  if (changed!=0) then begin  
+    DeselectWindow(wn,false);
+    GetWindowRecord(wn,TBBUr);
+    
+    TBBUDchrsum(TBBUr,rownr,true,GOb.UseDiscount);
+    TBBUSumup(TBBUr);
+    
+    PutWindowRecord(wn,TBBUr);
+  end;
+  TBBUDClassVATCodeEFAfter = true;
+  return;
+end;
+
 global
 function Boolean TBBUDClassAfterEditField(Integer wn,string fieldname,Integer fn, Integer rownr,Integer changed)
 BEGIN
@@ -319,6 +340,7 @@ BEGIN
     case "SalesMan": res = TBBUDClassSalesManEFAfter(wn,rownr,changed!=0);
     case "CurncyCode": res = TBBUDClassCurncyCodeEFAfter(wn,changed!=0);
     case "TransDate": res = TBBUDClassCurncyCodeEFAfter(wn,changed!=0);
+    case "VATCode": res = TBBUDClassVATCodeEFAfter(wn,fn,rownr,changed); //Edit by Victor 09.09.14
   end;
   TBBUDClassAfterEditField = res;
   RETURN;
