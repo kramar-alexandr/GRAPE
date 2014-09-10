@@ -5,6 +5,9 @@ external function val MulRateToBase1(var string,val,val,val,val,val,val,roundmod
 external function LongInt DateDiff(Date,Date);
 external function Integer GetVATLaw();
 external procedure RoundRowSum(string,string,string,var val);
+external procedure CalcVATBaseVAT(record SMVc,Integer,Integer,Integer,var val,var val);
+external procedure SetupVATBase(var record SMVc,var Integer);
+external function val FindVAT(string,val,Integer,Integer);
 
 global
 procedure SMSumup(var record SMVc SMp)
@@ -189,11 +192,11 @@ BEGIN
   row TBBUVc TBBUrw;
   record INVc INr;
   Integer i,rwcnt;
-  val tt,ot,mt,st;
+  val tt,ot,mt,st,s3,t;
   Integer itemtyp;
   val subtotv,costv;
   val gptot; //Edit***************************Sasha2,10:21 08.09.2014
-  
+    
   rwcnt = MatRowCnt(TBBUp);
   for (i=0;i<rwcnt;i=i+1) begin
     MatRowGet(TBBUp,i,TBBUrw);
@@ -222,6 +225,8 @@ BEGIN
           mt = mt + TBBUrw.Sum;
         end;
       end;
+      t = FindVAT (TBBUrw.VATCode,TBBUrw.Sum,TBBUp.InclVAT,TBBUp.NoTAXonVAT);//Edit by Victor 10.09.14
+      s3 = t + s3;//Edit by Victor 10.09.14
       subtotv = subtotv + TBBUrw.Sum;
       costv = costv + TBBUrw.Qty*TBBUrw.Cost;
       gptot = gptot + TBBUrw.GP; //Edit***************************Sasha2,10:27 08.09.2014
@@ -242,7 +247,9 @@ BEGIN
   tt = tt + ot;
   tt = tt + st;
   tt = tt + mt;
+  TBBUp.Sum3 = s3;//Edit by Victor 10.09.14
   TBBUp.TotSum = tt;
+  TBBUp.TotSumVAT = tt + s3;
   TBBUp.GPTot = gptot; //Edit***************************Sasha2,10:29 08.09.2014
   TBBUp.GPTotPercent = (TBBUp.GPTot/TBBUp.TotSum)*100; //Edit***************************Sasha2,10:29 08.09.2014
   TBBUp.GPTotPercent = Round(TBBUp.GPTotPercent,DefaultRoundMode); //Edit***************************Sasha2,11:00 08.09.2014
