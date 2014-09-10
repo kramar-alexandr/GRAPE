@@ -1169,7 +1169,8 @@ BEGIN
 						IVr.InvType = kInvoiceTypeDownpayment;
 						rwcnt = MatRowCnt(IVr);
 						ClearRow(IVr,IVrw,1);
-						IVrw.Spec = " ";
+						//IVrw.Spec = " ";
+						IVrw.Spec = PRp.Name;//Edit by Victor 10.09.14
 						MatRowPut(IVr,rwcnt,IVrw);
 						ClearRow(IVr,IVrw,5);
 						IVrw.Sum = tot;      
