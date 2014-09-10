@@ -1954,16 +1954,16 @@ begin
   date enddate;
   
   forcecurdate = AddDay(CurrentDate,5);
-  enddate = PRr.AddDoc2Date;
+  enddate = PRr.EndDate;
 
   if (nonBlankDate(enddate) and blank(PRr.AddDoc2Nr)) then begin
   	if (forcecurdate>=enddate) then begin
-  		mes = "Срок проекта заканчивается";
+  		mes = "Выпишите акт выполн. работ";
   		if (CurrentDate>enddate) then begin
-  			mes = "Проект закончен. Акт не выписан";
+  			mes = "Просрочен акт вып.раб.";
   		end;
   	end else begin
-  		mes = "Выпишите акт выполн. работ";
+  		//mes = "Выпишите акт выполн. работ";
   	end;
   end else begin
   	mes = "";
