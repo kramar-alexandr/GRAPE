@@ -1945,6 +1945,34 @@ begin //##ii
   return; //##ii
 end; //##ii
 
+
+global //Edit***************************Sasha2,9:28 10.09.2014 {
+function string 255 PRLClass(var record PRVc PRr)
+begin
+  string 255 mes;
+  date forcecurdate;
+  date enddate;
+  
+  forcecurdate = AddDay(CurrentDate,5);
+  enddate = PRr.AddDoc2Date;
+
+  if (nonBlankDate(enddate) and blank(PRr.AddDoc2Nr)) then begin
+  	if (forcecurdate>=enddate) then begin
+  		mes = "Срок проекта заканчивается";
+  		if (CurrentDate>enddate) then begin
+  			mes = "Проект закончен. Акт не выписан";
+  		end;
+  	end else begin
+  		mes = "Выпишите акт выполн. работ";
+  	end;
+  end else begin
+  	mes = "";
+  end;
+  
+  PRLClass = mes;
+  return;
+end; //Edit***************************Sasha2,9:28 10.09.2014 }
+
 window VIDClass:1
   wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
 begin
@@ -2654,7 +2682,7 @@ begin
   MatText(t=9,30,"Итого",true);
   MatCol(t,100,"",0,Spec,false,0);
   MatCol(t,-140,"Сумма",0,Sum,true,0);
-  MatCol(t,-70,"Ст-ть",0,Cost,true,0);
+  MatCol(t,-70,"Ст-ть за ед.",0,Cost,true,0); //Edit***************************Sasha2,9:41 10.09.2014
   MatText(t=17,30,"Заголовок",true);
   MatCol(t,100,"",0,Spec,false,0);
   MatCol(1,30,"Товар",0,ArtCode,false,INSClass);
@@ -2679,12 +2707,12 @@ begin
   MatCol(t,-50,"Подпись",0,PRStageSign,false,UserSClass);
   Flip(2);
   MatCol(t=1,-235,"Наценка",0,Markup,true,0);
-  MatCol(t,-180,"Ст-ть",0,Cost,true,0);
+  MatCol(t,-180,"Ст-ть за ед.",0,Cost,true,0); //Edit***************************Sasha2,9:41 10.09.2014
   MatCol(t,-115,"Прибыль",0,GP,true,0);
   MatCol(t,-50,"№ сч/ф",0,Invoiced,true,0);
 //  MatColTL(1,-50,"Inv. No.",0,-1,0,-1,Invoiced,true,0);
   MatCol(t=kInvoiceRowTypeStructuredItemComponent,-235,"Наценка",0,Markup,true,0);
-  MatCol(t,-180,"Ст-ть",0,Cost,true,0);
+  MatCol(t,-180,"Ст-ть за ед.",0,Cost,true,0);//Edit***************************Sasha2,9:40 10.09.2014
   MatCol(t,-115,"Прибыль",0,GP,true,0);
   MatCol(t,-50,"№ сч/ф",0,Invoiced,true,0);
   Flip(3);
@@ -3957,5 +3985,339 @@ end else begin
   SpecialMenu("Открыть нал. матрицу",' ',25,"TestVatMatrixIVDsm");
 */
 end;
+  EndWindow;
+end;
+
+window PRDClass:4
+  wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","*")
+begin
+  real h,h2,v,vs,vm;
+  string 255 label;
+  Integer tilenr;
+
+  WindowBegin("Проект",PRDClass,CGview,-);
+  UseView(PRVc);
+//  FormName(ProjectForm);
+  FormName(ProjectInfoForm);
+  Sizeable(-1,-1,0,0);
+//  if (GuiType==kGuiAndroid or GUIType==kGuiiPhone) then begin
+  if (false) then begin
+    SetWRect(0,0,320,418);
+
+    h = 200;  h2=h+240; vs = 38;
+  //Tile(0,70+18,false,"",Person);
+    EditField(h,v=6,120,"Код",St_i,Code,false,0); //
+    EditField(h2,v,-30,"Клиент",Normal,CustCode,false,CUSClass);
+    EditField(h,v+=vs,-30,"Наименование",Normal,CustName,false,0);
+    EditField(h,v+=vs,-30,"Описание",Normal,Name,false,0);
+
+    v = v + vs;
+
+  // HalPushButton(30,v+=vs,-30,v+22,"AddTimeToProject","Add Time");
+
+  /*
+    Tile(0,0,false,"",f1);
+    TileButton(1,"Details");
+    TileButton(2,"Time");
+    TileButton(3,"Expenses");
+    TileButton(4,"Orders");
+    Tile(1,372,false,"",f1);
+  */
+  // ----
+    //Tile(2,372,false,"",f1);
+    //RecordList2(1,1,-1,-1,"ActVc");
+    //RlColKey(94,94,"Comment",Header,false,PRComment);
+    //Tile(3,372,false,"",f1);
+    //RecordList2(1,1,-1,-1,"ExpVc");
+    //RlColKey(94,94,"Comment",Header,false,PRComment);
+    //Tile(4,372,false,"",f1);
+    //RecordList2(1,1,-1,-1,"ORVc");
+    //RlColKey(94,94,"Comment",Header,false,PRComment);
+  end else begin
+  SetWRect(20,80,600,390);
+  Tile(0,74,false,"",Code);
+  EditField(h=80,v=6,120,"Проект",St_i,Code,false,TSerSClass);
+  if (IsEnterprise) then begin
+    EditField(300,v,-210,"Старший",Normal,MotherCode,false,PRSClass);
+  end;
+  EditField(-100,v,-40,"Тип",Normal,PRClass,false,PRClassSClass);
+  EditField(h,v+=20,-210,"Описание",Normal,Name,false,0);
+  if (IsEnterprise) then begin
+    EditField(-100,v,-40,"Этап",Normal,PRStage,false,PRStageSClass);
+  end;
+  tilenr = 1;
+  TileButton(tilenr,"Условия"); tilenr = tilenr + 1;
+  TileButton(tilenr,"Члены"); tilenr = tilenr + 1;
+  TileButton(tilenr,"Авансы"); tilenr = tilenr + 1;
+  if (IsEnterprise) then begin
+    TileButton(tilenr,"Время и покупки"); tilenr = tilenr + 1;
+    TileButton(tilenr,"Склад и материалы"); tilenr = tilenr + 1;
+  end;
+  TileButton(tilenr,"Фактурирование"); tilenr = tilenr + 1;
+  TileButton(tilenr,"Текст"); tilenr = tilenr + 1;
+  TileButton(tilenr,"Документы"); tilenr = tilenr + 1; //Edit***************************Sasha2,17:23 09.09.2014
+  tilenr = 1;
+  Tile(tilenr,260,true,tilenr,CustCode); tilenr = tilenr + 1;
+  h=100; h2=h+140; v=6;
+  EditField(h,v,70,"Клиент",Normal ,CustCode,false,CUSClass);
+  EditField(h2,v,-40,"Название",ViewOnly,CustName,false,0);
+  EditField(h,v+=20,300,"Конт. лицо",Normal,Contact,false,ContactSClass);
+  if (HasObjects) then begin
+    EditField(h,v+=20,300,"Объекты",Normal ,Objects,false,ObjSClass);
+  end;
+  if (HasContactClassification) then begin
+    EditField(h,v+=20,300,"Классификация",Normal ,PRClassification,false,PRClSClass);
+  end;
+  EditField(h,v+=20,300,"Текст",Normal ,Desc0,false,0);
+  EditField(h,v+=20,300,"",Normal ,Desc1,false,0);
+  EditField(h,v+=20,300,"",Normal ,Desc2,false,0);
+  ButtonFrame(h,vm=(v+=45),150,3,"Status");
+  RadioButton(h,v,0,0,"Активный",Terminated);
+  RadioButton(h,v+=16,2,0,"Не рег-ть записи операций",Terminated);
+  RadioButton(h,v+=16,1,0,"Завершен",Terminated);
+  ButtonFrame(h=280,v=vm,150,3,"Вид проекта");
+  RadioButton(h,v,0,0,"Фактурируемый",Type);
+  RadioButton(h,v+=16,1,255,"Внутренний",Type);
+  RadioButton(h,v+=16,2,255,"Другой",Type);
+  if (IsEnterprise) then begin
+    ButtonFrame(h=460,v=vm,220,3,"Использов. товаров в бюдж. проекта");
+    RadioButton(h,v,0,0,"Не предупреждать",TBIVItemsUsage);
+    RadioButton(h,v+=16,1,255,"Предупреждать",TBIVItemsUsage);
+    RadioButton(h,v+=16,2,255,"Не разрешать",TBIVItemsUsage);
+  end;
+  EditField(-110,v=26,70,"Дата начала",Normal ,StartDate,false,PasteCurDate);
+  EditField(-110,v+=20,70,"Дата окончания",Normal ,EndDate,false,PasteCurDate);
+  EditField(-110,v+=20,70,"Дата завершения",ViewOnly,FinishedDate,false,0);
+  if (HasMultiCurrency) then begin
+    EditField(-110,v+=20,70,"Валюта проекта",Normal,CurncyCode,false,CurncyCodeSClass);
+  end;
+  //nk EditField(-110,v+=20,25,"Payment Terms",Normal,PayDeal,false,PDSClass);
+  //nk EditField(-110,v+=20,70,"Cust. Ord. No.",Normal,CustOrdNr,false,0);
+  Tile(tilenr,130,false,tilenr,Members); tilenr = tilenr + 1;
+  h=120; h2=300; v=6;
+  EditField(h,v,-40,"Участники",Normal,Members,false,UserSClass);
+  label = UserDefined("PRVc","Leader");
+  if (IsEnterprise) then begin
+    if (blank(label)) then begin label = "Project Manager 1";end;
+  end else begin
+    if (blank(label)) then begin label = "Project Manager";end;
+  end;
+  EditField(h,v+=20,70,label,Normal ,Leader,false,UserSClass);
+  EditField(h2,v,-210,"Имя",ViewOnly,LeaderName,false,0);
+  if (IsEnterprise) then begin
+    label = UserDefined("PRVc","Leader2");
+    if (blank(label)) then begin label = "Project Manager 2";end;
+    EditField(h,v+=20,70,label,Normal ,Leader2,false,UserSClass);
+    EditField(h2,v,-210,"Имя",ViewOnly,Leader2Name,false,0);
+    label = UserDefined("PRVc","Leader3");
+    if (blank(label)) then begin label = "Project Manager 3";end;
+    EditField(h,v+=20,70,label,Normal ,Leader3,false,UserSClass);
+    EditField(h2,v,-210,"Имя",ViewOnly,Leader3Name,false,0);
+    label = UserDefined("PRVc","Leader4");
+    if (blank(label)) then begin label = "Project Manager 4";end;
+    EditField(h,v+=20,70,label,Normal ,Leader4,false,UserSClass);
+    EditField(h2,v,-210,"Имя",ViewOnly,Leader4Name,false,0);
+    label = UserDefined("PRVc","Leader5");
+    if (blank(label)) then begin label = "Project Manager 5";end;
+    EditField(h,v+=20,70,label,Normal ,Leader5,false,UserSClass);
+    EditField(h2,v,-210,"Имя",ViewOnly,Leader5Name,false,0);
+  end;
+  v = 26;
+  if (HasSalesman) then begin
+    EditField(-100,v=26,-40,"Продавец",Normal,PrSalesMan,false,UserSClass);
+    EditField(-100,v+=20,-40,"Группа продажи",Normal,SalesGroup,false,SalesGroupSClass);
+  end;
+  Tile(tilenr,121,true,tilenr,Math); tilenr = tilenr + 1;
+  if (IsEnterprise) then begin
+    StaticText(36,v=14,"Только сч/ф на аванс",false); // and Retentions
+    MatrixBegin(4,v+=25,-32,-20,PRRowType,299);
+//  StaticText(36,v-5,"Date",false);
+//  StaticText(105,v-5,"Inv.No.",false);
+//  StaticText(165,v-5,"Sum",false);
+//  StaticText(255,v-5,"Подписать",false);
+//  StaticText(305,v-5,"Comment",false);
+    MatCol(1,32,"Тип",0,RowType,false,SetSClass);
+    MatCol(1,120,"Этап",0,PRStage,false,PRStageSClass);
+
+    MatCol(1,170,"Дата",0,PlanDate,false,PasteCurDate);
+    MatColTL(1,250,"№ сч/ф",0,-1,ViewOnly,-1,InvNr,false,0);
+    MatCol(1,320,"Сумма",0,ValStr,false,0);
+    MatCol(1,390,"Сотр.",0,Person,false,UserSClass);
+    MatCol(1,440,"Комментарий",0,Comment,false,0);
+    MatCol(1,-120,"Отфактуриров.",0,InvFlag,false,SetSClass);
+//  MatCol(1,490,"Ret. %",0,RetentionPrc,false,0);
+/*
+  MatCol(1,32,"Date",0,PlanDate,false,PasteCurDate);
+  MatColTL(1,107,"Inv. No.",0,-1,ViewOnly,-1,InvNr,false,0);
+  MatCol(1,170,"Sum",0,ValStr,false,0);
+  MatCol(1,260,"Sign",0,Person,false,UserSClass);
+  MatCol(1,310,"Comment",0,Comment,false,0);
+  MatCol(1,-120,"Type",0,InvFlag,false,SetSClass);
+//  MatCol(1,490,"Ret. %",0,RetentionPrc,false,0);
+*/
+  end else begin
+    StaticText(36,v=65,"Авансовые сч/ф-ры только",false); // and Retentions
+    MatrixBegin(4,v+=25,-32,-20,PRRowType,299);
+    MatCol(1,30,"Дата",0,PlanDate,false,PasteCurDate);
+    MatColTL(1,100,"Номер сч/ф",0,-1,ViewOnly,-1,InvNr,false,0);
+    MatCol(1,180,"Сумма/Проц.",0,ValStr,false,0);
+    MatCol(1,250,"Знак",0,Person,false,UserSClass);
+    MatCol(1,300,"Коммент.",0,Comment,false,0);
+    MatCol(1,-120,"Статус сч/ф",0,InvFlag,false,SetSClass);
+  end;
+  InsertRowTest;
+  DeleteRowTest;
+  EndMatrix;
+  if (IsEnterprise) then begin
+    Tile(tilenr,110,false,tilenr,InvoiceTime); tilenr = tilenr + 1;
+    h=140; v=16;
+    ButtonFrame(h=40,vm=v,180,5,"Время в сч/ф");
+    RadioButton(h,v    ,0,0,"итого по строке",InvoiceTime);
+    RadioButton(h,v+=16,1,0,"по группам",InvoiceTime);
+    RadioButton(h,v+=16,2,0,"по товарам",InvoiceTime);
+    RadioButton(h,v+=16,3,0,"по записям операций",InvoiceTime);
+    RadioButton(h,v+=16,4,0,"по товарам/сотрудникам",InvoiceTime);
+    ButtonFrame(h+=200,v=vm,180,5,"Покупки в сч/ф");
+    RadioButton(h,v    ,0,0,"итого по строке",InvoicePurch);
+    RadioButton(h,v+=16,1,0,"по группам",InvoicePurch);
+    RadioButton(h,v+=16,2,0,"по товарам",InvoicePurch);
+    RadioButton(h,v+=16,3,0,"по записям операций",InvoicePurch);
+    RadioButton(h,v+=16,4,0,"по товарам/сотрудникам",InvoicePurch);
+    Tile(tilenr,110,false,tilenr,InvoiceStock); tilenr = tilenr + 1;
+    h=140; v=16;
+    ButtonFrame(h=40,vm=v,180,4,"Складируемые товары в сч/ф");
+    RadioButton(h,v    ,0,0,"итого по строке",InvoiceStock);
+    RadioButton(h,v+=16,1,0,"по группам",InvoiceStock);
+    RadioButton(h,v+=16,2,0,"по товарам",InvoiceStock);
+    RadioButton(h,v+=16,3,0,"по записям операций",InvoiceStock);
+    ButtonFrame(h+=200,v=vm,180,5,"Invoice Materials");
+    RadioButton(h,v    ,0,0,"итого по строке",InvoiceMaterial);
+    RadioButton(h,v+=16,1,0,"по счетам",InvoiceMaterial);
+    RadioButton(h,v+=16,2,0,"по товарам",InvoiceMaterial);
+    RadioButton(h,v+=16,3,0,"по записям операций",InvoiceMaterial);
+    RadioButton(h,v+=16,4,0,"по товарам/сотрудникам",InvoiceMaterial);
+  end;
+  Tile(tilenr,260,false,tilenr,CustOrdNr); tilenr = tilenr + 1;
+  h=140; v=6;
+  EditField(h=430,v,25,"Условия оплаты",Normal,PayDeal,false,PDSClass);  
+  EditField(h,v+=20,-40,"№ счета клиенту",Normal,CustOrdNr,false,0);  
+  EditField(h,v+=20,-40,"E-mail",Normal,Email,false,0);  
+  EditField(h,v+=20,70,"Дата первой сч/ф",Normal ,NoInvBefore,false,PasteCurDate);  
+  if (HasLanguages) then begin
+    EditField(h,v+=20,70,"Язык",Normal,LangCode,false,LangSClass);
+  end;
+  if (IsEnterprise) then begin
+    EditField(h,v+=20,70,"Макс. удержание",Normal,MaxRetSum,false,0);
+  end;
+  CheckBox(h,v+=40,0,"Не фактур.",StopInvoicing);
+  if (IsEnterprise) then begin
+    CheckBox(h,v+=16,0,"Исп. WIP",UseWIP);
+  end;
+  ButtonFrame(h=40,vm=(v=25),275,13,"Выводить в сч/ф");
+  if (IsEnterprise) then begin
+    CheckBox(h,v,0,"Время: отдельной строкой",InvSepTB);
+    v = v + 16;
+    CheckBox(h,v,0,"Счета покупки/Ав. отчеты: Отдельная строка",InvSepPB);
+    v = v + 16;
+  end;
+  CheckBox(h,v ,0,"Код проекта",PRCodeOnInv);
+  CheckBox(h,v+=16,0,"Описание проекта",PRNameOnInv);
+  CheckBox(h,v+=16,0,"Текст проекта",PRTextOnInv);
+  CheckBox(h,v+=16,0,"Руководитель проекта",PRLeaderOnInv);
+  CheckBox(h,v+=16,0,"Контактное лицо",PRContOnInv);
+  CheckBox(h,v+=16,0,"Период от первой до последней отф. записью",PeriodOnInv);
+  if (IsEnterprise) then begin
+    CheckBox(h,v+=16,0,"Включать среднюю цену на время",TimeAvgPriOnInv);
+    CheckBox(h,v+=16,0,"Включать количество времени",TimeAvgQtyOnInv);
+    CheckBox(h,v+=16,0,"Включать среднюю цену на покупку",PurcAvgPriOnInv);
+    CheckBox(h,v+=16,0,"Включать количество покупки",PurcAvgQtyOnInv);
+  end else begin
+    CheckBox(h,v+=16,0,"Вкл. среднюю цену во время и материалы",PurcAvgPriOnInv);
+    CheckBox(h,v+=16,0,"Включить кол-во во время и материалы",PurcAvgQtyOnInv);
+  end;
+  CheckBox(h,v+=16,0,"Товары по дням",ItemPerDay);
+  EndFrame;
+  if (BuildProductCode=="StandardProjects") then begin
+    ButtonFrame(h,v+=70,275,5,"Счет-фактура");
+    RadioButton(h,v    ,0,0,"Всего по строке",InvoicePurch);
+    RadioButton(h,v+=16,1,0,"По группам",InvoicePurch);
+    RadioButton(h,v+=16,2,0,"По товарам",InvoicePurch);
+    RadioButton(h,v+=16,3,0,"По транзакциям",InvoicePurch);
+    RadioButton(h,v+=16,4,0,"По товарам/лицам",InvoicePurch);
+  end;
+  Tile(tilenr,220,false,tilenr,Text0); tilenr = tilenr + 1;
+  EditField(h=80,v=6,-40,"Текст",Normal,Text0,false,0);
+  EditField(h,v+=20,-40,"",Normal,Text1,false,0);
+  EditField(h,v+=20,-40,"",Normal,Text2,false,0);
+  EditField(h,v+=20,-40,"",Normal,Text3,false,0);
+  EditField(h,v+=20,-40,"",Normal,Text4,false,0);
+  EditField(h,v+=20,-40,"",Normal,Text5,false,0);
+  EditField(h,v+=20,-40,"",Normal,Text6,false,0);
+  EditField(h,v+=20,-40,"",Normal,Text7,false,0);
+  EditField(h,v+=20,-40,"",Normal,Text8,false,0);
+  EditField(h,v+=20,-40,"",Normal,Text9,false,0);
+  Tile(tilenr,220,false,tilenr,AddDoc1Nr); tilenr = tilenr + 1; //Edit***************************Sasha2,17:25 09.09.2014
+  StaticText(h=80,v=20,"Доп. соглашения по проектам:",false); //Edit***************************Sasha2,17:25 09.09.2014
+  EditField(h,v+=20,70,"№ Док.",Normal,AddDoc1Nr,false,0); //Edit***************************Sasha2,17:25 09.09.2014
+  EditField(h,v+=20,70,"Дата",Normal,AddDoc1Date,false,0); //Edit***************************Sasha2,17:25 09.09.2014
+  EditField(h,v+=20,70,"Сумма",Normal,AddDoc1Sum,false,0); //Edit***************************Sasha2,17:25 09.09.2014
+  StaticText(h=80,v+=40,"Акты выполненных работ:",false); //Edit***************************Sasha2,17:25 09.09.2014
+  EditField(h,v+=20,70,"№ Док.",Normal,AddDoc2Nr,false,0); //Edit***************************Sasha2,17:25 09.09.2014
+  EditField(h,v+=20,70,"Дата",Normal,AddDoc2Date,false,0); //Edit***************************Sasha2,17:25 09.09.2014
+  EditField(h,v+=20,70,"Сумма",Normal,AddDoc2Sum,false,0); //Edit***************************Sasha2,17:25 09.09.2014
+
+  SpecialMenu("Выписать счет-фактуру на аванс",' ',0,"PRDownPayDsm");
+  if (HasObjects) then begin
+    SpecialMenu("Создать объект",'o',1,"CreateObjPRDsm");
+  end;
+  SpecialMenu("Информация о проекте",'I',2,"ProInvPRD");
+  SpecialMenu("Project Status",'r',9,"ProStatRnPRD");
+  SpecialMenu("Создать ком. предложение",'q',3,"DoQTFromPRD");
+  if (HasStandardCRM) then begin
+    SpecialMenu("Создать деятельность",'c',4,"CreateActFromPRD");
+  end;
+  SpecialMenu("Создать бюджет проекта",'b',5,"DoTBBUFromPRD");
+  SpecialMenu("Показать бюджет проекта",'B',6,"OpenTBBUPRD");
+  if (IsEnterprise) then begin
+    SpecialMenu("Создать график проекта",' ',7,"CreatePRScheduleFromPRD");
+    SpecialMenu("Открыть график проекта",' ',8,"OpenPRSchedulePRD");
+  end;
+  end;
+  EndWindow;
+end;
+
+window PRLClass:3
+  wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer,android,iPad,iPhone")
+begin
+  WindowBegin("Проекты",PRLClass,CGmlist,-);
+  SetWRect(20,80,850,298); //Edit***************************Sasha2,18:13 09.09.2014 Width = 650
+  SpawnClass(PRDClass);
+  Sizeable(-1,-1,0,0);
+  UseView(PRVc);
+  FormName(PrintPRL);
+  RecordList(4,17,-21,-39);
+  RlColKey(4,1,    "Проект",Code,false,Code);
+  if (HasSalesman) then begin
+  RlColKey(75,75,  "Продавец",PrSalesMan,false,PrSalesMan);
+  end;
+  RlColKey(131,131,"Статус",StatMark,false,StatMark);
+  RlColKey(171,171,"Тип",PRClass,false,PRClass);
+  if (IsEnterprise) then begin
+  RlColKey(211,211,"Этап",PRStage,false,PRStage);
+  end;
+  RlColKey(261,261,"Клиент",CustCode,false,CustCode);
+  RlColKey(341,341,"Наименование",CustName,false,CustName);
+  RlColKey(471,471,"Описание",Name,false,Name);
+  CalculatedColumn(-180,-180,"Предупреждение","PRLClass",false);
+  SearchField("Найти");
+  if (HasLimitedAccess) then begin
+//  if (HasLimitedAccess and HasTouchScreenDevice==false) then begin
+    BrowseSubsetButton(-40,-15);
+  end;
+//  if (HasTouchScreenDevice==false) then begin
+  if (true) then begin
+    SpecialMenu("Информация по проекту",'I',0,"PRInfoPRLsm");
+    SpecialMenu("Поиск проекта",'F',6,"SearchPRLsm");
+  end;
   EndWindow;
 end;
