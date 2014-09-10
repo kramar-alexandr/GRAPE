@@ -1945,34 +1945,6 @@ begin //##ii
   return; //##ii
 end; //##ii
 
-
-global //Edit***************************Sasha2,9:28 10.09.2014 {
-function string 255 PRLClass(var record PRVc PRr)
-begin
-  string 255 mes;
-  date forcecurdate;
-  date enddate;
-  
-  forcecurdate = AddDay(CurrentDate,5);
-  enddate = PRr.EndDate;
-
-  if (nonBlankDate(enddate) and blank(PRr.AddDoc2Nr)) then begin
-  	if (forcecurdate>=enddate) then begin
-  		mes = "Выпишите акт выполн. работ";
-  		if (CurrentDate>enddate) then begin
-  			mes = "Просрочен акт вып.раб.";
-  		end;
-  	end else begin
-  		//mes = "Выпишите акт выполн. работ";
-  	end;
-  end else begin
-  	mes = "";
-  end;
-  
-  PRLClass = mes;
-  return;
-end; //Edit***************************Sasha2,9:28 10.09.2014 }
-
 window VIDClass:1
   wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
 begin
