@@ -696,7 +696,8 @@ BEGIN
   string 10 curncy;  
   Integer res;
 	record TBBUVc TBBUr;
-
+	
+	res = 0;
   BlockLoad(SRRec);
   RecordNew(IVp);
   IVp.InvType = kInvoiceTypeNormal;
@@ -750,13 +751,14 @@ BEGIN
     IVp.CurncyCode = tstr;
   end;
   GetFullCurncyRate(IVp.CurncyCode,IVp.InvDate,fr,to1,to2,br1,br2);
-  IVp.FrRate = fr;
+  /*IVp.FrRate = fr;
   IVp.ToRateB1 = to1; 
   IVp.ToRateB2 = to2;
   IVp.BaseRate1 = br1;
-  IVp.BaseRate2 = br2;
+  IVp.BaseRate2 = br2;*/
   IVp.SerNr = NextSerNr("IVVc",IVp.TransDate,-1,false,IVp.LangCode);
-
+	
+	logtext(0,"IVrSerNr " & IVp.SerNr);
   SRRec.LastInvNr = IVp.SerNr;
   if (IVp.SerNr<=-1) then begin 
     res = 1747;
@@ -872,6 +874,7 @@ BEGIN
     rownr = rownr + 1;
   end;
 LProInvHead:;
+	logtext(0,"RES " & res);
   ProInvHead = res;
   RETURN;
 END;
@@ -1110,6 +1113,7 @@ BEGIN
   integer ii,imtrw;
   record IVVc tIVr;
   val totinvoiced;
+  integer j;
   
   res = 0;
   totinvoiced = 0;
@@ -1120,7 +1124,9 @@ BEGIN
     TBBUr.PRCode = lPRr.Code;
     ReadFirstMain(TBBUr,1,true);
     prrwcnt = MatRowCnt(lPRr);
+    logtext(0,"prrwcnt " & prrwcnt);
     for (i=0;i<prrwcnt;i=i+1) begin
+    	logtext(0,"PrInv " & i);
       MatRowGet(lPRr,i,prrw);
       tot = 0;// Edit ************************** Wednesday, 20 August 2014 15:33:39
       testf = true;
@@ -1145,7 +1151,7 @@ BEGIN
             end;
             comment = prrw.Comment;
        
-      
+      		logtext(0,"tot " & tot);
 					if (tot>0) then begin
 						RecordNew(IVr);
 						/*IVr.SerNr = nextsernr("IVVc",CurrentDate,-1,false,"");
@@ -1156,6 +1162,7 @@ BEGIN
 						IVr.PayDeal = lPRr.PayDeal;*/
 						res = 1;
 						res = ProInvHead(IVr,lPRr);
+						logtext(0,"RES1" & res);
 						if (res!=0) then begin
 							goto LPRDownPayInvoice;
 						end;
@@ -1225,8 +1232,8 @@ BEGIN
 						testf = true;
 					end;
 					if (testf) then begin
-						i = TypeOfCurncy(CUr.CurncyCode,oldstyle);
-						if ((i==0) or (i==2)) then begin
+						j = TypeOfCurncy(CUr.CurncyCode,oldstyle);
+						if ((j==0) or (j==2)) then begin
 							IVr.CurncyCode = CUr.CurncyCode;
 							RecalcProjectInvoice(IVr,PRp.CurncyCode);
 						end;
