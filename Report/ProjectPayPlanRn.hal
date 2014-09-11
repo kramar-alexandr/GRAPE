@@ -685,11 +685,13 @@ begin
 			outstring(15,0,frdate & " - " & todate,false);
 			EndFormat;
 		end;
-		if (nonblank(prcode)) then begin
+//Edit***********************Vitalii 16:04 11.09.2014
+		/*if (nonblank(prcode)) then begin
 			PRr.Code = prcode;
 		end else begin
 			PRr.Code = IVr.PRCode;
-		end;
+		end;*/
+		PRr.Code = prcode;
 		ReadFirstMain(PRr,1,true);
 		datePU = DateToString(PRr.StartDate,"MMM'YYYY");
 		TrHs = true;
