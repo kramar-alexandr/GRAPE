@@ -1169,8 +1169,7 @@ BEGIN
 						IVr.InvType = kInvoiceTypeDownpayment;
 						rwcnt = MatRowCnt(IVr);
 						ClearRow(IVr,IVrw,1);
-						//IVrw.Spec = " ";
-						IVrw.Spec = PRp.Name;//Edit by Victor 10.09.14
+						IVrw.Spec = " ";
 						MatRowPut(IVr,rwcnt,IVrw);
 						ClearRow(IVr,IVrw,5);
 						IVrw.Sum = tot;      
@@ -1201,6 +1200,7 @@ BEGIN
 							MatRowPut(IVr,rwcnt+1,IVrw);
 							rwcnt = rwcnt + 1;
 						end;
+						IVr.InvComment = PRp.Name;//Edit by Victor 10.09.14
 						IVr.PayDate = prrw.PlanDate;
 						IVSumup(IVr,true);
 						IVr.PayDate = prrw.PlanDate;
@@ -1210,6 +1210,8 @@ BEGIN
 			//        IVr.OfficialSerNr = FindNextLegalSerNr(IVr,CUr.Classification);// POSN
 							if (RecordStore(IVr,false)) then begin end;
 								testf = true;
+								CreateRecordLink(IVr,CurrentCompany,lPRr,CurrentCompany);  
+      					CreateRecordLink(lPRr,CurrentCompany,IVr,CurrentCompany);
 								if (testf) then begin
 									prrw.InvNr = IVr.SerNr;
 									if (blank(prrw.Person)) then begin
