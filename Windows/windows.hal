@@ -131,8 +131,8 @@ begin
   DeleteRowTest;
   EndMatrix;
 
-  SpecialMenu("Добавить строку заголовка",' ',0,"HeaderLineTBBUDsm");
-  SpecialMenu("Добавить итого",' ',0,"SubtotalTBBUDsm");
+  SpecialMenu("Добавить строку заголовка",' ',0,"HeaderLineTemplateTBBUDsm");
+  SpecialMenu("Добавить итого",' ',0,"SubtotalTemplateTBBUDsm");
 
   EndWindow;
 end; //Edit***************************Sasha2,13:29 12.09.2014 }
