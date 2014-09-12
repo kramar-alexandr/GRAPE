@@ -1261,5 +1261,63 @@ begin
   KeySegment(Code);
   EndRecord;
   
+  RecordBegin(ADJVc,-,"adj"); //Acts of Done Jobs		*** Edit by Victor 12.09.14
+  RecordField(SerNr,M4Long,0,0);               
+  RecordField(ADJDate,M4Date,0,0);
+  RecordField(PRCode,M4Code,20,PRVc);
+  //RecordField(PRName,M4Str,60,0);
+  RecordField(Sum,M4Val,0,0);
+	RecordField(ADJNum,M4Str,60,0);
+  RecordField(Comment,M4Str,100,0);
+    
+  MainKeyBegin(SerNr,1);
+  StoreInBaseKey;
+  KeySegment(PRCode);
+  
+  SubsetKeyBegin2(PRCode);
+  StoreInBaseKey;
+  KeySegment(ADJDate);
+  KeySegment(SerNr);
+  
+  SubsetKeyBegin2(ADJDate);
+  StoreInBaseKey;
+  KeySegment(SerNr);
+  
+  SubsetKeyBegin2(ADJDate);
+  StoreInBaseKey;
+  KeySegment(PRCode);
+  KeySegment(SerNr);
+  
+  EndRecord;
+  
+  RecordBegin(SAVc,-,"supag"); //supplementary agreement		*** Edit by Victor 12.09.14
+  RecordField(SerNr,M4Long,0,0);               
+  RecordField(SADate,M4Date,0,0);
+  RecordField(PRCode,M4Code,20,PRVc);
+  //RecordField(PRName,M4Str,60,0);
+  RecordField(Sum,M4Val,0,0);
+	RecordField(SANum,M4Str,60,0);
+  RecordField(Comment,M4Str,100,0);
+    
+  MainKeyBegin(SerNr,1);
+  StoreInBaseKey;
+  KeySegment(PRCode);
+  
+  SubsetKeyBegin2(PRCode);
+  StoreInBaseKey;
+  KeySegment(SADate);
+  KeySegment(SerNr);
+  
+  SubsetKeyBegin2(SADate);
+  StoreInBaseKey;
+  KeySegment(SerNr);
+  
+  SubsetKeyBegin2(SADate);
+  StoreInBaseKey;
+  KeySegment(PRCode);
+  KeySegment(SerNr);
+  
+  EndRecord;
+  
 return;
 end;
