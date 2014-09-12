@@ -30,11 +30,7 @@ global updating
 function LongInt ADJVcRecordDefaults(var record ADJVc ADJr,record ADJVc ADJ2r,LongInt stat,LongInt long4)
 BEGIN
   LongInt res;
-  record LocalMachineBlock LMb;
-  record UserVc Userr;
-  
-  blockload(LMb);
-  
+     
   ADJr.SerNr = -1;
   ADJr.ADJDate = currentdate;
      

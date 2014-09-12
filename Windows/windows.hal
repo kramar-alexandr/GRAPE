@@ -149,12 +149,15 @@ begin
   RecordList(4,17,-21,-39);
   RlColKey(4,1, "Номер",SerNr,false,SerNr);
   RlColKey(75,75, "Проект",PRCode,false,PRCode);
-  
   RlColKey(150,150,"Дата",ADJDate,false,ADJDate);
   RlColKey(-120,-120,"Сума",Sum,false,Sum);
   
   SearchField("Найти");
- 
+ 	
+ 	if (HasLimitedAccess) then begin 
+  BrowseSubsetButton(-40,-15);
+  end;
+  
   EndWindow;
 end;
 
@@ -195,6 +198,8 @@ begin
   RlColKey(-100,-100,"Сума",Sum,false,Sum);
   
   SearchField("Найти");
- 
+	if (HasLimitedAccess) then begin 
+  BrowseSubsetButton(-40,-15);
+  end;
   EndWindow;
 end;//Edit by Victor 12.09.14 }
