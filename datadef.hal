@@ -1273,7 +1273,7 @@ begin
   EndBlock; //Edit***************************Sasha2,17:27 11.09.2014 }
   
   RecordBegin(TemplateTBBUVc,-,""); //Edit***************************Sasha2,11:25 12.09.2014 {
-  RecordField(PRCLass,M4Code,20,0);
+  RecordField(PRClass,M4Code,20,0);
   RecordField(Scope,M4Str,60,0);
   RecordField(Math,M4Matrix,0,0);
   ArrayBegin(Math,-,1);
@@ -1284,7 +1284,7 @@ begin
   ArrayField(stp,M4Int,0,0);
   EndArray;
   MainKeyBegin(MainKey,0);
-  KeySegment(PRCLass);
+  KeySegment(PRClass);
   KeySegment(Scope);
   EndRecord; //Edit***************************Sasha2,11:25 12.09.2014 }
 

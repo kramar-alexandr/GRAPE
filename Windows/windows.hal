@@ -67,7 +67,7 @@ begin
   Sizeable(-1,-1,0,0);
   UseView(TemplateTBBUVc);
   RecordList(4,17,-21,-39);
-  RlColKey(4,4,"Тип проекта",PRCLass,false,MainKey);
+  RlColKey(4,4,"Тип проекта",PRClass,false,MainKey);
   RlCol(100,100,"Масштаб",Scope,false);
   SearchField("Пошук");
   if (HasLimitedAccess) then begin 
@@ -89,7 +89,7 @@ begin
 
   vs=20; h=110; h2=260; h1=50;
 
-  EditField(h,v=10,80, "Тип проекта",Normal,PRCLass,false,PRClassSClass);
+  EditField(h,v=10,80, "Тип проекта",Normal,PRClass,false,PRClassSClass);
   EditField(h,v+=vs,80, "Масштаб проекта",Normal,Scope,false,ProjScopeSClass);
   //EnterSkip(Math);
   v=6; h = 20;
