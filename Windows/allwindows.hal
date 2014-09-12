@@ -4076,6 +4076,7 @@ begin
   if (HasMultiCurrency) then begin
     EditField(-110,v+=20,70,"Валюта проекта",Normal,CurncyCode,false,CurncyCodeSClass);
   end;
+  CheckBox(-110,v+=20,0,"Не фактур.",StopInvoicing);// Edit ************************** Friday, 12 September 2014 15:52:46
   //nk EditField(-110,v+=20,25,"Payment Terms",Normal,PayDeal,false,PDSClass);
   //nk EditField(-110,v+=20,70,"Cust. Ord. No.",Normal,CustOrdNr,false,0);
   Tile(tilenr,130,false,tilenr,Members); tilenr = tilenr + 1;
@@ -4194,7 +4195,7 @@ begin
   if (IsEnterprise) then begin
     EditField(h,v+=20,70,"Макс. удержание",Normal,MaxRetSum,false,0);
   end;
-  CheckBox(h,v+=40,0,"Не фактур.",StopInvoicing);
+  //CheckBox(h,v+=40,0,"Не фактур.",StopInvoicing);
   if (IsEnterprise) then begin
     CheckBox(h,v+=16,0,"Исп. WIP",UseWIP);
   end;
