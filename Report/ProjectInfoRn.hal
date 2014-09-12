@@ -212,7 +212,15 @@ begin
 		end;
 	end;
 	ResetLoop(VIr);
-
+	Gray_Divider(0,1);
+	startformat(15);
+		outstring(0,0,"Итого:",false);
+		outstring(50,0,"",false);
+		outstring(85,0,"",false);
+		outstring(135,0,"",false);
+		outstring(165,0,totcred,false);
+		outstring(265,0,totsup,false);
+	endformat;
 	Black_Divider(0,1);
 	startformat(15);
 		outstring(0,0,"",false);
