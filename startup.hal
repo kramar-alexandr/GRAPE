@@ -6,7 +6,7 @@ begin
 	
 	Report("Журнал платежей по проектам",ProjectPayPlanRClass,ProjectPayPlanRn,0,modTS);
   
-  
+    Setting("Масштабы проектов",ProjScaleTClass,modTS); //Edit***************************Sasha2,17:26 11.09.2014
   
   
   StrSetBegin(3); /* Try to keep them in alphabetical order */
