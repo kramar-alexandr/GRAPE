@@ -4019,7 +4019,7 @@ begin
     //RlColKey(94,94,"Comment",Header,false,PRComment);
   end else begin
   SetWRect(20,80,600,390);
-  Tile(0,74,false,"",Code);
+  Tile(0,100,false,"",Code); //Edit***************************Sasha2,17:06 11.09.2014      height = 74
   EditField(h=80,v=6,120,"Проект",St_i,Code,false,TSerSClass);
   if (IsEnterprise) then begin
     EditField(300,v,-210,"Старший",Normal,MotherCode,false,PRSClass);
@@ -4029,6 +4029,7 @@ begin
   if (IsEnterprise) then begin
     EditField(-100,v,-40,"Этап",Normal,PRStage,false,PRStageSClass);
   end;
+  EditField(-100,v+=20,-40,"Масштаб",Normal,Scope,false,ProjScopeSClass); //Edit***************************Sasha2,16:52 11.09.2014
   tilenr = 1;
   TileButton(tilenr,"Условия"); tilenr = tilenr + 1;
   TileButton(tilenr,"Члены"); tilenr = tilenr + 1;
@@ -4293,6 +4294,46 @@ begin
   RlColKey(341,341,"Наименование",CustName,false,CustName);
   RlColKey(471,471,"Описание",Name,false,Name);
   CalculatedColumn(-180,-180,"Предупреждение","PRLClass",false);
+  SearchField("Найти");
+  if (HasLimitedAccess) then begin
+//  if (HasLimitedAccess and HasTouchScreenDevice==false) then begin
+    BrowseSubsetButton(-40,-15);
+  end;
+//  if (HasTouchScreenDevice==false) then begin
+  if (true) then begin
+    SpecialMenu("Информация по проекту",'I',0,"PRInfoPRLsm");
+    SpecialMenu("Поиск проекта",'F',6,"SearchPRLsm");
+  end;
+  EndWindow;
+end;
+
+window PRLClass:3
+  wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer,android,iPad,iPhone")
+begin
+	real h,h2,v,vs,vm;
+  string 255 label;
+  Integer tilenr;
+  WindowBegin("Проекты",PRLClass,CGmlist,-);
+  SetWRect(20,80,650,298);
+  SpawnClass(PRDClass);
+  Sizeable(-1,-1,0,0);
+  UseView(PRVc);
+  FormName(PrintPRL);
+  RecordList(4,17,-21,-39);
+  RlColKey(4,1,    "Проект",Code,false,Code);
+  if (HasSalesman) then begin
+		label = UserDefined("PRVc","Leader");// Edit ************************** Friday, 12 September 2014 14:01:21
+		if (blank(label)) then begin label = "Менеджер проекта";end;// Edit ************************** Friday, 12 September 2014 14:01:20
+  RlCol(75,75,label,Leader,false);
+  end;
+  RlColKey(131,131,"Статус",StatMark,false,StatMark);
+  RlColKey(171,171,"Тип",PRClass,false,PRClass);
+  if (IsEnterprise) then begin
+  RlColKey(211,211,"Этап",PRStage,false,PRStage);
+  end;
+  RlColKey(261,261,"Клиент",CustCode,false,CustCode);
+  RlColKey(341,341,"Наименование",CustName,false,CustName);
+  RlColKey(471,471,"Описание",Name,false,Name);
   SearchField("Найти");
   if (HasLimitedAccess) then begin
 //  if (HasLimitedAccess and HasTouchScreenDevice==false) then begin

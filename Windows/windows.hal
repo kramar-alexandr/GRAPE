@@ -1,3 +1,4 @@
+external function Boolean HasLimitedAccess();
 
 //##ii
 procedure dummy() //##ii
@@ -20,8 +21,103 @@ begin
   EndWindow;
 end;
 
-window ADJDClass:2		//Edit by Victor 12.09.14 {
-  wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","*")
+window ProjScopeTClass:1 //Edit***************************Sasha2,17:28 11.09.2014 {
+ wtag("language","UKR"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
+begin
+  real h,v,vs,f;
+ WindowBegin("Масштабы проектов",ProjScopeTClass,CGHbl,-);
+  SetBlid(ProjScaleBlock);
+  SetWRect(64,80,500,400);
+    MatrixBegin(5,27,-50,-20,-,99);
+    MatCol(1,24,"Код",0,Code,false,0);
+    MatCol(1,85,"Описание",0,Name,false,0);
+    EndMatrix;
+  EndWindow;
+ end; //Edit***************************Sasha2,17:28 11.09.2014 }
+ 
+ window ProjScopeSClass:1 //Edit***************************Sasha2,9:56 12.09.2014 {
+  wtag("language","ukr"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer,iPad")
+begin
+  WindowBegin("Визначте масштаб",ProjScopeSClass,CGother,HBlRecType);
+  SetWRect(240,80,640,298);
+  Sizeable(-1,-1,-1,0);
+  StringList(9,9,-23,-10);
+  SearchField("Пошук");
+  EndWindow;
+end; //Edit***************************Sasha2,9:56 12.09.2014 }
+
+window ProjectInfoRClass:2
+  wtag("language","RUS"), wtag("product","*"), wtag("device","computer")
+begin
+  WindowBegin("Выберите проект для вывода информации",ProjectPayPlanRClass,CGRcW,RcType);
+  SetWRect(20,80,400,270);
+  EditField(120,20,120,"Проект",Normal,f1,false,PRSClass);
+
+  EndWindow;
+end;
+
+
+
+window TemplateTBBULClass:1 //Edit***************************Sasha2,11:52 12.09.2014 {
+  wtag("language","UKR"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
+begin
+  WindowBegin("Шаблоны для бюджетов проектов",TemplateTBBULClass,CGmlist,-);
+  SpawnClass(TemplateTBBUDClass);
+  SetWRect(64,80,700,298);
+  Sizeable(-1,-1,0,0);
+  UseView(TemplateTBBUVc);
+  RecordList(4,17,-21,-39);
+  RlColKey(4,4,"Тип проекта",PRCLass,false,MainKey);
+  RlCol(100,100,"Масштаб",Scope,false);
+  SearchField("Пошук");
+  if (HasLimitedAccess) then begin 
+  BrowseSubsetButton(-40,-15);
+  end;
+  EndWindow;
+end; //Edit***************************Sasha2,11:52 12.09.2014 }
+
+window TemplateTBBUDClass:1 //Edit***************************Sasha2,13:29 12.09.2014 {
+  wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
+begin
+  real h,h1,h2,h3,t,v,vm,vs;
+  Integer tnr;
+
+  WindowBegin("Шаблон для бюджета проекта",TemplateTBBUDClass,CGview,-);
+  SetWRect(20,80,640,410);
+  Sizeable(-1,-1,0,0);
+  UseView(TemplateTBBUVc);
+
+  vs=20; h=110; h2=260; h1=50;
+
+  EditField(h,v=10,80, "Тип проекта",Normal,PRCLass,false,PRClassSClass);
+  EditField(h,v+=vs,80, "Масштаб проекта",Normal,Scope,false,ProjScopeSClass);
+  //EnterSkip(Math);
+  v=6; h = 20;
+  MatrixBegin(h,80,-50,-56,-,150);
+  MatTypedRow(stp);
+  MatText(t=9,30,"Итого",true);
+  MatCol(t,100,"",0,Spec,false,0);
+  MatText(t=17,30,"Заголовок",true);
+  MatCol(t,100,"",0,Spec,false,0);
+  MatCol(1,30,"Товар",0,ArtCode,false,INSClass);
+  MatCol(1,155,"Кол-во",0,Qty,true,0);
+  MatCol(1,200,"Наименование",0,Comment,false,0);
+  MatCol(t=kInvoiceRowTypeStructuredItemComponent,30,"Товар",0,ArtCode,false,INSClass);
+  MatCol(t,155,"Кол-во",0,Qty,true,0);
+  MatCol(t,200,"Наименование",0,Comment,false,0);
+ 
+  DeleteRowTest;
+  EndMatrix;
+
+  SpecialMenu("Добавить строку заголовка",' ',0,"HeaderLineTemplateTBBUDsm");
+  SpecialMenu("Добавить итого",' ',0,"SubtotalTemplateTBBUDsm");
+
+  EndWindow;
+end; //Edit***************************Sasha2,13:29 12.09.2014 }
+
+
+window ADJDClass:2
+	wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","*")
 begin
   real h,h2,v,vs,vm;
   string 255 label;

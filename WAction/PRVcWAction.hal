@@ -639,3 +639,28 @@ begin
   PRDClassUpdateTest = res;
   return;
 end;
+
+
+global
+function Boolean PRLClassOnOpenWindow(Integer wn)
+begin
+	record UserVc User;
+		
+	if(usercanaction("CutPRList",true)==false)then begin
+		if(usercanaction("CutPRListViewGroup",false))then begin
+			User.Code = currentuser;
+			if(readfirstmain(User,1,true))then begin
+				if(nonblank(User.SalesGroup))then begin
+					setwindowsubset(wn,User.SalesGroup);
+				end else begin
+					setwindowsubset(wn,User.Code);
+				end;
+			end;
+		end else begin
+			setwindowsubset(wn,currentuser);
+		end;
+	end;
+	
+	PRLClassOnOpenWindow = true;
+return;
+end;

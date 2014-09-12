@@ -5,12 +5,13 @@ begin
 	SetLangMode(LangRussian,"RUS",0);
 	
 	Report("Журнал платежей по проектам",ProjectPayPlanRClass,ProjectPayPlanRn,0,modTS);
-  
-    Setting("Масштабы проектов",ProjScaleTClass,modTS); //Edit***************************Sasha2,17:26 11.09.2014
-    
-    Setting("Акты выполеных работ",ADJLClass,modTS); //Edit by Victor 12.09.2014
-    Setting("Дополнительные соглашения",SALClass,modTS); //Edit by Victor 12.09.2014
-  
+  Report("Информация о проекте",ProjectInfoRClass,ProjectInfoRn,0,modTS);
+
+	Setting("Масштабы проектов",ProjScaleTClass,modTS); //Edit***************************Sasha2,17:26 11.09.2014
+	Setting("Акты выполеных работ",ADJLClass,modTS); //Edit by Victor 12.09.2014
+	Setting("Дополнительные соглашения",SALClass,modTS); //Edit by Victor 12.09.2014
+	Setting("Шаблоны для бюджетов проектов",TemplateTBBULClass,modTS); //Edit***************************Sasha2,11:49 12.09.2014
+
   
   StrSetBegin(3); /* Try to keep them in alphabetical order */
   StrSetText(AllowAddingINtoRet,"Добавлять товары в возвраты");
@@ -238,6 +239,10 @@ begin
   StrSetText(WSToPO,"Заказ постащику из таблицы работ");
   StrSetText(StockMovOK,"Получение перемещения товара");
   StrSetText(AllowNPTSReprint," Перепечатать строки сч/ф (сенсорный экран)");
+  StrSetText(CutPRList,"Разрешить весь спискок проектов(только свои)");// Edit ************************** Friday, 12 September 2014 14:17:43
+  StrSetText(CutPRListViewGroup,"Разрешить список проектов группы продаж");// Edit ************************** Friday, 12 September 2014 14:17:43
+  StrSetText(CutTBBUList,"Разрешить весь спискок бюджетов(только свои)");// Edit ************************** Friday, 12 September 2014 14:17:43
+  StrSetText(CutTBBUListViewGroup,"Разрешить список бюджетов группы продаж");// Edit ************************** Friday, 12 September 2014 14:17:43
   StrSetText(JobCheckOut,"Резервирование - Выезд");
   StrSetText(JobAddItem,"Резервирование - Добавить товар");
   StrSetText(JobChargeStay,"Резервирование - Оплатить пребывание");

@@ -1,0 +1,92 @@
+SetLangMode(LangRussian,"RUS",0);
+
+
+global procedure ProjectInfoRn(record RCVc RepSpec)
+begin
+	record PRVc PRr;
+	record TBBUVc TBBUr;
+	record VIVc VIr;
+	val VIrashod,VIsum,VIvat,dohod,budj,budjsum,budjVAT;
+	Boolean TrHs;
+	
+	startreportnoheaderjob("Информация о проекте");
+	startformat(15);
+		outstring(0,0,"№ проекта",false);
+		outstring(50,0,"Описание",false);
+		outstring(85,0,"Вид деят.",false);
+		outstring(120,0,"Валюта",false);
+		outstring(150,0,"Утв. бюджет",false);
+		outstring(195,0,"Сумма без НДС",false);
+		outstring(245,0,"НДС",false);
+		outstring(280,0,"Расход",false);
+		outstring(315,0,"Сумма без НДС",false);
+		outstring(365,0,"НДС",false);
+		outstring(400,0,"Доходность",false);
+		outstring(450,0,"%",false);
+	endformat;
+	Gray_Divider(0,1);
+  PRr.Code = RepSpec.f1;
+	ReadFirstMain(PRr,1,true);
+	TBBUr.PRCode = PRr.Code;
+	ReadFirstMain(TBBUr,1,true)
+	if NonBlank(TBBUr.TotSumVAT) then begin
+		budj = TBBUr.TotSumVAT;
+		budjsum = TBBUr.TotSum;
+		budjVAT = TBBUr.Sum3;
+	end else begin
+		budj = TBBUr.TotSum;
+		budjsum = TBBUr.TotSum;
+		budjVAT = 0;
+	end;
+	VIr.PRCode = PRr.Code;
+	TrHs = true;
+	while (loopkey("PRCodeDueDate",VIr,1,TrHs)) begin
+		if (VIr.PRCode != PRr.Code) then begin TrHs = false; end;
+		if (TrHs) then begin
+	  	VIrashod = VIrashod + VIr.PayVal;
+	  	if NonBlank(VIr.CalcVATVal) then begin
+		 	 VIvat = VIvat + VIr.CalcVATVal;
+			end else begin
+				VIvat = VIvat + VIr.VATVal;
+			end;
+		end;
+	end;
+	RESETLOOP(VIr);
+	VIsum = VIrashod - VIvat;
+	dohod = budj - VIrashod;
+	startformat(15);
+		outstring(0,0,PRr.Code,false);
+		outstring(50,0,PRr.Name,false);
+		outstring(85,0,PRr.PRClass,false);
+		outstring(120,0,PRr.CurncyCode,false);
+		outstring(150,0,budj,false);
+		outstring(195,0,budjsum,false);
+		outstring(245,0,budjVAT,false);
+		outstring(280,0,VIrashod,false);
+		outstring(315,0,VIsum,false);
+		outstring(365,0,VIvat,false);
+		outstring(400,0,dohod,false);
+		outstring(450,0,dohod/budj*100 & " %",false);
+	endformat;
+	Black_Divider(0,1);
+	startformat(15);
+		outstring(0,0,"",false);
+		outstring(50,0,"Оплата от клиента",false);
+	endformat;
+	startformat(15);
+		outstring(0,0,"",false);
+		outstring(50,0,"",false);
+		outstring(85,0,"Клиент",false);
+		outstring(120,0,"",false);
+		outstring(130,0,"Номер сч/ф",false);
+		outstring(175,0,"Дебиторская задолженость",false);
+		outstring(270,0,"Оплата",false);
+		outstring(300,0,"Планируемая дата",false);
+		outstring(365,0,"Фактическая дата",false);
+		outstring(430,0,"Форма оплаты",false);
+	endformat;
+	Gray_Divider(0,1);
+
+	endjob;
+return;
+end;
