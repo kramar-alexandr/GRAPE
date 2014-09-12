@@ -14,6 +14,25 @@ external procedure GetFullCurncyRate (var string,Date,var val,var val,var val,va
 external procedure GetSalesGroup(string,var string);
 external updating function Integer SinglePRDownPayInvoice(var record PRVc);// Edit ************************** Wednesday, 20 August 2014 15:29:35
 
+
+// Edit Start ---------------------------------------------- Edit Start
+	//Friday, 12 September 2014 16:24:32
+	
+updating procedure UpdatePRBUOkFlag(record TBBUVc TBBUr)
+begin
+record PRVc PRr,oldPRr;
+	
+	PRr.Code = TBBUr.PRCode;
+	if(readfirstmain(PRr,1,true))then begin
+		PRr.BUOKFlag = TBBUr.OKFlag;
+		recordStore(PRr,true);
+	end;
+return;
+end;
+
+
+	// Edit End ---------------------------------------------- Edit End
+	
 procedure SetTBBUAcceptanceFlag(var record TBBUVc TBBUr,record TBBUVc prevTBBUr,LongInt stat)
 begin
   val bc1v;
@@ -414,7 +433,9 @@ begin
 	
 	if(TBBUr.OKFlag==1)then begin
 		CreateProjInvoice(TBBUr)// Edit ************************** Wednesday, 20 August 2014 11:45:45
+		UpdatePRBUOkFlag(TBBUr);
 	end;
+	
   SetTBBUAcceptanceFlag(TBBUr,TBBU2r,stat);
   TBBUVcRecordSaveAfter = res; 
   return;
@@ -438,6 +459,9 @@ begin
 	
 	if(TBBUr.OKFlag==1 and TBBU2r.OKFlag==0)then begin
 		CreateProjInvoice(TBBUr)// Edit ************************** Wednesday, 20 August 2014 11:45:45
+	end;
+	if(TBBUr.OKFlag!=TBBU2r.OKFlag)then begin
+		UpdatePRBUOkFlag(TBBUr);// Edit ************************** Friday, 12 September 2014 16:25:19
 	end;
 	
   switch (TBBUr.AcceptanceStatus) begin

@@ -4334,6 +4334,7 @@ begin
   //RlColKey(211,211,"Этап",PRStage,false,PRStage);// Edit ************************** Friday, 12 September 2014 16:17:25
   end;
   RlColKey(261,261,"Клиент",CustCode,false,CustCode);
+  RlCol(380,380,"Бюдж.утв.",BUOKFlag,false);
   //RlColKey(341,341,"Наименование",CustName,false,CustName);// Edit ************************** Friday, 12 September 2014 16:17:19
   RlColKey(471,471,"Описание",Name,false,Name);
   SearchField("Найти");
