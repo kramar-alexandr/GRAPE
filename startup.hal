@@ -236,6 +236,10 @@ begin
   StrSetText(WSToPO,"Заказ постащику из таблицы работ");
   StrSetText(StockMovOK,"Получение перемещения товара");
   StrSetText(AllowNPTSReprint," Перепечатать строки сч/ф (сенсорный экран)");
+  StrSetText(CutPRList,"Разрешить весь спискок проектов(только свои)");// Edit ************************** Friday, 12 September 2014 14:17:43
+  StrSetText(CutPRListViewGroup,"Разрешить список проектов группы продаж");// Edit ************************** Friday, 12 September 2014 14:17:43
+  StrSetText(CutTBBUList,"Разрешить весь спискок бюджетов(только свои)");// Edit ************************** Friday, 12 September 2014 14:17:43
+  StrSetText(CutTBBUListViewGroup,"Разрешить список бюджетов группы продаж");// Edit ************************** Friday, 12 September 2014 14:17:43
   StrSetText(JobCheckOut,"Резервирование - Выезд");
   StrSetText(JobAddItem,"Резервирование - Добавить товар");
   StrSetText(JobChargeStay,"Резервирование - Оплатить пребывание");
