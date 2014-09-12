@@ -4265,6 +4265,7 @@ begin
   end;
   SpecialMenu("Создать бюджет проекта",'b',5,"DoTBBUFromPRD");
   SpecialMenu("Показать бюджет проекта",'B',6,"OpenTBBUPRD");
+  SpecialMenu("Прикрепить дополнительное соглашение клиенту",'',9,"AddSAIVtoPRD");//*****Edit by Victor 12.09.14
   if (IsEnterprise) then begin
     SpecialMenu("Создать график проекта",' ',7,"CreatePRScheduleFromPRD");
     SpecialMenu("Открыть график проекта",' ',8,"OpenPRSchedulePRD");

@@ -129,11 +129,13 @@ begin
 
   SetWRect(20,80,600,390);
   
-  EditField(100,vm=(v=6), 82,"Номер",Normal,SerNr,false,0);
-  EditField(300,v,100,"Проект",Normal,PRCode,false,PRSClass);
-  EditField(-100,v,-50,"Дата",Normal,TransDate,false,PasteCurDate);
-  EditField(100,v+=20,-210,"Номер акта",Normal,ADJNum,false,0);
-  EditField(h=100,v+=20,-210,"Комментарий",Normal,Comment,false,0);
+  EditField(120,vm=(v=6), 80,"Номер",Normal,SerNr,false,0);
+  EditField(320,v,80,"Проект",Normal,PRCode,false,PRSClass);
+  EditField(120,v+=20,80,"Дата",Normal,TransDate,false,PasteCurDate);
+  EditField(320,v,200,"Название проекта",Normal,PRName,false,PRSClass);
+  EditField(120,v+=20,510,"Номер акта",Normal,ADJNum,false,0);
+  EditField(h=120,v+=20,510,"Комментарий",Normal,Comment,false,0);
+  EditField(h,v+=30,70,"Сумма",Normal,Sum,false,0);
   
   EndWindow;
 end;
@@ -148,8 +150,9 @@ begin
   UseView(ADJVc);
   RecordList(4,17,-21,-39);
   RlColKey(4,1, "Номер",SerNr,false,SerNr);
-  RlColKey(75,75, "Проект",PRCode,false,PRCode);
-  RlColKey(150,150,"Дата",TransDate,false,TransDate);
+  RlColKey(75,75,"Дата",TransDate,false,TransDate);
+  RlColKey(160,160, "Проект",PRCode,false,PRCode);
+  RlColKey(260,260, "Название проекта",PRName,false,PRName);
   RlColKey(-120,-120,"Сума",Sum,false,Sum);
   
   SearchField("Найти");
@@ -174,11 +177,13 @@ begin
 
   SetWRect(20,80,600,390);
   
-  EditField(100,vm=(v=6), 82,"Номер",Normal,SerNr,false,0);
-  EditField(300,v,100,"Проект",Normal,PRCode,false,PRSClass);
-  EditField(-100,v,-50,"Дата",Normal,TransDate,false,PasteCurDate);
-  EditField(100,v+=20,-210,"Номер соглашения",Normal,SANum,false,0);
-  EditField(h=100,v+=20,-210,"Комментарий",Normal,Comment,false,0);
+  EditField(120,vm=(v=6), 80,"Номер",Normal,SerNr,false,0);
+  EditField(320,v,80,"Проект",Normal,PRCode,false,PRSClass);
+  EditField(120,v+=20,80,"Дата",Normal,TransDate,false,PasteCurDate);
+  EditField(320,v,200,"Название проекта",Normal,PRName,false,PRSClass);
+  EditField(120,v+=20,510,"Номер соглашения",Normal,SANum,false,0);
+  EditField(h=120,v+=20,510,"Комментарий",Normal,Comment,false,0);
+  EditField(h,v+=30,70,"Сумма",Normal,Sum,false,0);
     
   EndWindow;
 end;
@@ -193,13 +198,110 @@ begin
   UseView(SAVc);
   RecordList(4,17,-21,-39);
   RlColKey(4,1, "Номер",SerNr,false,SerNr);
-  RlColKey(75,75, "Проект",PRCode,false,PRCode);
-  RlColKey(150,150,"Дата",TransDate,false,TransDate);
-  RlColKey(-100,-100,"Сума",Sum,false,Sum);
+  RlColKey(75,75,"Дата",TransDate,false,TransDate);
+  RlColKey(160,160, "Проект",PRCode,false,PRCode);
+  RlColKey(260,260, "Название проекта",PRName,false,PRName);
+  RlColKey(-120,-120,"Сума",Sum,false,Sum);;
   
   SearchField("Найти");
 	if (HasLimitedAccess) then begin 
   BrowseSubsetButton(-40,-15);
   end;
   EndWindow;
-end;//Edit by Victor 12.09.14 }
+end;
+
+window SAVIDClass:2
+  wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","*")
+begin
+  real h,h2,v,vs,vm;
+  string 255 label;
+  
+  WindowBegin("Дополнительное соглашение",SAVIDClass,CGview,-);
+  UseView(SAVIVc);
+//  FormName(SAVIForm);
+  Sizeable(-1,-1,0,0);
+
+  SetWRect(20,80,600,390);
+  
+  EditField(120,vm=(v=6), 80,"Номер",Normal,SerNr,false,0);
+  EditField(320,v,80,"Проект",Normal,PRCode,false,PRSClass);
+  EditField(120,v+=20,80,"Дата",Normal,TransDate,false,PasteCurDate);
+  EditField(320,v,200,"Название проекта",Normal,PRName,false,PRSClass);
+  EditField(120,v+=20,510,"Номер соглашения",Normal,SANum,false,0);
+  EditField(h=120,v+=20,510,"Комментарий",Normal,Comment,false,0);
+  EditField(h,v+=30,70,"Сумма",Normal,Sum,false,0);
+    
+  EndWindow;
+end;
+
+window SAVILClass:2
+  wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer,android,iPad,iPhone")
+begin
+  WindowBegin("Дополнительные соглашения",SAVILClass,CGmlist,-);
+  SetWRect(20,80,850,298); 
+  SpawnClass(SAVIDClass);
+  Sizeable(-1,-1,0,0);
+  UseView(SAVc);
+  RecordList(4,17,-21,-39);
+  RlColKey(4,1, "Номер",SerNr,false,SerNr);
+  RlColKey(75,75,"Дата",TransDate,false,TransDate);
+  RlColKey(160,160, "Проект",PRCode,false,PRCode);
+  RlColKey(260,260, "Название проекта",PRName,false,PRName);
+  RlColKey(-120,-120,"Сума",Sum,false,Sum);;
+  
+  SearchField("Найти");
+	if (HasLimitedAccess) then begin 
+  BrowseSubsetButton(-40,-15);
+  end;
+  EndWindow;
+end;
+
+window ADJVIDClass:2
+	wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","*")
+begin
+  real h,h2,v,vs,vm;
+  string 255 label;
+  
+  WindowBegin("Акт выполеных работ с подрядчиком",ADJVIDClass,CGview,-);
+  UseView(ADJVIVc);
+//  FormName(ADJVIForm);
+  Sizeable(-1,-1,0,0);
+
+  SetWRect(20,80,600,390);
+  
+  EditField(120,vm=(v=6), 80,"Номер",Normal,SerNr,false,0);
+  EditField(320,v,80,"Проект",Normal,PRCode,false,PRSClass);
+  EditField(120,v+=20,80,"Дата",Normal,TransDate,false,PasteCurDate);
+  EditField(320,v,200,"Название проекта",Normal,PRName,false,PRSClass);
+  EditField(120,v+=20,510,"Номер акта",Normal,ADJNum,false,0);
+  EditField(h=120,v+=20,510,"Комментарий",Normal,Comment,false,0);
+  EditField(h,v+=30,70,"Сумма",Normal,Sum,false,0);
+  
+  EndWindow;
+end;
+
+window ADJVILClass:2
+  wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer,android,iPad,iPhone")
+begin
+  WindowBegin("Акты выполненых работ с подрядчиками",ADJVILClass,CGmlist,-);
+  SetWRect(20,80,850,298); 
+  SpawnClass(ADJVIDClass);
+  Sizeable(-1,-1,0,0);
+  UseView(ADJVc);
+  RecordList(4,17,-21,-39);
+  RlColKey(4,1, "Номер",SerNr,false,SerNr);
+  RlColKey(75,75,"Дата",TransDate,false,TransDate);
+  RlColKey(160,160, "Проект",PRCode,false,PRCode);
+  RlColKey(260,260, "Название проекта",PRName,false,PRName);
+  RlColKey(-120,-120,"Сума",Sum,false,Sum);
+  
+  SearchField("Найти");
+ 	
+ 	if (HasLimitedAccess) then begin 
+  BrowseSubsetButton(-40,-15);
+  end;
+  
+  EndWindow;
+end;
+
+//Edit by Victor 12.09.14 }
