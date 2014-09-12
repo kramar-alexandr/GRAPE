@@ -1125,7 +1125,7 @@ begin
   RecordField(AddDoc2Nr,M4Str,60,0); //Edit***************************Sasha2,17:26 09.09.2014
   RecordField(AddDoc2Date,M4Date,0,0); //Edit***************************Sasha2,17:27 09.09.2014
   RecordField(AddDoc2Sum,M4Val,0,0); //Edit***************************Sasha2,17:28 09.09.2014
-  RecordField(Scale,M4Str,60,0); //Edit***************************Sasha2,16:49 11.09.2014
+  RecordField(Scope,M4Str,60,0); //Edit***************************Sasha2,16:49 11.09.2014
   ArrayBegin(Math,-,1);
   ArrayField(PlanDate,M4Date,0,0);
   ArrayField(InvNr,M4Long,0,IVVc);
