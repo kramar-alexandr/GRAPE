@@ -8,7 +8,7 @@ begin
   Report("Информация о проекте",ProjectInfoRClass,ProjectInfoRn,0,modTS);
 
     Setting("Масштабы проектов",ProjScaleTClass,modTS); //Edit***************************Sasha2,17:26 11.09.2014
-  
+    Setting("Шаблоны для бюджетов проектов",TemplateTBBULClass,modTS); //Edit***************************Sasha2,11:49 12.09.2014
   
   StrSetBegin(3); /* Try to keep them in alphabetical order */
   StrSetText(AllowAddingINtoRet,"Добавлять товары в возвраты");

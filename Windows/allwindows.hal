@@ -4019,7 +4019,7 @@ begin
     //RlColKey(94,94,"Comment",Header,false,PRComment);
   end else begin
   SetWRect(20,80,600,390);
-  Tile(0,74,false,"",Code);
+  Tile(0,100,false,"",Code); //Edit***************************Sasha2,17:06 11.09.2014      height = 74
   EditField(h=80,v=6,120,"Проект",St_i,Code,false,TSerSClass);
   if (IsEnterprise) then begin
     EditField(300,v,-210,"Старший",Normal,MotherCode,false,PRSClass);
@@ -4029,6 +4029,7 @@ begin
   if (IsEnterprise) then begin
     EditField(-100,v,-40,"Этап",Normal,PRStage,false,PRStageSClass);
   end;
+  EditField(-100,v+=20,-40,"Масштаб",Normal,Scope,false,ProjScopeSClass); //Edit***************************Sasha2,16:52 11.09.2014
   tilenr = 1;
   TileButton(tilenr,"Условия"); tilenr = tilenr + 1;
   TileButton(tilenr,"Члены"); tilenr = tilenr + 1;

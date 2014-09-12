@@ -1262,13 +1262,29 @@ begin
   KeySegment(Code);
   EndRecord;
   
-  BlockBegin(ProjScaleBlock,-,""); //Edit***************************Sasha2,17:27 11.09.2014 {
+  BlockBegin(ProjScopeBlock,-,""); //Edit***************************Sasha2,17:27 11.09.2014 {
 	RecordField(Math,M4Matrix,0,0);
 	ArrayBegin(Math,-,1);
 	ArrayField(Code,M4Code,20,0);
 	ArrayField(Name,M4Str,200,0);
 	EndArray;
   EndBlock; //Edit***************************Sasha2,17:27 11.09.2014 }
+  
+  RecordBegin(TemplateTBBUVc,-,""); //Edit***************************Sasha2,11:25 12.09.2014 {
+  RecordField(PRCLass,M4Code,20,0);
+  RecordField(Scope,M4Str,60,0);
+  RecordField(Math,M4Matrix,0,0);
+  ArrayBegin(Math,-,1);
+  ArrayField(ArtCode,M4Code,20,INVc);
+  ArrayField(Spec,M4Str,100,0);
+  ArrayField(Qty,M4UVal,0,0);
+  ArrayField(Comment,M4Str,60,0); 
+  ArrayField(stp,M4Int,0,0);
+  EndArray;
+  MainKeyBegin(MainKey,1);
+  KeySegment(PRCLass);
+  KeySegment(Scope);
+  EndRecord; //Edit***************************Sasha2,11:25 12.09.2014 }
 
    RecordBegin(ADJVc,-,"adj"); //Acts of Done Jobs		*** Edit by Victor 12.09.14
   RecordField(SerNr,M4Long,0,0);               

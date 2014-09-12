@@ -1,0 +1,1 @@
+external procedure PasteFromSysList(Integer,Integer);globalfunction Boolean ProjScopeSClassOnOKWindow(Integer wn)begin  PasteFromSysList(wn,-2);  ProjScopeSClassOnOKWindow = false;  return;end;
