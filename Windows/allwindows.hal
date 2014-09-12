@@ -4027,7 +4027,7 @@ begin
   EditField(-100,v,-40,"Тип",Normal,PRClass,false,PRClassSClass);
   EditField(h,v+=20,-210,"Описание",Normal,Name,false,0);
   if (IsEnterprise) then begin
-    EditField(-100,v,-40,"Этап",Normal,PRStage,false,PRStageSClass);
+    //EditField(-100,v,-40,"Этап",Normal,PRStage,false,PRStageSClass);
   end;
   EditField(-100,v+=20,-40,"Масштаб",Normal,Scope,false,ProjScopeSClass); //Edit***************************Sasha2,16:52 11.09.2014
   tilenr = 1;
