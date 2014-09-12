@@ -5,7 +5,8 @@ begin
 	SetLangMode(LangRussian,"RUS",0);
 	
 	Report("Журнал платежей по проектам",ProjectPayPlanRClass,ProjectPayPlanRn,0,modTS);
-  
+  Report("Информация о проекте",ProjectInfoRClass,ProjectInfoRn,0,modTS);
+
     Setting("Масштабы проектов",ProjScaleTClass,modTS); //Edit***************************Sasha2,17:26 11.09.2014
   
   
