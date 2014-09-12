@@ -119,6 +119,7 @@ BEGIN
     PRp.Email = CUr.eMail;
     PRp.LangCode = CUr.LangCode;
     PRp.PrSalesMan = CUr.SalesMan;
+    PRp.PayMode = CUr.PayMode;// Edit ************************** Friday, 12 September 2014 16:14:14
     if (nonblank(CUr.CurncyCode)) then begin
       PRp.CurncyCode = CUr.CurncyCode;
     end;
