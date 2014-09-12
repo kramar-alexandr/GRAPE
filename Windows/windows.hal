@@ -67,7 +67,7 @@ begin
   Sizeable(-1,-1,0,0);
   UseView(TemplateTBBUVc);
   RecordList(4,17,-21,-39);
-  RlColKey(4,4,"Тип проекта",PRClass,false,MainKey);
+  RlColKey(4,4,"Тип проекта",PRCLass,false,MainKey);
   RlCol(100,100,"Масштаб",Scope,false);
   SearchField("Пошук");
   if (HasLimitedAccess) then begin 
@@ -89,7 +89,7 @@ begin
 
   vs=20; h=110; h2=260; h1=50;
 
-  EditField(h,v=10,80, "Тип проекта",Normal,PRClass,false,PRClassSClass);
+  EditField(h,v=10,80, "Тип проекта",Normal,PRCLass,false,PRClassSClass);
   EditField(h,v+=vs,80, "Масштаб проекта",Normal,Scope,false,ProjScopeSClass);
   //EnterSkip(Math);
   v=6; h = 20;
@@ -216,7 +216,7 @@ begin
   real h,h2,v,vs,vm;
   string 255 label;
   
-  WindowBegin("Дополнительное соглашение",SAVIDClass,CGview,-);
+  WindowBegin("Дополнительное соглашение с подрядчиком",SAVIDClass,CGview,-);
   UseView(SAVIVc);
 //  FormName(SAVIForm);
   Sizeable(-1,-1,0,0);
@@ -237,11 +237,11 @@ end;
 window SAVILClass:2
   wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer,android,iPad,iPhone")
 begin
-  WindowBegin("Дополнительные соглашения",SAVILClass,CGmlist,-);
+  WindowBegin("Дополнительные соглашения с подрядчиками",SAVILClass,CGmlist,-);
   SetWRect(20,80,850,298); 
   SpawnClass(SAVIDClass);
   Sizeable(-1,-1,0,0);
-  UseView(SAVc);
+  UseView(SAVIVc);
   RecordList(4,17,-21,-39);
   RlColKey(4,1, "Номер",SerNr,false,SerNr);
   RlColKey(75,75,"Дата",TransDate,false,TransDate);
@@ -287,7 +287,7 @@ begin
   SetWRect(20,80,850,298); 
   SpawnClass(ADJVIDClass);
   Sizeable(-1,-1,0,0);
-  UseView(ADJVc);
+  UseView(ADJVIVc);
   RecordList(4,17,-21,-39);
   RlColKey(4,1, "Номер",SerNr,false,SerNr);
   RlColKey(75,75,"Дата",TransDate,false,TransDate);
@@ -302,6 +302,4 @@ begin
   end;
   
   EndWindow;
-end;
-
-//Edit by Victor 12.09.14 }
+end;//******************* Edit by Victor 12.09.14 }

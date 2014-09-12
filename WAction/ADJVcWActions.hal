@@ -1,0 +1,41 @@
+
+global
+function Integer PastePRInADJ(record PRVc PRr,var record ADJVc ADJr)
+begin
+  Integer err;
+  string 255 warntext;
+
+  ADJr.PRCode = PRr.Code;
+  if (ReadFirstMain(ADJr,1,true)==false) then begin
+    RecordNew(ADJr);
+    ADJr.TransDate = CurrentDate;
+    ADJr.PRCode = PRr.Code;
+    ADJr.PRName = PRr.Name;  
+    ADJr.CustCode = PRr.CustCode;
+    err = 0;
+  end;
+  return;
+end;
+
+
+global
+procedure AddADJtoPRDsm()
+BEGIN
+  record PRVc PRr;
+  Integer wn,err;
+  record ADJVc ADJr;
+  
+  wn = CurWindow;
+  GetWindowRecord(wn,PRr);
+  DeselectWindow(wn,false);
+  if (WindowState(wn)==0) then begin//Rs_normal
+    err = PastePRInADJ(PRr,ADJr);
+    switch (err) begin
+      case 0:
+        wn = OpenWindow("ADJDClass",1,0,"","",ADJr);      
+      otherwise
+        MessageBox(err,"");
+    end;
+  end;
+  RETURN;
+END;
