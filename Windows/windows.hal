@@ -26,7 +26,7 @@ window ProjScopeTClass:1 //Edit***************************Sasha2,17:28 11.09.201
 begin
   real h,v,vs,f;
  WindowBegin("Масштабы проектов",ProjScopeTClass,CGHbl,-);
-  SetBlid(ProjScaleBlock);
+  SetBlid(ProjScopeBlock);
   SetWRect(64,80,500,400);
     MatrixBegin(5,27,-50,-20,-,99);
     MatCol(1,24,"Код",0,Code,false,0);
