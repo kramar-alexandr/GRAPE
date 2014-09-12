@@ -6,8 +6,17 @@ begin
 	record PRVc PRr;
 	record TBBUVc TBBUr;
 	record VIVc VIr;
+	record IVVc IVr;
+	record IPrsVc IPrsr;
+	record OPrsVc OPrsr;
+	record IPVc IPr;
+	row IPVc IPrw;
+	record OPVc OPr;
+	row OPVc OPrw;
 	val VIrashod,VIsum,VIvat,dohod,budj,budjsum,budjVAT;
-	Boolean TrHs;
+	val totdeb,totcl,totcred,totsup;
+	Boolean TrHs,TrHs2,testf,oncef;
+	integer mtrw,i;
 	
 	startreportnoheaderjob("Информация о проекте");
 	startformat(15);
@@ -17,7 +26,7 @@ begin
 		outstring(120,0,"Валюта",false);
 		outstring(150,0,"Утв. бюджет",false);
 		outstring(195,0,"Сумма без НДС",false);
-		outstring(245,0,"НДС",false);
+		outstring(250,0,"НДС",false);
 		outstring(280,0,"Расход",false);
 		outstring(315,0,"Сумма без НДС",false);
 		outstring(365,0,"НДС",false);
@@ -51,11 +60,11 @@ begin
 			end;
 		end;
 	end;
-	RESETLOOP(VIr);
 	VIsum = VIrashod - VIvat;
 	dohod = budj - VIrashod;
+	ResetLoop(VIr);
 	startformat(15);
-		outstring(0,0,PRr.Code,false);
+		outstring(0,"DblPRVc",PRr.Code,false);
 		outstring(50,0,PRr.Name,false);
 		outstring(85,0,PRr.PRClass,false);
 		outstring(120,0,PRr.CurncyCode,false);
@@ -73,17 +82,166 @@ begin
 		outstring(0,0,"",false);
 		outstring(50,0,"Оплата от клиента",false);
 	endformat;
+	Gray_Divider(45,115);
 	startformat(15);
 		outstring(0,0,"",false);
 		outstring(50,0,"",false);
 		outstring(85,0,"Клиент",false);
-		outstring(120,0,"",false);
-		outstring(130,0,"Номер сч/ф",false);
-		outstring(175,0,"Дебиторская задолженость",false);
-		outstring(270,0,"Оплата",false);
+		outstring(135,0,"№ сч/ф",false);
+		outstring(165,0,"Дебиторская задолженость",false);
+		outstring(265,0,"Оплата",false);
 		outstring(300,0,"Планируемая дата",false);
 		outstring(365,0,"Фактическая дата",false);
 		outstring(430,0,"Форма оплаты",false);
+	endformat;
+	Gray_Divider(0,1);
+	IVr.PRCode = PRr.Code;
+	TrHs = true;
+	while (loopkey("PRCodePayDate",IVr,1,TrHs)) begin
+		if (IVr.PRCode != PRr.Code) then begin TrHs = false; end;
+		if (TrHs) then begin
+			startformat(15);
+				outstring(0,0,"",false);
+				outstring(50,0,"",false);
+				outstring(85,"DblCUVc",IVr.CustCode,false);
+				outstring(135,"DblIVVc",IVr.SerNr,false);
+				outstring(165,0,IVr.Sum4,false);
+			totdeb = totdeb + IVr.Sum4;
+			IPrsr.IVNr = IVr.SerNr;
+			IPrsr.TransType = 1;
+			TrHs2 = true;
+			while (loopkey("IVKey",IPrsr,2,TrHs2)) begin
+				testf = true;
+				if(IPrsr.IVNr!=IVr.SerNr)then begin testf = false; TrHs2 = false; end;
+				if(IPrsr.TransType!=1)then begin testf = false; TrHs2 = false; end;
+				if(testf)then begin
+					IPr.SerNr = IPrsr.TransNr;
+					oncef = true;
+					if(readfirstmain(IPr,1,true))then begin
+						mtrw = matrowcnt(IPr);
+						For(i=0;i<mtrw;i=i+1) begin
+							matrowget(IPr,i,IPrw);
+							if(IPrw.InvoiceNr==IPrsr.IVNr and IPrw.PayDate==IPrsr.TransDate)then begin
+								if (oncef) then begin startformat(15); end;
+									outstring(265,0,IPrw.RecVal,false);
+								totcl = totcl + IPrw.RecVal;
+									outstring(300,0,IVr.PayDate,false);
+									outstring(365,0,IPrw.PayDate,false);
+									outstring(430,0,"ФО",false);
+								oncef = false;
+								endformat;
+							end;
+						end; 							
+					end;
+				end;
+			end;
+			if (!oncef) then begin endformat; end;
+			ResetLoop(IPrsr);
+		end;
+	end;
+	ResetLoop(IVr);
+	Gray_Divider(0,1);
+	startformat(15);
+		outstring(0,0,"Итого:",false);
+		outstring(50,0,"",false);
+		outstring(85,0,"",false);
+		outstring(135,0,"",false);
+		outstring(165,0,totdeb,false);
+		outstring(265,0,totcl,false);
+	endformat;
+	Black_Divider(0,1);
+	startformat(15);
+		outstring(0,0,"",false);
+		outstring(50,0,"Оплата подрядчикам",false);
+	endformat;
+	Gray_Divider(45,125);
+	startformat(15);
+		outstring(0,0,"",false);
+		outstring(50,0,"",false);
+		outstring(85,0,"Подрядчик",false);
+		outstring(135,0,"№ сч/ф",false);
+		outstring(165,0,"Кредиторская задолженость",false);
+		outstring(265,0,"Оплата",false);
+		outstring(300,0,"Планируемая дата",false);
+		outstring(365,0,"Фактическая дата",false);
+		outstring(430,0,"Форма оплаты",false);
+	endformat;
+	Gray_Divider(0,1);
+	VIr.PRCode = PRr.Code;
+	TrHs = true;
+	while (loopkey("PRCodeDueDate",VIr,1,TrHs)) begin
+		if (VIr.PRCode != PRr.Code) then begin TrHs = false; end;
+		if (TrHs) then begin
+			startformat(15);
+				outstring(0,0,"",false);
+				outstring(50,0,"",false);
+				outstring(85,"DblCUVc",VIr.VECode,false);
+				outstring(135,"DblVIVc",VIr.SerNr,false);
+				outstring(165,0,VIr.PayVal,false);
+			totcred = totcred + VIr.PayVal;
+			OPrsr.VINr = VIr.SerNr;
+			OPrsr.TransType = 1;
+			TrHs2 = true;
+			while (loopkey("VIKey",OPrsr,2,TrHs2)) begin
+				testf = true;
+				if(OPrsr.VINr!=VIr.SerNr)then begin testf = false; TrHs2 = false; end;
+				if(OPrsr.TransType!=1)then begin testf = false; TrHs2 = false; end;
+				if(testf)then begin
+					OPr.SerNr = OPrsr.TransNr;
+					oncef = true;
+					if(readfirstmain(OPr,1,true))then begin
+						mtrw = matrowcnt(OPr);
+						For(i=0;i<mtrw;i=i+1) begin
+							matrowget(OPr,i,OPrw);
+							if(OPrw.VISerNr==OPrsr.VINr and OPr.RegDate==OPrsr.TransDate)then begin
+								if (oncef) then begin startformat(15); end;
+									outstring(265,0,OPrw.RecVal,false);
+								totsup = totsup + OPrw.RecVal;
+									outstring(300,0,VIr.DueDate,false);
+									outstring(365,0,OPr.RegDate,false);
+									outstring(430,0,"ФО",false);
+								oncef = false;
+								endformat;
+							end;
+						end; 							
+					end;
+				end;
+			end;
+			if (!oncef) then begin endformat; end;
+			resetloop(OPrsr);
+		end;
+	end;
+	ResetLoop(VIr);
+
+	Black_Divider(0,1);
+	startformat(15);
+		outstring(0,0,"",false);
+		outstring(50,0,"Документы от клиента",false);
+	endformat;
+	Gray_Divider(45,130);
+	startformat(15);
+		outstring(0,0,"",false);
+		outstring(30,0,"Клиент",false);
+		outstring(85,0,"Документ",false);
+		outstring(135,0,"№ док.",false);
+		outstring(165,0,"Дата",false);
+		outstring(265,0,"Сумма",false);
+	endformat;
+	Gray_Divider(0,1);
+
+	Black_Divider(0,1);
+	startformat(15);
+		outstring(0,0,"",false);
+		outstring(50,0,"Документы от подрядчика",false);
+	endformat;
+	Gray_Divider(45,140);
+	startformat(15);
+		outstring(0,0,"",false);
+		outstring(30,0,"Подрядчик",false);
+		outstring(85,0,"Документ",false);
+		outstring(135,0,"№ док.",false);
+		outstring(165,0,"Дата",false);
+		outstring(265,0,"Сумма",false);
 	endformat;
 	Gray_Divider(0,1);
 
