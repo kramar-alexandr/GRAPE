@@ -32,7 +32,7 @@ BEGIN
   LongInt res;
      
   ADJr.SerNr = -1;
-  ADJr.ADJDate = currentdate;
+  ADJr.TransDate = currentdate;
      
   ADJVcRecordDefaults = res; 
   RETURN;
@@ -44,7 +44,7 @@ BEGIN
   LongInt res;
 	
   ADJr.SerNr = -1;
-  ADJr.ADJDate = currentdate;
+  ADJr.TransDate = currentdate;
     
   ADJVcRecordDuplicate = res; 
   RETURN;

@@ -131,7 +131,7 @@ begin
   
   EditField(100,vm=(v=6), 82,"Номер",Normal,SerNr,false,0);
   EditField(300,v,100,"Проект",Normal,PRCode,false,PRSClass);
-  EditField(-100,v,-50,"Дата",Normal,ADJDate,false,PasteCurDate);
+  EditField(-100,v,-50,"Дата",Normal,TransDate,false,PasteCurDate);
   EditField(100,v+=20,-210,"Номер акта",Normal,ADJNum,false,0);
   EditField(h=100,v+=20,-210,"Комментарий",Normal,Comment,false,0);
   
@@ -149,7 +149,7 @@ begin
   RecordList(4,17,-21,-39);
   RlColKey(4,1, "Номер",SerNr,false,SerNr);
   RlColKey(75,75, "Проект",PRCode,false,PRCode);
-  RlColKey(150,150,"Дата",ADJDate,false,ADJDate);
+  RlColKey(150,150,"Дата",TransDate,false,TransDate);
   RlColKey(-120,-120,"Сума",Sum,false,Sum);
   
   SearchField("Найти");
@@ -176,7 +176,7 @@ begin
   
   EditField(100,vm=(v=6), 82,"Номер",Normal,SerNr,false,0);
   EditField(300,v,100,"Проект",Normal,PRCode,false,PRSClass);
-  EditField(-100,v,-50,"Дата",Normal,SADate,false,PasteCurDate);
+  EditField(-100,v,-50,"Дата",Normal,TransDate,false,PasteCurDate);
   EditField(100,v+=20,-210,"Номер соглашения",Normal,SANum,false,0);
   EditField(h=100,v+=20,-210,"Комментарий",Normal,Comment,false,0);
     
@@ -194,7 +194,7 @@ begin
   RecordList(4,17,-21,-39);
   RlColKey(4,1, "Номер",SerNr,false,SerNr);
   RlColKey(75,75, "Проект",PRCode,false,PRCode);
-  RlColKey(150,150,"Дата",SADate,false,SADate);
+  RlColKey(150,150,"Дата",TransDate,false,TransDate);
   RlColKey(-100,-100,"Сума",Sum,false,Sum);
   
   SearchField("Найти");
