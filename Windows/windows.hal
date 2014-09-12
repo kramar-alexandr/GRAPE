@@ -20,6 +20,16 @@ begin
   EndWindow;
 end;
 
+window ProjectInfoRClass:2
+  wtag("language","RUS"), wtag("product","*"), wtag("device","computer")
+begin
+  WindowBegin("Выберите проект для вывода информации",ProjectPayPlanRClass,CGRcW,RcType);
+  SetWRect(20,80,400,270);
+  EditField(120,20,120,"Проект",Normal,f1,false,PRSClass);
+
+  EndWindow;
+end;
+
 window ADJDClass:2
   wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","*")
 begin
