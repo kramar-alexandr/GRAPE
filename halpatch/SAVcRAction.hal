@@ -1,0 +1,153 @@
+external procedure ExtractObj(string,var Integer,var string);
+
+SetLangMode(LangRussian,"RUS",0); 
+
+global updating
+function LongInt SAVcRecordDefaults(var record SAVc SAr,record SAVc SA2r,LongInt stat,LongInt long4)
+BEGIN
+  LongInt res;
+     
+  SAr.SerNr = -1;
+  SAr.TransDate = currentdate;
+     
+  SAVcRecordDefaults = res; 
+  RETURN;
+END;
+
+global
+function LongInt SAVcRecordDuplicate(var record SAVc SAr,record SAVc SA2r,LongInt stat,LongInt long4)
+BEGIN
+  LongInt res;
+	
+  SAr.SerNr = -1;
+  SAr.TransDate = currentdate;
+    
+  SAVcRecordDuplicate = res; 
+  RETURN;
+END;
+
+global
+updating function LongInt SAVcRecordSave(var record SAVc SAr,record SAVc SA2r,LongInt stat,LongInt long4)
+begin
+  LongInt res;
+  
+  SAVcRecordSave = res; 
+  return;
+end;
+
+global
+function LongInt SAVcRecordUpdate(var record SAVc SAr,record SAVc SA2r,LongInt stat,LongInt long4)
+BEGIN
+  LongInt res;
+	
+
+  SAVcRecordUpdate = res; 
+  RETURN;
+END;
+
+
+global
+function LongInt SAVcRecordCheck(var record SAVc SAr,record SAVc SA2r,LongInt stat,LongInt long4)
+BEGIN 
+	LongInt res;
+	record CUVc CUr;
+	record PRVc PRr;
+	record IVVc IVr;
+	string 255 serNum, invNum,tmpCust;
+	integer insertmode,updatemode, pos, i;
+	record SysFormatBlock SysFormatRec;
+	record LocalMachineVc LMr;
+	record LocationVc Locr;
+	record UserVc Userr;
+  
+  BlockLoad(SysFormatRec);
+  res = 0;
+  insertmode = 1;
+  updatemode = 2;
+  invNum = "";
+  pos = 0;
+  i = 0;
+  tmpCust = "";
+  
+  if(SAr.SerNr==-1)then begin
+  	SAr.SerNr = NextSerNr("SAVc",SAr.TransDate,-1,false,"");
+  end;
+  
+  if (blank(SAr.SerNr)) then begin
+  	RecordCheckError(1058,SAr.SerNr,-1,"SerNr");      
+    res = -1; 
+    goto LSAVcRecordCheck;
+  end;
+ 
+  if (blank(SAr.PRCode)) then begin
+    RecordCheckError(1058,SAr.PRCode,-1,"PRCode");      
+    res = -1; 
+    goto LSAVcRecordCheck;
+  end else begin
+  	PRr.Code = SAr.PRCode;
+  	if(ReadFirstMain(PRr,1,true)==false) then begin
+  		RecordCheckError(1058,SAr.PRCode,-1,"PRCode");
+  		res = -1; 
+	    goto LSAVcRecordCheck;
+  	end;
+  end;
+  
+  if (blank(SAr.CustCode)) then begin
+    RecordCheckError(1058,SAr.CustCode,-1,"CustCode");      
+    res = -1; 
+    goto LSAVcRecordCheck;
+  end else begin
+  	CUr.Code = SAr.CustCode;
+  	if(ReadFirstMain(CUr,1,true)==false) then begin
+  		RecordCheckError(20047,SAr.CustCode,-1,"CustCode");
+  		res = -1; 
+	    goto LSAVcRecordCheck;
+  	end;
+  end;
+  
+  if (blank(SAr.SANum)) then begin
+    RecordCheckError(1058,SAr.SANum,-1,"SANum");      
+    res = -1; 
+    goto LSAVcRecordCheck;
+  end;
+  
+  if (blank(SAr.TransDate)) then begin
+    RecordCheckError(1058,SAr.TransDate,-1,"TransDate");      
+    res = -1; 
+    goto LSAVcRecordCheck;
+  end;
+  
+LSAVcRecordCheck:;
+  SAVcRecordCheck = res;
+  RETURN;
+END;
+	
+global
+updating function LongInt SAVcRecordSaveAfter(var record SAVc SAr,record SAVc SA2r,LongInt stat,LongInt long4)
+BEGIN
+  LongInt res;
+  record PRVc PRr;
+  PRr.Code = SAr.PRCode;
+  if(readFirstMain(PRr,1,true))then begin
+		CreateRecordLink(SAr,CurrentCompany,PRr,CurrentCompany);
+		CreateRecordLink(PRr,CurrentCompany,SAr,CurrentCompany);
+  end;
+    
+  SAVcRecordSaveAfter = res;
+  RETURN;
+END;
+
+
+/*global
+updating function LongInt SAVcRecordUpdateAfter(var record SAVc SAr,record SAVc SA2r,LongInt stat,LongInt long4)
+BEGIN
+  LongInt res;
+	boolean changes;
+  
+  changes = false;
+     
+  SAVcRecordUpdateAfter = res;
+  RETURN;
+END;*/
+
+

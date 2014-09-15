@@ -1,0 +1,140 @@
+external procedure ExtractObj(string,var Integer,var string);
+
+SetLangMode(LangRussian,"RUS",0); 
+
+global updating
+function LongInt SAVIVcRecordDefaults(var record SAVIVc SAVIr,record SAVIVc SAVI2r,LongInt stat,LongInt long4)
+BEGIN
+  LongInt res;
+     
+  SAVIr.SerNr = -1;
+  SAVIr.TransDate = currentdate;
+     
+  SAVIVcRecordDefaults = res; 
+  RETURN;
+END;
+
+global
+function LongInt SAVIVcRecordDuplicate(var record SAVIVc SAVIr,record SAVIVc SAVI2r,LongInt stat,LongInt long4)
+BEGIN
+  LongInt res;
+	
+  SAVIr.SerNr = -1;
+  SAVIr.TransDate = currentdate;
+    
+  SAVIVcRecordDuplicate = res; 
+  RETURN;
+END;
+
+global
+updating function LongInt SAVIVcRecordSave(var record SAVIVc SAVIr,record SAVIVc SAVI2r,LongInt stat,LongInt long4)
+begin
+  LongInt res;
+  
+  SAVIVcRecordSave = res; 
+  return;
+end;
+
+global
+function LongInt SAVIVcRecordUpdate(var record SAVIVc SAVIr,record SAVIVc SAVI2r,LongInt stat,LongInt long4)
+BEGIN
+  LongInt res;
+	
+
+  SAVIVcRecordUpdate = res; 
+  RETURN;
+END;
+
+
+global
+function LongInt SAVIVcRecordCheck(var record SAVIVc SAVIr,record SAVIVc SAVI2r,LongInt stat,LongInt long4)
+BEGIN 
+	LongInt res;
+	record CUVc CUr;
+	record CUVc VEr;
+	record PRVc PRr;
+  
+  res = 0;
+ 
+  if(SAVIr.SerNr==-1)then begin
+  	SAVIr.SerNr = NextSerNr("SAVIVc",SAVIr.TransDate,-1,false,"");
+  end;
+  
+  if (blank(SAVIr.SerNr)) then begin
+  	RecordCheckError(1058,SAVIr.SerNr,-1,"SerNr");      
+    res = -1; 
+    goto LSAVIVcRecordCheck;
+  end;
+ 
+  if (blank(SAVIr.PRCode)) then begin
+    RecordCheckError(1058,SAVIr.PRCode,-1,"PRCode");      
+    res = -1; 
+    goto LSAVIVcRecordCheck;
+  end else begin
+  	PRr.Code = SAVIr.PRCode;
+  	if(ReadFirstMain(PRr,1,true)==false) then begin
+  		RecordCheckError(1058,SAVIr.PRCode,-1,"PRCode");
+  		res = -1; 
+	    goto LSAVIVcRecordCheck;
+  	end;
+  end;
+  
+  if (blank(SAVIr.VECode)) then begin
+    RecordCheckError(1058,SAVIr.VECode,-1,"VECode");      
+    res = -1; 
+    goto LSAVIVcRecordCheck;
+  end else begin
+  	VEr.Code = SAVIr.VECode;
+  	if(ReadFirstMain(VEr,1,true)==false) then begin
+  		RecordCheckError(20875,SAVIr.VECode,-1,"VECode");
+  		res = -1; 
+	    goto LSAVIVcRecordCheck;
+  	end;
+  end;
+  
+  if (blank(SAVIr.SANum)) then begin
+    RecordCheckError(1058,SAVIr.SANum,-1,"SANum");      
+    res = -1; 
+    goto LSAVIVcRecordCheck;
+  end;
+  
+  if (blank(SAVIr.TransDate)) then begin
+    RecordCheckError(1058,SAVIr.TransDate,-1,"TransDate");      
+    res = -1; 
+    goto LSAVIVcRecordCheck;
+  end;
+  
+LSAVIVcRecordCheck:;
+  SAVIVcRecordCheck = res;
+  RETURN;
+END;
+	
+global
+updating function LongInt SAVIVcRecordSaveAfter(var record SAVIVc SAVIr,record SAVIVc SAVI2r,LongInt stat,LongInt long4)
+BEGIN
+  LongInt res;
+  record PRVc PRr;
+  PRr.Code = SAVIr.PRCode;
+  if(readFirstMain(PRr,1,true))then begin
+		CreateRecordLink(SAVIr,CurrentCompany,PRr,CurrentCompany);
+		CreateRecordLink(PRr,CurrentCompany,SAVIr,CurrentCompany);
+  end;
+    
+  SAVIVcRecordSaveAfter = res;
+  RETURN;
+END;
+
+
+/*global
+updating function LongInt SAVIVcRecordUpdateAfter(var record SAVIVc SAVIr,record SAVIVc SAVI2r,LongInt stat,LongInt long4)
+BEGIN
+  LongInt res;
+	boolean changes;
+  
+  changes = false;
+     
+  SAVIVcRecordUpdateAfter = res;
+  RETURN;
+END;*/
+
+

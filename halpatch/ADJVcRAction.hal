@@ -2,30 +2,6 @@ external procedure ExtractObj(string,var Integer,var string);
 
 SetLangMode(LangRussian,"RUS",0); 
 
-/*global 
-function LongInt ADJVcRecordRemoveTest(var record ADJVc ADJr,record ADJVc ADJ2r,LongInt long3,LongInt long4)
-BEGIN
-  LongInt res;
-  Boolean testf;
-  record UserVc Userr;
-
-  res = 1;
-  if (testf) then begin
-    if (long3>0) then begin MessageBox(1040,""); end;
-    res = 0;
-  end;
- 
-  if(UserCanAction("AllowDeleteMarketingRecord",false)==false)then begin
-		MessageBox(1040," У Вас недостаточно прав на удаление!");
-	res = 0;
-	goto LADJVcRecordRemoveTest;
-  end;
-
-LADJVcRecordRemoveTest:;
-  ADJVcRecordRemoveTest = res; 
-  RETURN;
-END;*/
-
 global updating
 function LongInt ADJVcRecordDefaults(var record ADJVc ADJr,record ADJVc ADJ2r,LongInt stat,LongInt long4)
 BEGIN
@@ -70,11 +46,12 @@ BEGIN
 END;
 
 
-/*global
+global
 function LongInt ADJVcRecordCheck(var record ADJVc ADJr,record ADJVc ADJ2r,LongInt stat,LongInt long4)
 BEGIN 
 	LongInt res;
 	record CUVc CUr;
+	record PRVc PRr;
 	record IVVc IVr;
 	string 255 serNum, invNum,tmpCust;
 	integer insertmode,updatemode, pos, i;
@@ -96,178 +73,66 @@ BEGIN
   	ADJr.SerNr = NextSerNr("ADJVc",ADJr.TransDate,-1,false,"");
   end;
   
-
-  if(nonblank(ADJr.Phone1))then begin
-  	if(len(ADJr.Phone1)!=10)then begin
-  		RecordCheckError(31010,"",-1,"Phone1");      
-			res = -1; 
-			goto LADJVcRecordCheck;
-  	end;
+  if (blank(ADJr.SerNr)) then begin
+  	RecordCheckError(1058,ADJr.SerNr,-1,"SerNr");      
+    res = -1; 
+    goto LADJVcRecordCheck;
   end;
-  if(nonblank(ADJr.Phone2))then begin
-  	if(len(ADJr.Phone2)!=10)then begin
-  		RecordCheckError(31010,"",-1,"Phone2");      
-			res = -1; 
-			goto LADJVcRecordCheck;
-  	end;
-  end;
-  
-  if (blank(ADJr.Location)) then begin
-    RecordCheckError(1058,ADJr.Location,-1,"Location");      
+ 
+  if (blank(ADJr.PRCode)) then begin
+    RecordCheckError(1058,ADJr.PRCode,-1,"PRCode");      
     res = -1; 
     goto LADJVcRecordCheck;
   end else begin
-  	Locr.Code = ADJr.Location;
-  	if(ReadFirstMain(Locr,1,true)==false) then begin
-  		RecordCheckError(1058,ADJr.Location,-1,"Location");
+  	PRr.Code = ADJr.PRCode;
+  	if(ReadFirstMain(PRr,1,true)==false) then begin
+  		RecordCheckError(1058,ADJr.PRCode,-1,"PRCode");
   		res = -1; 
 	    goto LADJVcRecordCheck;
   	end;
   end;
   
-  if (blank(ADJr.SalesMan)) then begin
-    RecordCheckError(1058,ADJr.SalesMan,-1,"SalesMan");      
+  if (blank(ADJr.CustCode)) then begin
+    RecordCheckError(1058,ADJr.CustCode,-1,"CustCode");      
     res = -1; 
     goto LADJVcRecordCheck;
   end else begin
-  	Userr.Code = ADJr.SalesMan;
-  	if(ReadFirstMain(Userr,1,true)==false) then begin
-  		RecordCheckError(20047,ADJr.SalesMan,-1,"SalesMan");
-  		res = -1; 
-	    goto LADJVcRecordCheck;
-  	end;
-  end;
-  
-  if(ADJr.NationalityRbtn==0) then begin
-  	RecordCheckError(1058," " & USetStr(31004),-1,"NationalityRbtn");
-		res = -1; 
-		goto LADJVcRecordCheck;
-  end;
-  if(ADJr.NationalityRbtn == 3) then begin
-  	if(blank(ADJr.NationalityTxt)) then begin
-  		RecordCheckError(1058,ADJr.NationalityTxt,-1,"NationalityTxt");
-  		res = -1; 
-    	goto LADJVcRecordCheck;
-  	end;
-  end;
-  
-  if(ADJr.ReferenceRbtn==0) then begin
-		RecordCheckError(1058," " & USetStr(31008),-1,"ReferenceRbtn");
-		res = -1; 
-		goto LADJVcRecordCheck;
-  end;
-  if(ADJr.ReferenceRbtn==6) then begin
-  	if(blank(ADJr.ReferenceTxt)) then begin
-  		RecordCheckError(1058,ADJr.ReferenceTxt,-1,"ReferenceTxt");
-  		res = -1; 
-	    goto LADJVcRecordCheck;
-  	end;
-  end;
-  
-  
-  if(ADJr.CityRbtn==0) then begin
-		RecordCheckError(1058," " & USetStr(31007),-1,"CityTxt");
-		res = -1; 
-		goto LADJVcRecordCheck;
-  end;
-  if(ADJr.CityRbtn==1) then begin
-  	if(blank(ADJr.CityTxt)) then begin
-  		RecordCheckError(1058,ADJr.CityTxt,-1,"CityTxt");
-  		res = -1; 
-	    goto LADJVcRecordCheck;
-  	end;
-  end;
-   
-  if(ADJr.ResultRbtn==0) then begin
-		RecordCheckError(1058," " & USetStr(31009),-1,"ResultRbtn");
-		res = -1; 
-		goto LADJVcRecordCheck;
-  end;
-  
-  if(ADJr.Age==0) then begin
-		RecordCheckError(1058," " & USetStr(31005),-1,"Age");
-		res = -1; 
-		goto LADJVcRecordCheck;
-  end;
-  if(ADJr.Gender==0) then begin
-		RecordCheckError(1058," " & USetStr(31006),-1,"Gender");
-		res = -1; 
-		goto LADJVcRecordCheck;
-  end;
-  
-  if(ADJr.ResultRbtn==1 and blank(ADJr.ResultTxt)) then begin
-  	RecordCheckError(1058,"",-1,"ResultTxt");
-		res = -1; 
-		goto LADJVcRecordCheck;
-  end;
-  if(ADJr.ResultRbtn==2 and blank(ADJr.InvNr)) then begin
-  	RecordCheckError(1058,"",-1,"InvNr");
-		res = -1; 
-		goto LADJVcRecordCheck;
-  end;
-  
-  if(ADJr.ResultRbtn==2) then begin
-	  ExtractObj(ADJr.InvNr,pos,serNum);
-    while (nonblank(serNum)) begin
-      IVr.SerNr = serNum;
-			if(Readfirstmain(IVr,1,true)==false)then begin
-				res	= -1;
-				RecordCheckError(1451,serNum,-1,"InvNr");
-				goto LADJVcRecordCheck;		
-      end else begin
-				if(nonBlank(ADJr.CustCode))then begin
-					if(IVr.CustCode != ADJr.CustCode)then begin
-						res	= -1;
-						RecordCheckError(2130,serNum,-1,"InvNr");
-						goto LADJVcRecordCheck;		
-					end;
-				end else begin
-					if(i > 0) then begin
-						if(tmpCust != IVr.CustCode)then begin
-							res	= -1;
-							RecordCheckError(2130,serNum,-1,"InvNr");
-							goto LADJVcRecordCheck;
-						end;
-					end;
-					tmpCust = IVr.CustCode;
-					i = i + 1;
-				end;
-			end;
-      ExtractObj(ADJr.InvNr,pos,serNum);
-    end;
-  end;
-  
-  if(nonblank(ADJr.CustCode)) then begin
   	CUr.Code = ADJr.CustCode;
   	if(ReadFirstMain(CUr,1,true)==false) then begin
-  		RecordCheckError(1218,ADJr.CustCode,-1,"CustCode");
+  		RecordCheckError(20047,ADJr.CustCode,-1,"CustCode");
   		res = -1; 
 	    goto LADJVcRecordCheck;
   	end;
   end;
-   
-  if(nonblank(ADJr.LocalMachine)) then begin
-  	LMr.Code = ADJr.LocalMachine;
-  	if(ReadFirstMain(LMr,1,true)==false) then begin
-  		RecordCheckError(1770,ADJr.LocalMachine,-1,"LocalMachine");
-  		res = -1; 
-	    goto LADJVcRecordCheck;
-  	end;
+  
+  if (blank(ADJr.ADJNum)) then begin
+    RecordCheckError(1058,ADJr.ADJNum,-1,"ADJNum");      
+    res = -1; 
+    goto LADJVcRecordCheck;
   end;
- 	
+  
+  if (blank(ADJr.TransDate)) then begin
+    RecordCheckError(1058,ADJr.TransDate,-1,"TransDate");      
+    res = -1; 
+    goto LADJVcRecordCheck;
+  end;
+  
 LADJVcRecordCheck:;
   ADJVcRecordCheck = res;
   RETURN;
-END;*/
+END;
 	
 global
 updating function LongInt ADJVcRecordSaveAfter(var record ADJVc ADJr,record ADJVc ADJ2r,LongInt stat,LongInt long4)
 BEGIN
   LongInt res;
   record PRVc PRr;
-  CreateRecordLink(ADJr,CurrentCompany,PRr,CurrentCompany);
-  CreateRecordLink(PRr,CurrentCompany,ADJr,CurrentCompany);
-  
+  PRr.Code = ADJr.PRCode;
+  if(readFirstMain(PRr,1,true))then begin
+		CreateRecordLink(ADJr,CurrentCompany,PRr,CurrentCompany);
+		CreateRecordLink(PRr,CurrentCompany,ADJr,CurrentCompany);
+  end;
+    
   ADJVcRecordSaveAfter = res;
   RETURN;
 END;
@@ -277,37 +142,10 @@ END;
 updating function LongInt ADJVcRecordUpdateAfter(var record ADJVc ADJr,record ADJVc ADJ2r,LongInt stat,LongInt long4)
 BEGIN
   LongInt res;
-	record CUVc CUr;
-  boolean changes;
+	boolean changes;
   
   changes = false;
-  
-  if(nonblank(ADJr.CustCode))then begin
-		CUr.Code = ADJr.CustCode;
-		if(readfirstmain(CUr,1,true))then begin
-			if(nonblank(ADJr.Phone1) and ADJr.Phone1!=CUr.Phone)then begin
-				CUr.Phone = ADJr.Phone1;
-				changes = true;
-			end;
-			if(nonblank(ADJr.Phone2) and ADJr.Phone2!=CUr.Mobile)then begin
-				CUr.Mobile = ADJr.Phone2;
-				changes = true;
-			end;
-			if(nonblank(ADJr.eMail) and ADJr.eMail!=CUr.eMail)then begin
-				CUr.eMail = ADJr.eMail;
-				changes = true;
-			end;
-			if(nonblank(ADJr.Address) and ADJr.Address!=CUr.InvAddr0)then begin
-				CUr.InvAddr0 = ADJr.Address;
-				changes = true;
-			end;
-		end;
-	end;
-	
-	if(changes)then begin
-		recordStore(CUr,true);
-	end;
-  
+     
   ADJVcRecordUpdateAfter = res;
   RETURN;
 END;*/

@@ -1,0 +1,154 @@
+external procedure ExtractObj(string,var Integer,var string);
+
+SetLangMode(LangRussian,"RUS",0); 
+
+global updating
+function LongInt ADJVIVcRecordDefaults(var record ADJVIVc ADJVIr,record ADJVIVc ADJVI2r,LongInt stat,LongInt long4)
+BEGIN
+  LongInt res;
+     
+  ADJVIr.SerNr = -1;
+  ADJVIr.TransDate = currentdate;
+     
+  ADJVIVcRecordDefaults = res; 
+  RETURN;
+END;
+
+global
+function LongInt ADJVIVcRecordDuplicate(var record ADJVIVc ADJVIr,record ADJVIVc ADJVI2r,LongInt stat,LongInt long4)
+BEGIN
+  LongInt res;
+	
+  ADJVIr.SerNr = -1;
+  ADJVIr.TransDate = currentdate;
+    
+  ADJVIVcRecordDuplicate = res; 
+  RETURN;
+END;
+
+global
+updating function LongInt ADJVIVcRecordSave(var record ADJVIVc ADJVIr,record ADJVIVc ADJVI2r,LongInt stat,LongInt long4)
+begin
+  LongInt res;
+  
+  ADJVIVcRecordSave = res; 
+  return;
+end;
+
+global
+function LongInt ADJVIVcRecordUpdate(var record ADJVIVc ADJVIr,record ADJVIVc ADJVI2r,LongInt stat,LongInt long4)
+BEGIN
+  LongInt res;
+	
+
+  ADJVIVcRecordUpdate = res; 
+  RETURN;
+END;
+
+
+global
+function LongInt ADJVIVcRecordCheck(var record ADJVIVc ADJVIr,record ADJVIVc ADJVI2r,LongInt stat,LongInt long4)
+BEGIN 
+	LongInt res;
+	record CUVc CUr;
+	record CUVc VEr;
+	record PRVc PRr;
+	record IVVc IVr;
+	string 255 serNum, invNum,tmpCust;
+	integer insertmode,updatemode, pos, i;
+	record SysFormatBlock SysFormatRec;
+	record LocalMachineVc LMr;
+	record LocationVc Locr;
+	record UserVc Userr;
+  
+  BlockLoad(SysFormatRec);
+  res = 0;
+  insertmode = 1;
+  updatemode = 2;
+  invNum = "";
+  pos = 0;
+  i = 0;
+  tmpCust = "";
+  
+  if(ADJVIr.SerNr==-1)then begin
+  	ADJVIr.SerNr = NextSerNr("ADJVIVc",ADJVIr.TransDate,-1,false,"");
+  end;
+  
+  if (blank(ADJVIr.SerNr)) then begin
+  	RecordCheckError(1058,ADJVIr.SerNr,-1,"SerNr");      
+    res = -1; 
+    goto LADJVIVcRecordCheck;
+  end;
+ 
+  if (blank(ADJVIr.PRCode)) then begin
+    RecordCheckError(1058,ADJVIr.PRCode,-1,"PRCode");      
+    res = -1; 
+    goto LADJVIVcRecordCheck;
+  end else begin
+  	PRr.Code = ADJVIr.PRCode;
+  	if(ReadFirstMain(PRr,1,true)==false) then begin
+  		RecordCheckError(1058,ADJVIr.PRCode,-1,"PRCode");
+  		res = -1; 
+	    goto LADJVIVcRecordCheck;
+  	end;
+  end;
+  
+  if (blank(ADJVIr.VECode)) then begin
+    RecordCheckError(1058,ADJVIr.VECode,-1,"VECode");      
+    res = -1; 
+    goto LADJVIVcRecordCheck;
+  end else begin
+  	VEr.Code = ADJVIr.VECode;
+  	if(ReadFirstMain(VEr,1,true)==false) then begin
+  		RecordCheckError(20047,ADJVIr.VECode,-1,"VECode");
+  		res = -1; 
+	    goto LADJVIVcRecordCheck;
+  	end;
+  end;
+  
+  if (blank(ADJVIr.ADJNum)) then begin
+    RecordCheckError(1058,ADJVIr.ADJNum,-1,"ADJNum");      
+    res = -1; 
+    goto LADJVIVcRecordCheck;
+  end;
+  
+  if (blank(ADJVIr.TransDate)) then begin
+    RecordCheckError(1058,ADJVIr.TransDate,-1,"TransDate");      
+    res = -1; 
+    goto LADJVIVcRecordCheck;
+  end;
+  
+LADJVIVcRecordCheck:;
+  ADJVIVcRecordCheck = res;
+  RETURN;
+END;
+	
+global
+updating function LongInt ADJVIVcRecordSaveAfter(var record ADJVIVc ADJVIr,record ADJVIVc ADJVI2r,LongInt stat,LongInt long4)
+BEGIN
+  LongInt res;
+  record PRVc PRr;
+  PRr.Code = ADJVIr.PRCode;
+  if(readFirstMain(PRr,1,true))then begin
+		CreateRecordLink(ADJVIr,CurrentCompany,PRr,CurrentCompany);
+		CreateRecordLink(PRr,CurrentCompany,ADJVIr,CurrentCompany);
+  end;
+    
+  ADJVIVcRecordSaveAfter = res;
+  RETURN;
+END;
+
+
+/*global
+updating function LongInt ADJVIVcRecordUpdateAfter(var record ADJVIVc ADJVIr,record ADJVIVc ADJVI2r,LongInt stat,LongInt long4)
+BEGIN
+  LongInt res;
+	boolean changes;
+  
+  changes = false;
+     
+  ADJVIVcRecordUpdateAfter = res;
+  RETURN;
+END;*/
+
+

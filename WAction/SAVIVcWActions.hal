@@ -1,0 +1,41 @@
+
+global
+function Integer PastePRInSAVI(record PRVc PRr,var record SAVIVc SAVIr)
+begin
+  Integer err;
+  string 255 warntext;
+
+  SAVIr.PRCode = PRr.Code;
+  if (ReadFirstMain(SAVIr,1,true)==false) then begin
+    RecordNew(SAVIr);
+    SAVIr.TransDate = CurrentDate;
+    SAVIr.PRCode = PRr.Code;
+    SAVIr.PRName = PRr.Name;  
+    //SAVIr.CustCode = PRr.CustCode;
+    err = 0;
+  end;
+  return;
+end;
+
+
+global
+procedure AddSAVItoPRDsm()
+BEGIN
+  record PRVc PRr;
+  Integer wn,err;
+  record SAVIVc SAVIr;
+  
+  wn = CurWindow;
+  GetWindowRecord(wn,PRr);
+  DeselectWindow(wn,false);
+  if (WindowState(wn)==0) then begin//Rs_normal
+    err = PastePRInSAVI(PRr,SAVIr);
+    switch (err) begin
+      case 0:
+        wn = OpenWindow("SAVIDClass",1,0,"","",SAVIr);      
+      otherwise
+        MessageBox(err,"");
+    end;
+  end;
+  RETURN;
+END;

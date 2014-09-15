@@ -1,0 +1,41 @@
+
+global
+function Integer PastePRInSA(record PRVc PRr,var record SAVc SAr)
+begin
+  Integer err;
+  string 255 warntext;
+
+  SAr.PRCode = PRr.Code;
+  if (ReadFirstMain(SAr,1,true)==false) then begin
+    RecordNew(SAr);
+    SAr.TransDate = CurrentDate;
+    SAr.PRCode = PRr.Code;
+    SAr.PRName = PRr.Name;  
+    SAr.CustCode = PRr.CustCode;
+    err = 0;
+  end;
+  return;
+end;
+
+
+global
+procedure AddSAtoPRDsm()
+BEGIN
+  record PRVc PRr;
+  Integer wn,err;
+  record SAVc SAr;
+  
+  wn = CurWindow;
+  GetWindowRecord(wn,PRr);
+  DeselectWindow(wn,false);
+  if (WindowState(wn)==0) then begin//Rs_normal
+    err = PastePRInSA(PRr,SAr);
+    switch (err) begin
+      case 0:
+        wn = OpenWindow("SADClass",1,0,"","",SAr);      
+      otherwise
+        MessageBox(err,"");
+    end;
+  end;
+  RETURN;
+END;
