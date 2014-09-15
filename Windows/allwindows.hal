@@ -2837,6 +2837,7 @@ begin
   SpecialMenu("Выписать счет-фактуру за выполн. этапы",'f',6,"IVFromTBBUCompleteDsm");
     end;
   end;
+  SpecialMenu("Вставить бюджет из шаблона",'b',7,"CreateTBBUFromTemplateDsm"); //Edit***************************Sasha2,10:56 15.09.2014
 
 //      SpecialMenu("Открыть налоговую матрицу",' ',25,"OpenTaxMatrixTBBUDsm");
   EndWindow;

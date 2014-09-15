@@ -13,6 +13,11 @@ external function Boolean PasteCustInInv(var record IVVc);
 external procedure TBPRNewInvoice(var record IVVc,record PRVc);
 external procedure RemoveOldPRClassObjects(string,var string);
 external function Boolean FindCustomerRelation(string,string,var record CUVc);
+external procedure TBBUSumup(var record TBBUVc); //Edit***************************Sasha2,17:59 12.09.2014
+remote function Boolean TBBUVc_PasteArtCode(var record TBBUVc,Integer,var string); //Edit***************************Sasha2,10:01 15.09.2014
+external procedure TBBUDchrsum(var record TBBUVc,Integer,Boolean,Integer); //Edit***************************Sasha2,10:02 15.09.2014
+external procedure TBBUSumup(var record TBBUVc); //Edit***************************Sasha2,10:02 15.09.2014
+remote function Boolean TBBUVc_PasteQty(var record TBBUVc,Integer); //Edit***************************Sasha2,10:05 15.09.2014
 
 procedure GetPRClassObject(string aclass,var string tstr)
 BEGIN
@@ -419,6 +424,113 @@ BEGIN
   return;
 end;
 
+//Edit***************************Sasha2,10:16 15.09.2014 {
+procedure SubtotalTBBUCustom(integer row_i,var record TBBUVc TBBUr,string spec)
+BEGIN
+  row TBBUVc TBBUrw;
+  Integer wn,i,rwcnt,rownr,starti;
+  val pt,pt2;
+
+  rwcnt = MatRowCnt(TBBUr);
+  rownr = row_i;
+  if ((rownr==-1) or (rownr>rwcnt)) then begin
+    rownr = rwcnt;
+  end;
+  for (i=(rownr-1);i>=0;i=i-1) begin
+    MatRowGet(TBBUr,i,TBBUrw);
+    if (TBBUrw.stp!=kInvoiceRowTypeSubtotal) then begin
+      pt = pt + TBBUrw.Sum;
+      pt2 = pt2 + TBBUrw.Qty*TBBUrw.Cost;
+    end else begin
+      if (TBBUrw.Sum!=0) then begin 
+        starti = i;
+        goto LBREAK; 
+      end;      
+    end;
+  end;
+LBREAK:;  
+  ClearRow(TBBUr,TBBUrw,9);
+  TBBUrw.Spec = spec;
+  TBBUrw.Sum = pt;
+  TBBUrw.Cost = pt2;
+  MatRowInsert(TBBUr,rownr,TBBUrw);
+  if (rownr<rwcnt) then begin
+    rwcnt = MatRowCnt(TBBUr);
+    for (i=starti+1;i<rwcnt;i=i+1) begin
+      if (i!=rownr) then begin
+        MatRowGet(TBBUr,i,TBBUrw);
+        if (TBBUrw.stp==kInvoiceRowTypeSubtotal) then begin
+          TBBUrw.Sum = TBBUrw.Sum - pt;
+          TBBUrw.Cost = TBBUrw.Cost - pt2;
+          MatRowPut(TBBUr,i,TBBUrw);
+          goto LSubtotalTBBUDsm;
+        end;
+      end;
+    end;
+  end;
+LSubtotalTBBUDsm:;  
+
+  RETURN;
+END; //Edit***************************Sasha2,10:16 15.09.2014 }
+
+
+global //Edit***************************Sasha2,17:22 12.09.2014 {
+procedure CreateTBBUFromTemplate(record PRVc PRr,var record TBBUVc TBBUr)
+begin
+  record TemplateTBBUVc TempTBBUr;
+  row TemplateTBBUVc TempTBBUrw;
+  row TBBUVc TBBUrw;
+  record GeneralOptionBlock GOb;
+  integer rwcnt,i;
+  string 255 inmsg;
+  
+  TempTBBUr.PRClass = PRr.PRClass;
+  TempTBBUr.Scope = PRr.Scope;
+  if (ReadFirstMain(TempTBBUr,1,true)) then begin
+  	BlockLoad(GOb);
+  	rwcnt = MatRowCnt(TempTBBUr);
+  	for (i=0;i<rwcnt;i=i+1) begin
+  		MatRowGet(TempTBBUr,i,TempTBBUrw);
+  		switch(TempTBBUrw.stp) begin
+  		case kInvoiceRowTypeStructuredItemComponent:
+  		case 1: // Товар
+  			ClearRow(TBBUr,TBBUrw,1);
+  			TBBUrw.ArtCode = TempTBBUrw.ArtCode;
+  			MatRowPut(TBBUr,i,TBBUrw);
+  			if (TBBUVc_PasteArtCode(TBBUr,i,inmsg)) then begin
+		      TBBUDchrsum(TBBUr,i,true,GOb.UseDiscount);
+		      TBBUSumup(TBBUr);
+		    end;
+  			if (TempTBBUrw.Qty!=0) then begin
+  				MatRowGet(TBBUr,i,TBBUrw);
+  				TBBUrw.Qty = TempTBBUrw.Qty;
+  				MatRowPut(TBBUr,i,TBBUrw);
+  				if (TBBUVc_PasteQty(TBBUr,i)) then begin      
+			      TBBUDchrsum(TBBUr,i,true,GOb.UseDiscount);
+			      TBBUSumup(TBBUr);         
+			    end else begin
+			      MatRowGet(TBBUr,i,TBBUrw);
+			      if (nonblank(TBBUrw.TimeClass)) then begin
+			        TBBUDchrsum(TBBUr,i,true,GOb.UseDiscount);
+			        TBBUSumup(TBBUr);
+			      end;
+			    end;
+  			end;
+  		case 9: //Итого
+  			SubtotalTBBUCustom(i,TBBUr,TempTBBUrw.Spec);
+  		case 17: //Заголовок
+  			ClearRow(TBBUr,TBBUrw,17);
+  			TBBUrw.Spec = TempTBBUrw.Spec;
+  			MatRowPut(TBBUr,i,TBBUrw);
+  		otherwise
+  			ClearRow(TBBUr,TBBUrw,1);
+  		end;
+  	end;
+  end;
+
+  return;
+end; //Edit***************************Sasha2,17:22 12.09.2014 }
+
 global
 function Integer PastePRInTBBU(record PRVc PRr,var record TBBUVc TBBUr)
 begin
@@ -442,6 +554,7 @@ begin
     if (nonblank(TBBUr.CurncyCode)) then begin
       TBBUVc_PasteCurncyCode(TBBUr,"",true);
     end;
+    CreateTBBUFromTemplate(PRr,TBBUr); //Edit***************************Sasha2,10:34 15.09.2014
     err = 0;
   end;
   return;

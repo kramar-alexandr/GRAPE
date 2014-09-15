@@ -24,7 +24,9 @@ remote updating procedure GenProInvoices(var record RcVc,Boolean);
 external function Boolean UserCanChangePendingRecord(Integer);
 remote procedure IVVc_PasteVATCode(var record IVVc,Integer,string,var Boolean);
 remote procedure CalculateBudget(var record TBBUVc);// Edit ************************** Friday, 12 September 2014 15:34:35
+remote procedure CreateTBBUFromTemplate(record PRVc,var record TBBUVc); //Edit***************************Sasha2,11:02 15.09.2014
 
+SetLangMode(LangRussian,"RUS",0); //Edit***************************Sasha2,11:27 15.09.2014
 
 function Boolean TBBUDClassBudTypeEFAfter(Integer wn,Integer fn,Integer rownr,Integer changedf)
 begin  
@@ -870,6 +872,38 @@ begin
   TBBUDClassSpecPasteName = psname;
   return;
 end;
+
+//Edit***************************Sasha2,11:25 15.09.2014 {
+global procedure CreateTBBUFromTemplateDsm() 
+begin
+	record TBBUVc TBBUr;
+	record TemplateTBBUVc TempTBBUr;
+	record PRVc PRr;
+	Integer wn,rwcnt;
+	
+	wn = CurWindow;
+  	DeselectWindow(wn,false);
+  	GetWindowRecord(wn,TBBUr);
+  	
+  	rwcnt = MatRowCnt(TBBUr);
+  	PRr.Code = TBBUr.PRCode;
+  	if (ReadFirstMain(PRr,1,true)) then begin
+	  	TempTBBUr.PRClass = PRr.PRClass;
+	  	TempTBBUr.Scope = PRr.Scope;
+	  	if (!ReadFirstMain(TempTBBUr,1,true)) then begin
+	  		MessageBox(0,"Шаблон бюджета для проекта не существует");
+	  	end else begin
+	  		if (rwcnt>0) then begin
+  				MessageBox(0,"Удалите строки перед вставкой шаблона бюджета");
+  			end else begin
+  				CreateTBBUFromTemplate(PRr,TBBUr);
+				PutWindowRecord(wn,TBBUr);
+  			end;
+	  	end;
+  	end;
+	
+ return;
+end; //Edit***************************Sasha2,11:25 15.09.2014 }
 
 
 global procedure RecalculateTBBUDsm()
