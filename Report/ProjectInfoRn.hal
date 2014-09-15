@@ -1,7 +1,10 @@
+external procedure CurValToOtherCur(Date,string,val,string,var val,roundmode);
+
+
 SetLangMode(LangRussian,"RUS",0);
 
 
-global procedure ProjectInfoRn(record RCVc RepSpec)
+global procedure ProjectInfoRn(record RcVc RepSpec)
 begin
 	record PRVc PRr;
 	record TBBUVc TBBUr;
@@ -13,7 +16,12 @@ begin
 	row IPVc IPrw;
 	record OPVc OPr;
 	row OPVc OPrw;
+	record ADJVc ADJr;
+	record SAVc SAr;
+	record ADJVIVc ADJVIr;
+	record SAVIVc SAVIr;
 	val VIrashod,VIsum,VIvat,dohod,budj,budjsum,budjVAT;
+	val deb,cl,cred,sup;
 	val totdeb,totcl,totcred,totsup;
 	Boolean TrHs,TrHs2,testf,oncef;
 	integer mtrw,i;
@@ -54,7 +62,7 @@ begin
 		if (TrHs) then begin
 	  	VIrashod = VIrashod + VIr.PayVal;
 	  	if NonBlank(VIr.CalcVATVal) then begin
-		 	 VIvat = VIvat + VIr.CalcVATVal;
+		 		VIvat = VIvat + VIr.CalcVATVal;
 			end else begin
 				VIvat = VIvat + VIr.VATVal;
 			end;
@@ -63,6 +71,13 @@ begin
 	VIsum = VIrashod - VIvat;
 	dohod = budj - VIrashod;
 	ResetLoop(VIr);
+	if Blank(budj) then begin budj = 0; end;
+	if Blank(budjsum) then begin budjsum = 0; end;
+	if Blank(budjVAT) then begin budjVAT = 0; end;
+	if Blank(VIrashod) then begin VIrashod = 0; end;
+	if Blank(VIsum) then begin VIsum = 0; end;
+	if Blank(VIvat) then begin VIvat = 0; end;
+	if Blank(dohod) then begin dohod = 0; end;
 	startformat(15);
 		outstring(0,"DblPRVc",PRr.Code,false);
 		outstring(50,0,PRr.Name,false);
@@ -100,43 +115,47 @@ begin
 	while (loopkey("PRCodePayDate",IVr,1,TrHs)) begin
 		if (IVr.PRCode != PRr.Code) then begin TrHs = false; end;
 		if (TrHs) then begin
+			if (IVr.CurncyCode != PRr.CurncyCode) then begin
+				CurValToOtherCur(IVr.InvDate,IVr.CurncyCode,IVr.Sum4,PRr.CurncyCode,deb,DefaultCurRoundOff);
+			end else begin
+				deb = IVr.Sum4;
+			end;
+			totdeb = totdeb + deb;
 			startformat(15);
 				outstring(0,0,"",false);
 				outstring(50,0,"",false);
 				outstring(85,"DblCUVc",IVr.CustCode,false);
 				outstring(135,"DblIVVc",IVr.SerNr,false);
-				outstring(165,0,IVr.Sum4,false);
-			totdeb = totdeb + IVr.Sum4;
-			IPrsr.IVNr = IVr.SerNr;
-			IPrsr.TransType = 1;
+				outstring(165,0,deb,false);
+			IPr.SerNr = "";
 			TrHs2 = true;
-			while (loopkey("IVKey",IPrsr,2,TrHs2)) begin
-				testf = true;
-				if(IPrsr.IVNr!=IVr.SerNr)then begin testf = false; TrHs2 = false; end;
-				if(IPrsr.TransType!=1)then begin testf = false; TrHs2 = false; end;
-				if(testf)then begin
-					IPr.SerNr = IPrsr.TransNr;
-					oncef = true;
-					if(readfirstmain(IPr,1,true))then begin
-						mtrw = matrowcnt(IPr);
-						For(i=0;i<mtrw;i=i+1) begin
-							matrowget(IPr,i,IPrw);
-							if(IPrw.InvoiceNr==IPrsr.IVNr and IPrw.PayDate==IPrsr.TransDate)then begin
-								if (oncef) then begin startformat(15); end;
-									outstring(265,0,IPrw.RecVal,false);
-								totcl = totcl + IPrw.RecVal;
-									outstring(300,0,IVr.PayDate,false);
-									outstring(365,0,IPrw.PayDate,false);
-									outstring(430,0,"ФО",false);
-								oncef = false;
-								endformat;
-							end;
-						end; 							
+			oncef = false;
+			while (loopmain(IPr,1,TrHs2)) begin
+				mtrw = matrowcnt(IPr);
+				for (i=0;i<mtrw;i=i+1) begin
+					matrowget(IPr,i,IPrw);
+					if (IPrw.InvoiceNr==IVr.SerNr) then begin
+						if (IPrw.RecCurncy != PRr.CurncyCode) then begin
+							CurValToOtherCur(IPr.TransDate,IPrw.RecCurncy,IPrw.RecVal,PRr.CurncyCode,cl,DefaultCurRoundOff);
+						end else begin
+							cl = IPrw.RecVal;
+						end;
+						totcl = totcl + cl;
+						if (oncef) then begin startformat(15); end;
+							outstring(265,0,cl,false);
+							outstring(300,0,IVr.PayDate,false);
+							outstring(365,0,IPrw.PayDate,false);
+							outstring(430,0,IPr.PayMode,false);
+						oncef = true;
+						endformat;
 					end;
 				end;
 			end;
-			if (!oncef) then begin endformat; end;
-			ResetLoop(IPrsr);
+			ResetLoop(IPr);
+			if (!oncef) then begin
+				outstring(430,0,PRr.PayMode,false);
+				endformat;
+			end;
 		end;
 	end;
 	ResetLoop(IVr);
@@ -172,42 +191,47 @@ begin
 	while (loopkey("PRCodeDueDate",VIr,1,TrHs)) begin
 		if (VIr.PRCode != PRr.Code) then begin TrHs = false; end;
 		if (TrHs) then begin
+			if (VIr.CurncyCode != PRr.CurncyCode) then begin
+				CurValToOtherCur(VIr.InvDate,VIr.CurncyCode,VIr.PayVal,PRr.CurncyCode,cred,DefaultCurRoundOff);
+			end else begin
+				cred = VIr.PayVal;
+			end;
+			totcred = totcred + cred;
 			startformat(15);
 				outstring(0,0,"",false);
 				outstring(50,0,"",false);
 				outstring(85,"DblCUVc",VIr.VECode,false);
 				outstring(135,"DblVIVc",VIr.SerNr,false);
-				outstring(165,0,VIr.PayVal,false);
-			totcred = totcred + VIr.PayVal;
-			OPrsr.VINr = VIr.SerNr;
-			OPrsr.TransType = 1;
+				outstring(165,0,cred,false);
+			OPr.SerNr = "";
 			TrHs2 = true;
-			while (loopkey("VIKey",OPrsr,2,TrHs2)) begin
-				testf = true;
-				if(OPrsr.VINr!=VIr.SerNr)then begin testf = false; TrHs2 = false; end;
-				if(OPrsr.TransType!=1)then begin testf = false; TrHs2 = false; end;
-				if(testf)then begin
-					OPr.SerNr = OPrsr.TransNr;
-					oncef = true;
-					if(readfirstmain(OPr,1,true))then begin
-						mtrw = matrowcnt(OPr);
-						For(i=0;i<mtrw;i=i+1) begin
-							matrowget(OPr,i,OPrw);
-							if(OPrw.VISerNr==OPrsr.VINr and OPr.RegDate==OPrsr.TransDate)then begin
-								if (oncef) then begin startformat(15); end;
-									outstring(265,0,OPrw.RecVal,false);
-								totsup = totsup + OPrw.RecVal;
-									outstring(300,0,VIr.DueDate,false);
-									outstring(365,0,OPr.RegDate,false);
-									outstring(430,0,"ФО",false);
-								oncef = false;
-								endformat;
-							end;
-						end; 							
+			oncef = false;
+			while (loopmain(OPr,1,TrHs2)) begin
+				mtrw = matrowcnt(OPr);
+				for (i=0;i<mtrw;i=i+1) begin
+					matrowget(OPr,i,OPrw);
+					if(OPrw.VISerNr==VIr.SerNr)then begin
+						if (OPrw.RecCurncy != PRr.CurncyCode) then begin
+							CurValToOtherCur(OPr.TransDate,OPrw.RecCurncy,OPrw.RecVal,PRr.CurncyCode,sup,DefaultCurRoundOff);
+						end else begin
+							sup = OPrw.RecVal;
+						end;
+						totsup = totsup + sup;
+						if (oncef) then begin startformat(15); end;
+							outstring(265,0,sup,false);
+							outstring(300,0,VIr.DueDate,false);
+							outstring(365,0,OPr.RegDate,false);
+							outstring(430,0,OPr.PayMode,false);
+						oncef = true;
+						endformat;
 					end;
-				end;
+				end; 							
 			end;
-			if (!oncef) then begin endformat; end;
+			ResetLoop(OPr);
+			if (!oncef) then begin
+				outstring(430,0,PRr.PayMode,false);
+				endformat;
+			end;
 			resetloop(OPrsr);
 		end;
 	end;
@@ -229,14 +253,46 @@ begin
 	Gray_Divider(45,130);
 	startformat(15);
 		outstring(0,0,"",false);
-		outstring(30,0,"Клиент",false);
+		outstring(30,0,"",false);
 		outstring(85,0,"Документ",false);
 		outstring(135,0,"№ док.",false);
 		outstring(165,0,"Дата",false);
 		outstring(265,0,"Сумма",false);
 	endformat;
 	Gray_Divider(0,1);
-
+	SAr.PRCode = PRr.Code;
+	TrHs = true;
+	while (loopkey("PRCode",SAr,1,TrHs)) begin
+		if (SAr.PRCode != PRr.Code) then begin TrHs = false; end;
+		if (TrHs) then begin
+			startformat(15);
+				outstring(0,0,"",false);
+				outstring(30,0,"",false);
+				outstring(85,0,"ДС",false);
+				outstring(135,0,SAr.SerNr,false);
+				outstring(165,0,SAr.TransDate,false);
+				outstring(265,0,SAr.Sum,false);
+			endformat;
+		end;
+	end;
+	ResetLoop(SAr);
+	Gray_Divider(0,1);
+	ADJr.PRCode = PRr.Code;
+	TrHs = true;
+	while (loopkey("PRCode",ADJr,1,TrHs)) begin
+		if (ADJr.PRCode != PRr.Code) then begin TrHs = false; end;
+		if (TrHs) then begin
+			startformat(15);
+				outstring(0,0,"",false);
+				outstring(30,0,"",false);
+				outstring(85,0,"Акт",false);
+				outstring(135,0,ADJr.SerNr,false);
+				outstring(165,0,ADJr.TransDate,false);
+				outstring(265,0,ADJr.Sum,false);
+			endformat;
+		end;
+	end;
+	ResetLoop(ADJr);
 	Black_Divider(0,1);
 	startformat(15);
 		outstring(0,0,"",false);
@@ -252,6 +308,40 @@ begin
 		outstring(265,0,"Сумма",false);
 	endformat;
 	Gray_Divider(0,1);
+	SAVIr.PRCode = PRr.Code;
+	TrHs = true;
+	while (loopkey("PRCode",SAVIr,1,TrHs)) begin
+		if (SAVIr.PRCode != PRr.Code) then begin TrHs = false; end;
+		if (TrHs) then begin
+			startformat(15);
+				outstring(0,0,"",false);
+				outstring(30,0,SAVIr.VECode,false);
+				outstring(85,0,"ДС",false);
+				outstring(135,0,SAVIr.SerNr,false);
+				outstring(165,0,SAVIr.TransDate,false);
+				outstring(265,0,SAVIr.Sum,false);
+			endformat;
+		end;
+	end;
+	ResetLoop(SAVIr);
+	Gray_Divider(0,1);
+	ADJVIr.PRCode = PRr.Code;
+	TrHs = true;
+	while (loopkey("PRCode",ADJVIr,1,TrHs)) begin
+		if (ADJVIr.PRCode != PRr.Code) then begin TrHs = false; end;
+		if (TrHs) then begin
+			startformat(15);
+				outstring(0,0,"",false);
+				outstring(30,0,ADJVIr.VECode,false);
+				outstring(85,0,"Акт",false);
+				outstring(135,0,ADJVIr.SerNr,false);
+				outstring(165,0,ADJVIr.TransDate,false);
+				outstring(265,0,ADJVIr.Sum,false);
+			endformat;
+		end;
+	end;
+	ResetLoop(ADJVIr);
+	Black_Divider(0,1);
 
 	endjob;
 return;
