@@ -493,7 +493,7 @@ begin
   		MatRowGet(TempTBBUr,i,TempTBBUrw);
   		switch(TempTBBUrw.stp) begin
   		case kInvoiceRowTypeStructuredItemComponent:
-  		case 1: // ’овар
+  		case 1: // В’Г®ГўГ Г°
   			ClearRow(TBBUr,TBBUrw,1);
   			TBBUrw.ArtCode = TempTBBUrw.ArtCode;
   			MatRowPut(TBBUr,i,TBBUrw);
@@ -516,14 +516,14 @@ begin
 			      end;
 			    end;
   			end;
-  		case 9: //€того
+  		case 9: //В€ГІГ®ГЈГ®
   			SubtotalTBBUCustom(i,TBBUr,TempTBBUrw.Spec);
-  		case 17: //‡аголовок
+  		case 17: //В‡Г ГЈГ®Г«Г®ГўГ®ГЄ
   			ClearRow(TBBUr,TBBUrw,17);
   			TBBUrw.Spec = TempTBBUrw.Spec;
   			MatRowPut(TBBUr,i,TBBUrw);
   		otherwise
-  			ClearRow(TBBUr,TBBUrw,1);
+  			//ClearRow(TBBUr,TBBUrw,1);
   		end;
   	end;
   end;
