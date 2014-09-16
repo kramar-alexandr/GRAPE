@@ -443,7 +443,7 @@ BEGIN
   if (WindowState(wn)==Rs_update) then begin
     GetPrevWindowRecord(wn,TBBUr);
     if (TBBUr.ApproveFlag!=0) then begin
-      res = false;
+      //res = false;
     end;
   end;
   
@@ -455,7 +455,7 @@ BEGIN
 	  	PRr.Code = TBBUr.PRCode;
 	  	ReadFirstMain(PRr,1,true);
 	  	if (UserCanAction("AllowPutApproveFlagOnlyProjectBudget",false) and PRr.Leader==CurrentUser) then begin
-	  		//res = true;
+	  		res = true;
 	  	end;
 	  end;
   end; 
