@@ -1,19 +1,21 @@
 external procedure TBBUSumup(var record TBBUVc);
-//external procedure TBBUDchrsum(var record TBBUVc,Integer,Boolean,Integer);
+external procedure TBBUDchrsum(var record TBBUVc,Integer,Boolean,Integer);
 
 SetLangMode(LangRussian,"RUS",0);
 
 
 global procedure CalculateBudget(var record TBBUVc TBBUr)
 begin
-	integer i,rwcnt,rwnum;
+	integer i,rwcnt,rwnum,j,rwcnt2,k;
 	record PRVc PRr;
 	record TBBUVc TBBU2r;
 	row TBBUVc TBBU2rw;
+	row TBBUVc TBBU3rw;
 	row PRVc PRrw;
 	row TBBUVc TBBUrw;
 	boolean testf,TrHs;
 	val t,s;
+	boolean ident;
 	record GeneralOptionBlock GenOptRec;
 	
 	BlockLoad(GenOptRec);
@@ -38,21 +40,74 @@ begin
 				if(testf) then begin
 					TBBU2r.PRCode = PRr.Code;
 					if(readfirstmain(TBBU2r,1,true))then begin
-						logtext(0,TBBU2r.PRCode);
-						rwcnt = MatRowCnt(TBBU2r);
-						if(rwcnt>0)then begin
-							TBBUrw.stp = 17;
-							TBBUrw.Spec = TBBU2r.PRName;
-							MatRowPut(TBBUr,rwnum,TBBUrw);
-							rwnum = rwnum + 1;
-							for (i=0;i<rwcnt;i=i+1) begin
-								MatRowGet(TBBU2r,i,TBBU2rw);
-								MatRowPut(TBBUr,rwnum,TBBU2rw);	
+						if(MatRowCnt(TBBUr)==0)then begin
+							rwcnt = MatRowCnt(TBBU2r);
+							if(rwcnt>0)then begin
+								TBBUrw.stp = 18;
+								TBBUrw.Spec = TBBU2r.PRName;
+								MatRowPut(TBBUr,rwnum,TBBUrw);
 								rwnum = rwnum + 1;
+								for (i=0;i<rwcnt;i=i+1) begin
+									MatRowGet(TBBU2r,i,TBBU2rw);
+									MatRowPut(TBBUr,rwnum,TBBU2rw);	
+									TBBUDchrsum(TBBUr,rwnum,true,GenOptRec.UseDiscount);
+									rwnum = rwnum + 1;
+								end;
+							end;
+						end else begin
+							rwcnt = MatRowCnt(TBBUr);
+							For(i=0;i<rwcnt;i=i+1) begin
+	  						matrowget(TBBUr,i,TBBUrw);
+	  						if(TBBUrw.stp==18 and TBBUrw.Spec==TBBU2r.PRName)then begin
+	  							ident = true;
+	  							rwcnt2 = MatRowCnt(TBBU2r);
+	  							if(rwcnt2<=(rwcnt-i-1))then begin
+	  								For(j=0;j<rwcnt2;j=j+1) begin
+	  									matrowget(TBBU2r,j,TBBU2rw);
+	  									matrowget(TBBUr,j+i+1,TBBU3rw);
+	  									if(TBBU2rw.stp!=TBBU3rw.stp or TBBU2rw.ArtCode!=TBBU3rw.ArtCode)then begin
+	  										ident = false;
+	  									end;
+										end; 
+	  							end else begin
+	  								ident = false;
+	  							end;
+	  							
+	  							if(ident)then begin
+	  								For(j=0;j<rwcnt2;j=j+1) begin
+	  									matrowget(TBBU2r,j,TBBU2rw);
+	  									matrowget(TBBUr,j+i+1,TBBU3rw);	  									
+	  									TBBU3rw.Qty = TBBU3rw.Qty + TBBU2rw.Qty;
+	  									matrowput(TBBUr,j+i+1,TBBU3rw);
+	  									TBBUDchrsum(TBBUr,j+i+1,true,GenOptRec.UseDiscount);
+										end; 
+										goto Ldone;
+	  							end;
+	  							
+	  						end;
+							end; 
+							if(!ident)then begin
+								rwcnt2 = MatRowCnt(TBBU2r);
+								if(rwcnt2>0)then begin
+									rwnum = rwcnt;
+									clearrow(TBBUr,TBBU3rw,18);
+									TBBU3rw.stp = 18;
+									TBBU3rw.Spec = TBBU2r.PRName;
+									matrowput(TBBUr,rwnum,TBBU3rw);
+									rwnum = rwnum + 1;
+									For(i=0;i<rwcnt2;i=i+1) begin
+	  								matrowget(TBBU2r,i,TBBU2rw);
+	  								MatRowPut(TBBUr,rwnum,TBBU2rw);	
+	  								TBBUDchrsum(TBBUr,rwnum,true,GenOptRec.UseDiscount);
+	  								rwnum = rwnum + 1;
+									end; 
+									
+								end;
 							end;
 						end;
 					end;
 				end;
+Ldone:;
 			end;
 			TBBUSumup(TBBUr);
 		end;
