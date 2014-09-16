@@ -172,6 +172,7 @@ begin
 	startformat(15);
 		outstring(0,0,"",false);
 		outstring(50,0,"Оплата подрядчикам",false);
+		outstringID(150,"CreateVIProjInf","Создать сч.ф. подрядчика",false,PRr.Code);
 	endformat;
 	Gray_Divider(45,125);
 	startformat(15);

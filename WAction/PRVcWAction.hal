@@ -655,3 +655,20 @@ begin
 	PRLClassOnOpenWindow = true;
 return;
 end;
+
+//Edit***********************Vitalii 11:56 16.09.2014
+global
+procedure CreateVIProjInf(string dblstr,string l,Integer currepwn)
+begin
+  Integer wn;
+  record PRVc PRr;
+  record VIVc VIr;
+  
+  PRr.Code = FirstInRange(l,20);
+	ReadFirstMain(PRr,1,true)
+	RecordNew(VIr);
+	VIr.PRCode = PRr.Code;
+	VIr.Comment = PRr.Name;
+	wn = OpenWindow("VIDClass",1,0,"","",VIr);
+  return;
+end;
