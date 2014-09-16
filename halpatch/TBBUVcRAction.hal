@@ -363,7 +363,7 @@ begin
 	//budsum = TBBUr.SumTime + TBBUr.SumMaterial + TBBUr.SumStocked;
 	budsum = TBBUr.TotSum;
 	PRr.Code = TBBUr.PRCode;
-	if(readfirstmain(PRr,1,true) and PRr.StopInvoicing>0)then begin// Edit ************************** Friday, 12 September 2014 15:49:53
+	if(readfirstmain(PRr,1,true) and PRr.StopInvoicing==0)then begin // Edit ************************** Friday, 12 September 2014 15:49:53
 		mtrw = matrowcnt(PRr);
 		PDr.Code = PRr.PayDeal;
 		invcnt = 1;

@@ -4043,7 +4043,7 @@ begin
   end;
   TileButton(tilenr,"Фактурирование"); tilenr = tilenr + 1;
   TileButton(tilenr,"Текст"); tilenr = tilenr + 1;
-  TileButton(tilenr,"Документы"); tilenr = tilenr + 1; //Edit***************************Sasha2,17:23 09.09.2014
+  //TileButton(tilenr,"Документы"); tilenr = tilenr + 1; //Edit***************************Sasha2,17:23 09.09.2014
   tilenr = 1;
   Tile(tilenr,260,true,tilenr,CustCode); tilenr = tilenr + 1;
   h=100; h2=h+140; v=6;
@@ -4246,7 +4246,7 @@ begin
   EditField(h,v+=20,-40,"",Normal,Text7,false,0);
   EditField(h,v+=20,-40,"",Normal,Text8,false,0);
   EditField(h,v+=20,-40,"",Normal,Text9,false,0);
-  Tile(tilenr,220,false,tilenr,AddDoc1Nr); tilenr = tilenr + 1; //Edit***************************Sasha2,17:25 09.09.2014
+  /*Tile(tilenr,220,false,tilenr,AddDoc1Nr); tilenr = tilenr + 1; //Edit***************************Sasha2,17:25 09.09.2014
   StaticText(h=80,v=20,"Доп. соглашения по проектам:",false); //Edit***************************Sasha2,17:25 09.09.2014
   EditField(h,v+=20,70,"№ Док.",Normal,AddDoc1Nr,false,0); //Edit***************************Sasha2,17:25 09.09.2014
   EditField(h,v+=20,70,"Дата",Normal,AddDoc1Date,false,0); //Edit***************************Sasha2,17:25 09.09.2014
@@ -4254,7 +4254,7 @@ begin
   StaticText(h=80,v+=40,"Акты выполненных работ:",false); //Edit***************************Sasha2,17:25 09.09.2014
   EditField(h,v+=20,70,"№ Док.",Normal,AddDoc2Nr,false,0); //Edit***************************Sasha2,17:25 09.09.2014
   EditField(h,v+=20,70,"Дата",Normal,AddDoc2Date,false,0); //Edit***************************Sasha2,17:25 09.09.2014
-  EditField(h,v+=20,70,"Сумма",Normal,AddDoc2Sum,false,0); //Edit***************************Sasha2,17:25 09.09.2014
+  EditField(h,v+=20,70,"Сумма",Normal,AddDoc2Sum,false,0);*/ //Edit***************************Sasha2,17:25 09.09.2014
 
   SpecialMenu("Выписать счет-фактуру на аванс",' ',0,"PRDownPayDsm");
   if (HasObjects) then begin
