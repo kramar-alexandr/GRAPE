@@ -4282,7 +4282,7 @@ begin
   EndWindow;
 end;
 
-window PRLClass:3
+/*window PRLClass:3
   wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer,android,iPad,iPhone")
 begin
   WindowBegin("Проекты",PRLClass,CGmlist,-);
@@ -4316,7 +4316,7 @@ begin
     SpecialMenu("Поиск проекта",'F',6,"SearchPRLsm");
   end;
   EndWindow;
-end;
+end;*/
 
 window PRLClass:3
   wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer,android,iPad,iPhone")
