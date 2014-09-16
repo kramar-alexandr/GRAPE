@@ -1,0 +1,121 @@
+external procedure CurValToOtherCur(Date,string,val,string,var val,roundmode);
+
+SetLangMode(LangRussian,"RUS",0);
+
+
+global procedure ExpBudgetRn(record RcVc RepSpec)
+begin
+	record TBBUVc TBBUr;
+	row TBBUVc TBBUrw;
+	integer mtrw,i;
+	
+	TBBUr.PRCode = RepSpec.f1;
+	if(ReadFirstMain(TBBUr,1,true))then begin
+		
+	end;
+		
+	startreportnoheaderjob("Бюджет");
+	
+	startformat(15);
+		outstring(0,0,"",false);
+	endformat;	
+	
+	startformat(15);
+		outstring(0,0,"",false);
+		outstring(10,0,"Клиент",false);
+		outstring(50,0,TBBUr.CustName,false);
+	endformat;
+	startformat(15);
+		outstring(0,0,"",false);
+		outstring(10,0,"Проект",false);
+		outstring(50,0,TBBUr.PRName,false);
+	endformat;
+	startformat(15);
+		outstring(0,0,"",false);
+		outstring(10,0,"Дата",false);
+		outstring(50,0,TBBUr.TransDate,false);
+		outstring(0,0,"",false);
+	endformat;
+	
+	startformat(15);
+		outstring(0,0,"",false);
+	endformat;	
+	
+	startformat(15);
+		outstring(0,0,"",false);
+		outstring(10,0,"Задача",false);
+		outstring(100,0,"Стоимость",false);
+		outstring(150,0,"Количество",false);
+		outstring(210,0,"Общая стоимость",false);
+	endformat;
+	Gray_Divider(0,1);
+  	
+	mtrw = matrowcnt(TBBUr);
+	for (i=0;i<mtrw;i=i+1) begin
+		matrowget(TBBUr,i,TBBUrw);
+		if(TBBUrw.stp == 17)then begin
+			startformat(15);
+				outstring(0,0,TBBUrw.stp,false);
+				outstring(10,0,TBBUrw.Spec,false);
+				outstring(100,0,"",false);
+				outstring(150,0,"",false);
+				outstring(210,0,"",false);
+			endformat;
+		end else begin
+			if(TBBUrw.stp == 1)then begin
+				startformat(15);
+					outstring(0,0,TBBUrw.stp,false);
+					outstring(10,0,TBBUrw.Comment,false);
+					outstring(100,0,TBBUrw.Price,false);
+					outstring(150,0,TBBUrw.Qty,false);
+					outstring(210,0,TBBUrw.Sum,false);
+				endformat;
+			end else begin
+				if(TBBUrw.stp == 9)then begin
+					startformat(15);
+						outstring(0,0,TBBUrw.stp,false);
+						outstring(10,0,"",false);
+						outstring(50,0,"",false);
+						outstring(150,0,"ИТОГО Проект:",false);
+						outstring(210,0,TBBUrw.Cost,false);
+					endformat;
+					startformat(15);
+						outstring(0,0,TBBUrw.stp,false);
+						outstring(0,0,"",false);
+						outstring(50,0,"",false);
+						outstring(150,0,"ИТОГО, с НДС:",false);
+						outstring(210,0,TBBUrw.Sum,false);
+						Gray_Divider(0,1);
+					endformat;
+				end;	
+			end;
+		end;
+	end;
+
+	startformat(15); 
+		outstring(0,0,"",false);
+	endformat;
+	startformat(15);
+		outstring(0,0,"",false);
+		outstring(0,0,"",false);
+		outstring(0,0,"",false);
+		outstring(150,0,"TOTAL:",false);
+		outstring(210,0,TBBUr.TotSum,false);
+	endformat;
+	startformat(15);
+		outstring(0,0,"",false);
+		outstring(0,0,"",false);
+		outstring(0,0,"",false);
+		outstring(150,0,"НДС:",false);
+		outstring(210,0,TBBUr.Sum3,false);
+	endformat;
+	startformat(15);
+		outstring(0,0,"",false);
+		outstring(0,0,"",false);
+		outstring(0,0,"",false);
+		outstring(150,0,"Всего:",false);
+		outstring(210,0,TBBUr.TotSumVAT,false);
+	endformat;
+	endjob;
+return;
+end;

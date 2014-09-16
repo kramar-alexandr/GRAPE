@@ -1015,3 +1015,21 @@ begin
 	TBBULClassOnOpenWindow = true;
 return;
 end;
+
+global procedure ExportToExcelTBBUDsm() //*** Edit by Victor 15.09.14
+begin
+	record TBBUVc TBBUr;
+	record PRVc PRr;
+	Integer wn,rwcnt;
+	record RcVc RepSpec;
+	
+	wn = CurWindow;
+  DeselectWindow(wn,false);
+  GetWindowRecord(wn,TBBUr);
+
+  RepSpec.Media = mtExcel;
+  RepSpec.repname = "ExpBudgetRn";
+  RepSpec.f1 = TBBUr.PRCode;
+  RunReport(RepSpec,0);
+ return;
+end;
