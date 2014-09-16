@@ -3,7 +3,7 @@ external procedure CurValToOtherCur(Date,string,val,string,var val,roundmode);
 SetLangMode(LangRussian,"RUS",0);
 
 
-global procedure ExpBudgetRn(record RcVc RepSpec)
+global procedure ExpBudgetRn(record RcVc RepSpec)//Edit by Victor 16.09.14
 begin
 	record TBBUVc TBBUr;
 	row TBBUVc TBBUrw;
@@ -53,7 +53,7 @@ begin
 	mtrw = matrowcnt(TBBUr);
 	for (i=0;i<mtrw;i=i+1) begin
 		matrowget(TBBUr,i,TBBUrw);
-		if(TBBUrw.stp == 17)then begin
+		if(TBBUrw.stp == 18)then begin
 			startformat(15);
 				outstring(0,0,TBBUrw.stp,false);
 				outstring(10,0,TBBUrw.Spec,false);
@@ -62,32 +62,42 @@ begin
 				outstring(210,0,"",false);
 			endformat;
 		end else begin
-			if(TBBUrw.stp == 1)then begin
+			if(TBBUrw.stp == 17)then begin
 				startformat(15);
 					outstring(0,0,TBBUrw.stp,false);
-					outstring(10,0,TBBUrw.Comment,false);
-					outstring(100,0,TBBUrw.Price,false);
-					outstring(150,0,TBBUrw.Qty,false);
-					outstring(210,0,TBBUrw.Sum,false);
+					outstring(10,0,TBBUrw.Spec,false);
+					outstring(100,0,"",false);
+					outstring(150,0,"",false);
+					outstring(210,0,"",false);
 				endformat;
 			end else begin
-				if(TBBUrw.stp == 9)then begin
+				if(TBBUrw.stp == 1)then begin
 					startformat(15);
 						outstring(0,0,TBBUrw.stp,false);
-						outstring(10,0,"",false);
-						outstring(50,0,"",false);
-						outstring(150,0,"ˆ’ŽƒŽ ðîåêò:",false);
-						outstring(210,0,TBBUrw.Cost,false);
-					endformat;
-					startformat(15);
-						outstring(0,0,TBBUrw.stp,false);
-						outstring(0,0,"",false);
-						outstring(50,0,"",false);
-						outstring(150,0,"ˆ’ŽƒŽ, ñ „‘:",false);
+						outstring(10,0,TBBUrw.Comment,false);
+						outstring(100,0,TBBUrw.Price,false);
+						outstring(150,0,TBBUrw.Qty,false);
 						outstring(210,0,TBBUrw.Sum,false);
-						Gray_Divider(0,1);
 					endformat;
-				end;	
+				end else begin
+					if(TBBUrw.stp == 9)then begin
+						startformat(15);
+							outstring(0,0,TBBUrw.stp,false);
+							outstring(10,0,"",false);
+							outstring(50,0,"",false);
+							outstring(150,0,"ˆ’ŽƒŽ ðîåêò:",false);
+							outstring(210,0,TBBUrw.Cost,false);
+						endformat;
+						startformat(15);
+							outstring(0,0,TBBUrw.stp,false);
+							outstring(0,0,"",false);
+							outstring(50,0,"",false);
+							outstring(150,0,"ˆ’ŽƒŽ, ñ „‘:",false);
+							outstring(210,0,TBBUrw.Sum,false);
+							Gray_Divider(0,1);
+						endformat;
+					end;	
+				end;
 			end;
 		end;
 	end;
