@@ -281,11 +281,11 @@ begin
   StrSetText(AllowPutOKFlagAllBudget,"Разрешить утверждать все бюджеты"); //Edit***************************Sasha2,12:20 16.09.2014
   StrSetText(AllowPutOKFlagOnlyProjectBudget,"Разрешить утверждать бюджеты только своих проектов"); //Edit***************************Sasha2,12:20 16.09.2014
   StrSetText(AllowPutApproveFlagAllBudget,"Разрешить подтверждение клиентом всех бюджетов"); //Edit***************************Sasha2,12:20 16.09.2014
-  StrSetText(AllowPutApproveFlagOnlyProjectBudget,"Разрешить подтверждение клиентом только своих бюджетов"); //Edit***************************Sasha2,12:20 16.09.2014
+  StrSetText(AllowPutApproveFlagOnlyProjectBudget,"Разрешить подтверждение клиентом бюджетов только своих проектов"); //Edit***************************Sasha2,12:20 16.09.2014
   StrSetText(AllowTakeOutOKFlagAllBudget,"Разрешить снимать ОК со всех бюджетов");// Edit ************************** Friday, 5 September 2014 13:39:15 //Edit***************************Sasha2,12:37 16.09.2014
   StrSetText(AllowTakeOutOKFlagOnlyProjectBudget,"Разрешить снимать ОК с бюджетов только своих проектов"); //Edit***************************Sasha2,12:37 16.09.2014
   StrSetText(AllowTakeOutApproveFlagAllBudget,"Разрешить снимать утверждение клиентом со всех бюджетов"); //Edit***************************Sasha2,12:39 16.09.2014
-  StrSetText(AllowTakeOutApproveFlagOnlyProjectBudget,"Разрешить снимать утверждение клиентом только своих бюджетов"); //Edit***************************Sasha2,12:39 16.09.2014
+  StrSetText(AllowTakeOutApproveFlagOnlyProjectBudget,"Разрешить снимать утверждение клиентом бюджетов только своих проектов"); //Edit***************************Sasha2,12:39 16.09.2014
   StrSetText(UnOKAll,"Снимать OK со всех записей");
   StrSetText(UnOKBud,"Снимать OK с бюджетов");
   StrSetText(UnOKDA,"Сниамть OK с суточных возмещений");
