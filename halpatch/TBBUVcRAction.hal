@@ -20,7 +20,7 @@ external updating function Integer SinglePRDownPayInvoice(var record PRVc);// Ed
 	
 updating procedure UpdatePRBUOkFlag(record TBBUVc TBBUr)
 begin
-record PRVc PRr,oldPRr;
+record PRVc PRr;
 	
 	PRr.Code = TBBUr.PRCode;
 	if(readfirstmain(PRr,1,true))then begin
@@ -32,6 +32,18 @@ end;
 
 
 	// Edit End ---------------------------------------------- Edit End
+//Edit***************************Sasha2,15:14 16.09.2014 {	
+updating procedure UpdatePRBUApproveFlag(record TBBUVc TBBUr)
+begin
+record PRVc PRr;
+	
+	PRr.Code = TBBUr.PRCode;
+	if(readfirstmain(PRr,1,true))then begin
+		PRr.BUApproveFlag = TBBUr.ApproveFlag; 
+		recordStore(PRr,true);
+	end;
+return;
+end; //Edit***************************Sasha2,15:14 16.09.2014 }
 	
 procedure SetTBBUAcceptanceFlag(var record TBBUVc TBBUr,record TBBUVc prevTBBUr,LongInt stat)
 begin
@@ -435,6 +447,9 @@ begin
 		CreateProjInvoice(TBBUr)// Edit ************************** Wednesday, 20 August 2014 11:45:45
 		UpdatePRBUOkFlag(TBBUr);
 	end;
+	if (TBBUr.ApproveFlag==1) then begin
+		UpdatePRBUApproveFlag(TBBUr); //Edit***************************Sasha2,15:12 16.09.2014
+	end;
 	
   SetTBBUAcceptanceFlag(TBBUr,TBBU2r,stat);
   TBBUVcRecordSaveAfter = res; 
@@ -462,6 +477,9 @@ begin
 	end;
 	if(TBBUr.OKFlag!=TBBU2r.OKFlag)then begin
 		UpdatePRBUOkFlag(TBBUr);// Edit ************************** Friday, 12 September 2014 16:25:19
+	end;
+	if(TBBUr.ApproveFlag!=TBBU2r.ApproveFlag)then begin
+		UpdatePRBUApproveFlag(TBBUr); //Edit***************************Sasha2,15:12 16.09.2014
 	end;
 	
   switch (TBBUr.AcceptanceStatus) begin

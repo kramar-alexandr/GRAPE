@@ -367,6 +367,7 @@ function Boolean TBBUDClassOKFlagButtonAction(Integer wn,Integer value)
 BEGIN
   Boolean res;
   record TBBUVc TBBUr;
+  record PRVc PRr;
   
   res = true;
   
@@ -375,9 +376,15 @@ BEGIN
   if (WindowState(wn)==Rs_normal) then begin
     if (TBBUr.OKFlag!=0) then begin
       res = false;
-      if (UserCanAction("AllowTakeOutCheckFlagBudget",false)) then begin
+      if (UserCanAction("AllowTakeOutOKFlagAllBudget",false)) then begin
         res = true;
-      end;
+      end else begin //Edit***************************Sasha2,13:49 16.09.2014 {
+      	PRr.Code = TBBUr.PRCode;
+      	ReadFirstMain(PRr,1,true);
+      	if (UserCanAction("AllowTakeOutOKFlagOnlyProjectBudget",false) and PRr.Leader==CurrentUser) then begin
+      		res = true;
+      	end;
+      end; //Edit***************************Sasha2,13:49 16.09.2014 }
     end;
   end;  
   if (WindowState(wn)==Rs_update) then begin
@@ -387,13 +394,75 @@ BEGIN
     end;
   end;
   
+  if (TBBUr.OKFlag==0) then begin //Edit***************************Sasha2,13:49 16.09.2014 {
+  	res = false;
+	  if (UserCanAction("AllowPutOKFlagAllBudget",false)) then begin
+	    res = true;
+	  end else begin
+	  	PRr.Code = TBBUr.PRCode;
+	  	ReadFirstMain(PRr,1,true);
+	  	if (UserCanAction("AllowPutOKFlagOnlyProjectBudget",false) and PRr.Leader==CurrentUser) then begin
+	  		res = true;
+	  	end;
+	  end;
+  end; //Edit***************************Sasha2,13:49 16.09.2014 }
+  
  	/*if(TBBUr.OKFlag==1)then begin
-		res = UserCanAction("AllowTakeOutCheckFlagBudget",false);
+		res = UserCanAction("AllowTakeOutCheckFlagAllBudget",false);
   end;*/
     
   TBBUDClassOKFlagButtonAction = res;
   RETURN;
 END;
+
+global //Edit***************************Sasha2,13:49 16.09.2014 {
+function Boolean TBBUDClassApproveFlagButtonAction(Integer wn,Integer value)
+BEGIN
+  Boolean res;
+  record TBBUVc TBBUr;
+  record PRVc PRr;
+  
+  res = true;
+  
+  GetWindowRecord(wn,TBBUr);
+  
+  if (WindowState(wn)==Rs_normal) then begin
+    if (TBBUr.ApproveFlag!=0) then begin
+      res = false;
+      if (UserCanAction("AllowTakeOutApproveFlagAllBudget",false)) then begin
+        res = true;
+      end else begin 
+      	PRr.Code = TBBUr.PRCode;
+      	ReadFirstMain(PRr,1,true);
+      	if (UserCanAction("AllowTakeOutApproveFlagOnlyProjectBudget",false) and PRr.Leader==CurrentUser) then begin
+      		res = true;
+      	end;
+      end; 
+    end;
+  end;  
+  if (WindowState(wn)==Rs_update) then begin
+    GetPrevWindowRecord(wn,TBBUr);
+    if (TBBUr.ApproveFlag!=0) then begin
+      res = false;
+    end;
+  end;
+  
+  if (TBBUr.ApproveFlag==0) then begin 
+  	res = false;
+	  if (UserCanAction("AllowPutApproveFlagAllBudget",false)) then begin
+	    res = true;
+	  end else begin
+	  	PRr.Code = TBBUr.PRCode;
+	  	ReadFirstMain(PRr,1,true);
+	  	if (UserCanAction("AllowPutApproveFlagOnlyProjectBudget",false) and PRr.Leader==CurrentUser) then begin
+	  		//res = true;
+	  	end;
+	  end;
+  end; 
+    
+  TBBUDClassApproveFlagButtonAction = res;
+  RETURN; 
+END; //Edit***************************Sasha2,13:49 16.09.2014 }
 
 global
 function Boolean TBBUDClassBudStockedButtonAction(Integer wn,Integer value)

@@ -2608,7 +2608,8 @@ begin
   EditField(h2,v,240, "Описание",Normal,PRName,false,0);
   EditField(h,v+=vs,80, "Клиент",St_i,CustCode,false,CUSClass);
   EditField(h2,v,240, "Наименов.",Normal,CustName,false,0);
-  CheckBox(h2+250,v,0,"Утвержденно клиентом",OKFlag);// Edit ************************** Tuesday, 19 August 2014 09:30:21
+  CheckBox(h2+250,v,0,"Бюджет подтвержден",OKFlag); //Edit***************************Sasha2,11:52 16.09.2014
+  CheckBox(h2+250,v+20,0,"Утвержденно клиентом",ApproveFlag);// Edit ************************** Tuesday, 19 August 2014 09:30:21
 
   EditField(h,v+=vs,80, "Дата операции",Normal,TransDate,false,PasteCurDate);
   EnterSkip(Math);
@@ -4323,7 +4324,7 @@ begin
   string 255 label;
   Integer tilenr;
   WindowBegin("Проекты",PRLClass,CGmlist,-);
-  SetWRect(20,80,650,298);
+  SetWRect(20,80,750,298);
   SpawnClass(PRDClass);
   Sizeable(-1,-1,0,0);
   UseView(PRVc);
@@ -4342,8 +4343,9 @@ begin
   end;
   RlColKey(261,261,"Клиент",CustCode,false,CustCode);
   RlCol(380,380,"Бюдж.утв.",BUOKFlag,false);
+  RlCol(460,460,"Бюдж.подтв.кл.",BUApproveFlag,false); //Edit***************************Sasha2,14:45 16.09.2014
   //RlColKey(341,341,"Наименование",CustName,false,CustName);// Edit ************************** Friday, 12 September 2014 16:17:19
-  RlColKey(471,471,"Описание",Name,false,Name);
+  RlColKey(562,562,"Описание",Name,false,Name);
   SearchField("Найти");
   if (HasLimitedAccess) then begin
 //  if (HasLimitedAccess and HasTouchScreenDevice==false) then begin
