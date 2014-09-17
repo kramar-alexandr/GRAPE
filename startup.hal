@@ -14,6 +14,8 @@ begin
 	Setting("Акты выполеных работ с подрядчиками",ADJVILClass,modTS); //Edit by Victor 12.09.2014
 	Setting("Дополнительные соглашения с подрядчиками",SAVILClass,modTS); //Edit by Victor 12.09.2014
 	Setting("Шаблоны для бюджетов проектов",TemplateTBBULClass,modTS); //Edit***************************Sasha2,11:49 12.09.2014
+	Setting("Цены",PLLClass,modTS); //Edit***************************Sasha2,11:49 12.09.2014
+	Setting("Прейскуранты",PLDefLClass,modTS); //Edit***************************Sasha2,11:49 12.09.2014
 
 	SString(31020,"Способ оплаты платежа не совпадает со способом оплаты проекта по сч/ф № ");//Edit***********************Vitalii 10:51 16.09.2014
   
