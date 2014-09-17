@@ -4070,7 +4070,7 @@ begin
   RadioButton(h,v+=16,1,255,"Внутренний",Type);
   RadioButton(h,v+=16,2,255,"Другой",Type);
   if (IsEnterprise) then begin
-    ButtonFrame(h=460,v=vm,220,3,"Использов. товаров в бюдж. проекта");
+    ButtonFrame(h=460,v=vm+20,220,3,"Использов. товаров в бюдж. проекта");
     RadioButton(h,v,0,0,"Не предупреждать",TBIVItemsUsage);
     RadioButton(h,v+=16,1,255,"Предупреждать",TBIVItemsUsage);
     RadioButton(h,v+=16,2,255,"Не разрешать",TBIVItemsUsage);
@@ -4083,6 +4083,7 @@ begin
   end;
   CheckBox(-110,v+=20,0,"Не фактур.",StopInvoicing);// Edit ************************** Friday, 12 September 2014 15:52:46
   EditField(-110,v+=20,70,"Способ оплаты",Normal,PayMode,false,PMSClass);// Edit ************************** Friday, 12 September 2014 16:07:02
+  EditField(-110,v+=20,25,"Условия оплаты",Normal,PayDeal,false,PDSClass);  //Edit by Victor 17.09.14
   //nk EditField(-110,v+=20,25,"Payment Terms",Normal,PayDeal,false,PDSClass);
   //nk EditField(-110,v+=20,70,"Cust. Ord. No.",Normal,CustOrdNr,false,0);
   Tile(tilenr,130,false,tilenr,Members); tilenr = tilenr + 1;
@@ -4191,8 +4192,8 @@ begin
   end;
   Tile(tilenr,260,false,tilenr,CustOrdNr); tilenr = tilenr + 1;
   h=140; v=6;
-  EditField(h=430,v,25,"Условия оплаты",Normal,PayDeal,false,PDSClass);  
-  EditField(h,v+=20,-40,"№ счета клиенту",Normal,CustOrdNr,false,0);  
+  //EditField(h=430,v,25,"Условия оплаты",Normal,PayDeal,false,PDSClass);  //Move to first tab Edit by Victor 17.09.14
+  EditField(h=430,v,-40,"№ счета клиенту",Normal,CustOrdNr,false,0);  //h,v+=20 -> h=430,v
   EditField(h,v+=20,-40,"E-mail",Normal,Email,false,0);  
   EditField(h,v+=20,70,"Дата первой сч/ф",Normal ,NoInvBefore,false,PasteCurDate);  
   if (HasLanguages) then begin
