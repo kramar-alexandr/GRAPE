@@ -4029,7 +4029,7 @@ begin
   if (IsEnterprise) then begin
     EditField(300,v,-210,"Старший",Normal,MotherCode,false,PRSClass);
   end;
-  EditField(-100,v,-40,"Тип",Normal,PRClass,false,PRClassSClass);
+  EditField(-100,v,-40,"Вид деятельности",Normal,PRClass,false,PRClassSClass); //Edit***************************Sasha2,10:05 17.09.2014
   EditField(h,v+=20,-210,"Описание",Normal,Name,false,0);
   if (IsEnterprise) then begin
     //EditField(-100,v,-40,"Этап",Normal,PRStage,false,PRStageSClass); //Edit***************************Sasha2,17:06 12.09.2014
@@ -4338,7 +4338,7 @@ begin
   RlCol(75,75,label,Leader,false);
   end;
   RlColKey(131,131,"Статус",StatMark,false,StatMark);
-  RlColKey(171,171,"Тип",PRClass,false,PRClass);
+  RlColKey(171,171,"Вид деятел.",PRClass,false,PRClass); //Edit***************************Sasha2,10:06 17.09.2014
   if (IsEnterprise) then begin
   //RlColKey(211,211,"Этап",PRStage,false,PRStage);// Edit ************************** Friday, 12 September 2014 16:17:25
   end;
