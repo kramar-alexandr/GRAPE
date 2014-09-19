@@ -270,7 +270,7 @@ begin
 				outstring(0,0,"",false);
 				outstring(30,0,"",false);
 				outstring(85,0,"„‘",false);
-				outstring(135,0,SAr.SerNr,false);
+				outstring(135,0,SAr.SANum,false);
 				outstring(165,0,SAr.TransDate,false);
 				outstring(265,0,SAr.Sum,false);
 			endformat;
@@ -287,7 +287,7 @@ begin
 				outstring(0,0,"",false);
 				outstring(30,0,"",false);
 				outstring(85,0,"€êò",false);
-				outstring(135,0,ADJr.SerNr,false);
+				outstring(135,0,ADJr.ADJNum,false);
 				outstring(165,0,ADJr.TransDate,false);
 				outstring(265,0,ADJr.Sum,false);
 			endformat;
@@ -318,7 +318,7 @@ begin
 				outstring(0,0,"",false);
 				outstring(30,0,SAVIr.VECode,false);
 				outstring(85,0,"„‘",false);
-				outstring(135,0,SAVIr.SerNr,false);
+				outstring(135,0,SAVIr.SANum,false);
 				outstring(165,0,SAVIr.TransDate,false);
 				outstring(265,0,SAVIr.Sum,false);
 			endformat;
@@ -335,7 +335,7 @@ begin
 				outstring(0,0,"",false);
 				outstring(30,0,ADJVIr.VECode,false);
 				outstring(85,0,"€êò",false);
-				outstring(135,0,ADJVIr.SerNr,false);
+				outstring(135,0,ADJVIr.ADJNum,false);
 				outstring(165,0,ADJVIr.TransDate,false);
 				outstring(265,0,ADJVIr.Sum,false);
 			endformat;
