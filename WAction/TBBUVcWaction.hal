@@ -449,15 +449,17 @@ BEGIN
   
   if (TBBUr.ApproveFlag==0) then begin 
   	res = false;
-	  if (UserCanAction("AllowPutApproveFlagAllBudget",false)) then begin
-	    res = true;
-	  end else begin
-	  	PRr.Code = TBBUr.PRCode;
-	  	ReadFirstMain(PRr,1,true);
-	  	if (UserCanAction("AllowPutApproveFlagOnlyProjectBudget",false) and PRr.Leader==CurrentUser) then begin
-	  		res = true;
-	  	end;
-	  end;
+  	  if (TBBUr.OKFlag!=0) then begin
+	  	  if (UserCanAction("AllowPutApproveFlagAllBudget",false)) then begin
+		    res = true;
+		  end else begin
+		  	PRr.Code = TBBUr.PRCode;
+		  	ReadFirstMain(PRr,1,true);
+		  	if (UserCanAction("AllowPutApproveFlagOnlyProjectBudget",false) and PRr.Leader==CurrentUser) then begin
+		  		res = true;
+		  	end;
+		  end;
+  	  end;  
   end; 
     
   TBBUDClassApproveFlagButtonAction = res;
