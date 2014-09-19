@@ -4029,12 +4029,12 @@ begin
   if (IsEnterprise) then begin
     EditField(300,v,-210,"Старший",Normal,MotherCode,false,PRSClass);
   end;
-  EditField(-100,v,-40,"Вид деятельности",Normal,PRClass,false,PRClassSClass); //Edit***************************Sasha2,10:05 17.09.2014
+  EditField(-100,v,-40,"Тип проекта",Normal,PRClass,false,PRClassSClass); //Edit by Victor 19.09.14 //Edit***************************Sasha2,10:05 17.09.2014
   EditField(h,v+=20,-210,"Описание",Normal,Name,false,0);
   if (IsEnterprise) then begin
     //EditField(-100,v,-40,"Этап",Normal,PRStage,false,PRStageSClass); //Edit***************************Sasha2,17:06 12.09.2014
   end;
-  EditField(-100,v+=20,-40,"Масштаб",Normal,Scope,false,ProjScopeSClass); //Edit***************************Sasha2,16:52 11.09.2014
+  EditField(-100,v+=20,-40,"Масштаб проекта",Normal,Scope,false,ProjScopeSClass); //Edit by Victor 19.09.14 //Edit***************************Sasha2,16:52 11.09.2014
   tilenr = 1;
   TileButton(tilenr,"Условия"); tilenr = tilenr + 1;
   TileButton(tilenr,"Члены"); tilenr = tilenr + 1;
