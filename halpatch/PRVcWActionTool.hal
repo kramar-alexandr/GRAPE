@@ -478,6 +478,7 @@ global //Edit***************************Sasha2,17:22 12.09.2014 {
 procedure CreateTBBUFromTemplate(record PRVc PRr,var record TBBUVc TBBUr)
 begin
   record TemplateTBBUVc TempTBBUr;
+  record INVc INr;
   row TemplateTBBUVc TempTBBUrw;
   row TBBUVc TBBUrw;
   record GeneralOptionBlock GOb;
@@ -496,6 +497,14 @@ begin
   		case 1: // товар
   			ClearRow(TBBUr,TBBUrw,1);
   			TBBUrw.ArtCode = TempTBBUrw.ArtCode;
+  			if(nonblank(TempTBBUrw.Comment))then begin	//Edit by Victor 19.09.14 {
+	  			TBBUrw.Comment = TempTBBUrw.Comment;	
+	  		end else begin
+	  			INr.Code = TBBUrw.ArtCode;
+	  			if(readFirstMain(INr,1,true))then begin
+	  				TBBUrw.Comment =INr.Name;
+	  			end;
+	  		end;	// }
   			MatRowPut(TBBUr,i,TBBUrw);
   			if (TBBUVc_PasteArtCode(TBBUr,i,inmsg)) then begin
 		      TBBUDchrsum(TBBUr,i,true,GOb.UseDiscount);
