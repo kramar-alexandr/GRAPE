@@ -8,6 +8,7 @@ begin
 	record TBBUVc TBBUr;
 	row TBBUVc TBBUrw;
 	integer mtrw,i;
+	string 255 prname;
 	
 	TBBUr.PRCode = RepSpec.f1;
 	if(ReadFirstMain(TBBUr,1,true))then begin
@@ -22,16 +23,19 @@ begin
 	
 	startformat(15);
 		outstring(0,0,"",false);
+		outstring(1,0,"",false);
 		outstring(10,0,"Клиент",false);
 		outstring(50,0,TBBUr.CustName,false);
 	endformat;
 	startformat(15);
 		outstring(0,0,"",false);
+		outstring(1,0,"",false);
 		outstring(10,0,"Проект",false);
 		outstring(50,0,TBBUr.PRName,false);
 	endformat;
 	startformat(15);
 		outstring(0,0,"",false);
+		outstring(1,0,"",false);
 		outstring(10,0,"Дата",false);
 		outstring(50,0,TBBUr.TransDate,false);
 		outstring(0,0,"",false);
@@ -43,6 +47,7 @@ begin
 	
 	startformat(15);
 		outstring(0,0,"",false);
+		outstring(1,0,"",false);
 		outstring(10,0,"Задача",false);
 		outstring(100,0,"Стоимость",false);
 		outstring(150,0,"Количество",false);
@@ -55,7 +60,9 @@ begin
 		matrowget(TBBUr,i,TBBUrw);
 		if(TBBUrw.stp == 18)then begin
 			startformat(15);
-				outstring(0,0,TBBUrw.stp,false);
+				prname = TBBUrw.Spec;
+				outstring(0,0,TBBUrw.Spec,false);
+				outstring(1,0,TBBUrw.stp,false);
 				outstring(10,0,TBBUrw.Spec,false);
 				outstring(100,0,"",false);
 				outstring(150,0,"",false);
@@ -64,7 +71,8 @@ begin
 		end else begin
 			if(TBBUrw.stp == 17)then begin
 				startformat(15);
-					outstring(0,0,TBBUrw.stp,false);
+					outstring(0,0,prname,false);
+					outstring(1,0,TBBUrw.stp,false);
 					outstring(10,0,TBBUrw.Spec,false);
 					outstring(100,0,"",false);
 					outstring(150,0,"",false);
@@ -73,7 +81,8 @@ begin
 			end else begin
 				if(TBBUrw.stp == 1)then begin
 					startformat(15);
-						outstring(0,0,TBBUrw.stp,false);
+						outstring(0,0,prname,false);
+						outstring(1,0,TBBUrw.stp,false);
 						outstring(10,0,TBBUrw.Comment,false);
 						outstring(100,0,TBBUrw.Price,false);
 						outstring(150,0,TBBUrw.Qty,false);
@@ -82,14 +91,16 @@ begin
 				end else begin
 					if(TBBUrw.stp == 9)then begin
 						startformat(15);
-							outstring(0,0,TBBUrw.stp,false);
+							outstring(0,0,prname,false);
+							outstring(1,0,TBBUrw.stp,false);
 							outstring(10,0,"",false);
 							outstring(50,0,"",false);
 							outstring(150,0,"ИТОГО Проект:",false);
 							outstring(210,0,TBBUrw.Cost,false);
 						endformat;
 						startformat(15);
-							outstring(0,0,TBBUrw.stp,false);
+							outstring(0,0,prname,false);
+							outstring(1,0,TBBUrw.stp,false);
 							outstring(0,0,"",false);
 							outstring(50,0,"",false);
 							outstring(150,0,"ИТОГО, с НДС:",false);
