@@ -990,6 +990,8 @@ begin
   ArrayField(MotherArtCode,M4Code,20,INVc);
   ArrayField(RecipeQuant,M4Qty,0,0);
   ArrayField(VATCode,M4Code,10,VATCodeBlock); //Edit***************************Sasha2,12:00 08.09.2014
+  ArrayField(TypeName,M4Str,100,0);	//Edit by Victor 23.09.14
+  ArrayField(IdentQuant,M4Int,0,0);
   EndArray;
   MainKeyBegin(MainKey,1);
   StoreInBaseKey;

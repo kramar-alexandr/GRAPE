@@ -2660,6 +2660,8 @@ begin
   MatCol(t,100,"",0,Spec,false,0);
   MatText(t=18,30,"Проект",true);// Edit ************************** Monday, 15 September 2014 14:28:53
   MatCol(t,100,"",0,Spec,false,0);// Edit ************************** Monday, 15 September 2014 14:29:15
+  MatCol(t,300,"",0,TypeName,false,0); // Edit by Victor 23.09.14
+  MatCol(t,-20,"",0,IdentQuant,false,0);	// Edit by Victor 24.09.14
   MatCol(1,30,"Товар",0,ArtCode,false,INSClass);
   MatCol(1,100,"Сотр.",0,EMCode,false,UserSClass);
   MatCol(1,155,"Кол-во",0,Qty,true,0);
