@@ -1024,14 +1024,23 @@ begin
 	record PRVc PRr;
 	Integer wn,rwcnt;
 	record RcVc RepSpec;
+	string 255 path,args;
 	
 	wn = CurWindow;
   DeselectWindow(wn,false);
   GetWindowRecord(wn,TBBUr);
 
-  RepSpec.Media = mtExcel;
+  //RepSpec.Media = mtExcel; 
+  RepSpec.Media = mtClipBoard; // Edit by Victor 25.09.14
   RepSpec.repname = "ExpBudgetRn";
   RepSpec.f1 = TBBUr.PRCode;
   RunReport(RepSpec,0);
+  MilliSleep(100);
+  path = Left(CurrentPath, len(CurrentPath)-1);
+  
+  RunProgram("/Users/Victor/7.2r_GRAPE/ExcelFormating/ExcelFormating.sh",path); // Put path 
+  
+	/* Working!*/
+	//RunProgram("/Library/Java/JavaVirtualMachines/jdk1.8.0_11.jdk/Contents/Home/bin/java","-jar /Users/Victor/7.2r_GRAPE/ExcelFormating/ExcelFormating.jar");
  return;
 end;
