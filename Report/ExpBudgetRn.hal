@@ -2,15 +2,43 @@ external procedure CurValToOtherCur(Date,string,val,string,var val,roundmode);
 
 SetLangMode(LangRussian,"RUS",0);
 
+global
+function Integer CountStp(record TBBUVc TBBUr, integer pos)
+BEGIN
+  integer res, mtrw, i;
+  row TBBUVc TBBUrw;
+  	res = 1;
+    mtrw = matrowcnt(TBBUr);
+		for (i=pos+1;i<mtrw;i=i+1) begin
+			
+			matrowget(TBBUr,i,TBBUrw);
+			if(TBBUrw.stp == 17)then begin  
+				res = res + 1;
+			end;
+			if(TBBUrw.stp == 18)then begin  
+				goto LCountStp;
+			end;
+		end;
+		
+  	LCountStp:;	
+    CountStp = res; 
+  RETURN;
+END;
 
 global procedure ExpBudgetRn(record RcVc RepSpec)//Edit by Victor 16.09.14
 begin
 	record TBBUVc TBBUr;
 	row TBBUVc TBBUrw;
-	integer mtrw,i;
+	integer mtrw,i,stp18,stp9,stp17,max,flag1;
 	string 255 prname;
 	val tot,totvat;
+	boolean changed;
 	
+	stp18 = 0;
+	stp17 = 0;
+	stp9 = 0;
+	flag1 = 0;
+	changed = false;
 	TBBUr.PRCode = RepSpec.f1;
 	if(ReadFirstMain(TBBUr,1,true))then begin
 		
@@ -56,15 +84,25 @@ begin
 	for (i=0;i<mtrw;i=i+1) begin
 		matrowget(TBBUr,i,TBBUrw);
 		if(TBBUrw.stp == 18)then begin
+			flag1 = CountStp(TBBUr,i) - 1;
+			stp18 = stp18 + 1;
+			if(stp18>1) then begin 
+				stp18 = 1; 
+				stp17 = 0;
+				tot = 0;
+				totvat = 0;
+			end;
+						
 			startformat(15);
 				outstring(0,0,TBBUrw.stp,false);
 				outstring(10,0,TBBUrw.Spec,false);
-				outstring(100,0,"",false);
-				outstring(150,0,"",false);
+				outstring(100,0,TBBUrw.TypeName,false);
+				outstring(150,0,TBBUrw.IdentQuant,false);
 				outstring(210,0,"",false);
 			endformat;
 		end else begin
 			if(TBBUrw.stp == 17)then begin
+				stp17 = stp17 + 1;
 				startformat(15);
 					outstring(0,0,TBBUrw.stp,false);
 					outstring(10,0,TBBUrw.Spec,false);
@@ -90,14 +128,34 @@ begin
 							outstring(150,0,"ˆ’ƒ ğîåêò:",false);
 							outstring(210,0,TBBUrw.Cost,false);
 						endformat;
+						tot = tot + TBBUrw.Cost;
+												
 						startformat(15);
 							outstring(0,0,TBBUrw.stp,false);
 							outstring(0,0,"",false);
 							outstring(50,0,"",false);
 							outstring(150,0,"ˆ’ƒ, ñ „‘:",false);
 							outstring(210,0,TBBUrw.Sum,false);
-							Gray_Divider(0,1);
 						endformat;
+						totvat = totvat + TBBUrw.Sum;
+												
+						if(stp17==flag1)then begin
+							startformat(15);
+								outstring(0,0,"19",false);
+								outstring(10,0,"",false);
+								outstring(50,0,"",false);
+								outstring(150,0,"ˆ’ƒ ïî ïğîåêòàì:",false);
+								outstring(210,0,tot,false);
+							endformat;
+							startformat(15);
+								outstring(0,0,"19",false);
+								outstring(10,0,"",false);
+								outstring(50,0,"",false);
+								outstring(150,0,"ˆ’ƒ ïî ïğîåêòàì ñ „‘:",false);
+								outstring(210,0,totvat,false);
+							endformat;
+						end;
+						
 					end;	
 				end;
 			end;
@@ -110,18 +168,21 @@ begin
 	startformat(15);
 		outstring(0,0,"20",false);
 		outstring(1,0,"",false);
+		outstring(2,0,"",false);
 		outstring(150,0,"TOTAL:",false);
 		outstring(210,0,TBBUr.TotSum,false);
 	endformat;
 	startformat(15);
 		outstring(0,0,"20",false);
 		outstring(1,0,"",false);
+		outstring(2,0,"",false);
 		outstring(150,0,"„‘:",false);
 		outstring(210,0,TBBUr.Sum3,false);
 	endformat;
 	startformat(15);
 		outstring(0,0,"20",false);
 		outstring(1,0,"",false);
+		outstring(2,0,"",false);
 		outstring(150,0,"‚ñåãî:",false);
 		outstring(210,0,TBBUr.TotSumVAT,false);
 	endformat;
