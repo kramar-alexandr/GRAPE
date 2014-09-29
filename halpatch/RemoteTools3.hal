@@ -29,6 +29,8 @@ external procedure Bud2Sumup(var record Bud2Vc);
 external updating procedure AssignStockResFromPO(record POVc);
 external function Boolean ActVc_ShouldAttachPdfToEMail(record ActVc);
 external procedure GetMailFormattingSettings(record MailVc,var record ConfVc);
+external function LongInt CountWorkingDays(Date,Date,string,string);
+external function Boolean GetPD(var record PDVc);
 
 global
 procedure PasteInvInEDIInv(var record EDIIVVc EDIIVp,record IVVc IVp)
@@ -688,7 +690,7 @@ BEGIN
   record CUVc CUr;
   record ProjectBlock PRRec;
   Integer i,rownr;
-  Integer firstrow;
+  Integer firstrow,pdays,datedif;
   row IVVc IVrw;
   record SRBlock SRRec;
   string 255 tstr;
@@ -696,8 +698,13 @@ BEGIN
   string 10 curncy;  
   Integer res;
 	record TBBUVc TBBUr;
+	string 20 country;
+	record AccBlock ARAb;
+	record PDVc PDr;
 	
 	res = 0;
+	
+	BlockLoad(ARAb);
   BlockLoad(SRRec);
   RecordNew(IVp);
   IVp.InvType = kInvoiceTypeNormal;
@@ -743,6 +750,42 @@ BEGIN
   if (nonblank(PRp.PayDeal)) then begin
     IVp.PayDeal = PRp.PayDeal;
   end;
+ 	
+ 	PDr.Code = IVp.PayDeal;
+  if (GetPD(PDr)) then begin end;
+ 	
+  CUr.Code = IVp.CustCode;	//******** Edit by Victor 23.09.14 {
+	if(readfirstmain(CUr,1,true))then begin
+		country = CUr.CountryCode;
+	end else begin
+		country = "UA";
+	end;
+			
+  pdays = IVp.pdays;
+  
+  datedif = CountWorkingDays(IVp.InvDate,AddDay(IVp.InvDate,IVp.pdays),IVp.CustCode,country);
+	
+	if(datedif>0 and datedif<pdays)then begin
+		while(datedif<pdays)begin
+			i=i+1;
+			datedif = CountWorkingDays(AddDay(IVp.InvDate,1),AddDay(IVp.InvDate,pdays + i),IVp.CustCode,country);
+		end;
+		pdays = pdays + i - 1;
+	end;
+	IVp.pdays = pdays;
+	
+	if (pdays<0) then begin pdays = 0; end;	//******* Edit by Victor 23.09.14 }
+	    
+  if (IVp.pdays!=-1) then begin
+    if (ARAb.DueDateBasedOnServDelDate==0) then begin
+    	IVp.PayDate = AddDay(IVp.InvDate,pdays);	
+    end else begin
+      IVp.PayDate = AddDay(IVp.ServiceDelDate,pdays);	
+    end;
+  end else begin
+    IVp.PayDate = IVp.InvDate;
+  end; //******* Edit by Victor 29.09.14 }
+    
   if (nonblank(PRp.CustOrdNr)) then begin
     IVp.CustOrdNr = PRp.CustOrdNr;
   end;
