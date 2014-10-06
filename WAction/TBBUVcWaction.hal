@@ -1035,10 +1035,10 @@ begin
   RepSpec.repname = "ExpBudgetRn";
   RepSpec.f1 = TBBUr.PRCode;
   RunReport(RepSpec,0);
-  MilliSleep(100);
-  path = Left(CurrentPath, len(CurrentPath)-1);
   
-  RunProgram("/Users/Victor/7.2r_GRAPE/ExcelFormating/ExcelFormating.sh",path); // Put path 
+  path = Left(CurrentPath, len(CurrentPath)-1);
+
+  RunProgram(CurrentPath & "ExcelFormating/ExcelFormating.sh",path); // Put path 
   
 	/* Working!*/
 	//RunProgram("/Library/Java/JavaVirtualMachines/jdk1.8.0_11.jdk/Contents/Home/bin/java","-jar /Users/Victor/7.2r_GRAPE/ExcelFormating/ExcelFormating.jar");
