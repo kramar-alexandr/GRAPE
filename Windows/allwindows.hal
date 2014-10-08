@@ -2654,8 +2654,10 @@ begin
   Flip(0);
   MatText(t=9,30,"Итого",true);
   MatCol(t,100,"",0,Spec,false,0);
-  MatCol(t,-140,"Сумма",0,Sum,true,0);
-  MatCol(t,-70,"Ст-ть за ед.",0,Cost,true,0); //Edit***************************Sasha2,9:41 10.09.2014
+  MatText(t,-215,"Ст-сть",false); //Edit***************************Sasha2,17:10 08.10.2014
+  MatCol(t,-170,"Ст-ть за ед.",0,Cost,true,0); //Edit***************************Sasha2,9:41 10.09.2014
+  MatText(t,-100,"Сумма",false); //Edit***************************Sasha2,17:08 08.10.2014
+  MatCol(t,-60,"Сумма",0,Sum,true,0); 
   MatText(t=17,30,"Заголовок",true);
   MatCol(t,100,"",0,Spec,false,0);
   MatText(t=18,30,"Проект",true);// Edit ************************** Monday, 15 September 2014 14:28:53
@@ -2663,8 +2665,17 @@ begin
   MatCol(t,300,"",0,TypeName,false,0); // Edit by Victor 23.09.14
   MatCol(t,-20,"",0,IdentQuant,false,0);	// Edit by Victor 24.09.14
   MatText(t=19,30,"Скидка",true); //Edit***************************Sasha2,14:48 07.10.2014 {
-  MatCol(t,100,"",0,Spec,false,0); 
-  MatCol(t,-140,"Сумма",0,Cost,true,0); //Edit***************************Sasha2,14:48 07.10.2014 }
+  MatCol(t,100,"",0,Spec,false,0);
+  MatText(t,-100,"Сумма",false); 
+  MatCol(t,-60,"Сумма",0,Sum,true,0);
+  MatText(t=20,30,"Начало группы задач",true); 
+  MatCol(t,155,"",0,Spec,false,0); 
+  MatText(t=21,30,"Конец группы задач",true);
+  MatCol(t,155,"",0,Spec,false,0);
+  MatText(t,-185,"Кол-во",false); 
+  MatCol(t,-140,"Кол-во",0,Qty,true,0);
+  MatText(t,-100,"Сумма",false);
+  MatCol(t,-60,"Сумма",0,Sum,true,0); //Edit***************************Sasha2,14:48 07.10.2014 }
   MatCol(1,30,"Товар",0,ArtCode,false,INSClass);
   MatCol(1,100,"Сотр.",0,EMCode,false,UserSClass);
   MatCol(1,155,"Кол-во",0,Qty,true,0);
@@ -2829,6 +2840,8 @@ begin
   SpecialMenu("Добавить строку заголовка",' ',0,"HeaderLineTBBUDsm");
   SpecialMenu("Добавить итого",' ',0,"SubtotalTBBUDsm");
   SpecialMenu("Добавить скидку",' ',0,"SubRebateTBBUDsm"); //Edit***************************Sasha2,14:29 07.10.2014
+  SpecialMenu("Добавить начало группы задач",' ',0,"SubBlockStartTBBUDsm"); //Edit***************************Sasha2,14:29 07.10.2014
+  SpecialMenu("Добавить конец группы задач",' ',0,"SubBlockEndTBBUDsm"); //Edit***************************Sasha2,14:29 07.10.2014
   if (HasApprovals) then begin
   SpecialMenu("Отправить для утверждения",' ',6,"TBBUSendforAcceptanceTBBUDsm");
   SpecialMenu("Отменить запрос на утверждение",' ',2,"CancelApprovalRequestDsm");

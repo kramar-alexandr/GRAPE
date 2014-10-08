@@ -99,6 +99,14 @@ begin
   MatCol(t,100,"",0,Spec,false,0);
   MatText(t=17,30,"Заголовок",true);
   MatCol(t,100,"",0,Spec,false,0);
+  MatText(t=20,30,"Начало группы задач",true); 
+  MatCol(t,155,"",0,Spec,false,0); 
+  MatText(t=21,30,"Конец группы задач",true);
+  MatCol(t,155,"",0,Spec,false,0);
+  MatText(t,-185,"Кол-во",false); 
+  MatCol(t,-140,"Кол-во",0,Qty,true,0);
+  MatText(t,-100,"Сумма",false);
+  MatCol(t,-60,"Сумма",0,Sum,true,0);
   MatCol(1,30,"Товар",0,ArtCode,false,INSClass);
   MatCol(1,155,"Кол-во",0,Qty,true,0);
   MatCol(1,200,"Наименование",0,Comment,false,0);
@@ -111,6 +119,8 @@ begin
 
   SpecialMenu("Добавить строку заголовка",' ',0,"HeaderLineTemplateTBBUDsm");
   SpecialMenu("Добавить итого",' ',0,"SubtotalTemplateTBBUDsm");
+  SpecialMenu("Добавить начало группы задач",' ',0,"SubBlockStartTemplateTBBUDsm"); //Edit***************************Sasha2,14:29 07.10.2014
+  SpecialMenu("Добавить конец группы задач",' ',0,"SubBlockEndTemplateTBBUDsm"); //Edit***************************Sasha2,14:29 07.10.2014
 
   EndWindow;
 end; //Edit***************************Sasha2,13:29 12.09.2014 }

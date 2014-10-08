@@ -196,13 +196,16 @@ BEGIN
   Integer itemtyp;
   val subtotv,costv;
   val gptot,totrebate; //Edit***************************Sasha2,10:21 08.09.2014
+  Boolean findblock; //Edit***************************Sasha2,16:09 08.10.2014
+  val blqty,blsum; //Edit***************************Sasha2,16:10 08.10.2014
     
     logtext(0,1);
     
+  findblock = false; //Edit***************************Sasha2,16:09 08.10.2014
   rwcnt = MatRowCnt(TBBUp);
   for (i=0;i<rwcnt;i=i+1) begin
     MatRowGet(TBBUp,i,TBBUrw);
-    if (TBBUrw.stp!=9) then begin
+    if (TBBUrw.stp!=9 and (TBBUrw.stp<17 or TBBUrw.stp>21)) then begin //Edit***************************Sasha2,11:49 08.10.2014
       if ((nonblank(TBBUrw.ArtCode)) and (TBBUrw.stp!=9)) then begin
         itemtyp = TBBUrw.ItemType;
         if (itemtyp==0) then begin
@@ -232,17 +235,37 @@ BEGIN
       subtotv = subtotv + TBBUrw.Sum;
       costv = costv + TBBUrw.Qty*TBBUrw.Cost;
       gptot = gptot + TBBUrw.GP; //Edit***************************Sasha2,10:27 08.09.2014
-      if (TBBUrw.stp==19) then begin //Edit***************************Sasha2,15:12 07.10.2014 {
-      	totrebate = totrebate + TBBUrw.Cost;  
-      end; //Edit***************************Sasha2,15:12 07.10.2014 }
+      if (findblock) then begin //Edit***************************Sasha2,16:11 08.10.2014 {
+      	  blqty = blqty + TBBUrw.Qty;
+      	  blsum = blsum + TBBUrw.Sum;
+      end; //Edit***************************Sasha2,16:11 08.10.2014 }
     end else begin
-      if (TBBUrw.Sum!=subtotv) or (TBBUrw.Cost!=costv) then begin
-        TBBUrw.Sum = subtotv;
-        TBBUrw.Cost = costv;
-        MatRowPut(TBBUp,i,TBBUrw);
-      end;
-      subtotv = blankval;
-      costv = blankval;
+      if (TBBUrw.stp>=17) then begin //Edit***************************Sasha2,15:12 07.10.2014 {
+      	if (TBBUrw.stp==19) then begin
+      		totrebate = totrebate + TBBUrw.Sum;
+      	end;
+      	if (TBBUrw.stp==20) then begin
+      		findblock = true;
+      	end;
+      	if (TBBUrw.stp==21) then begin
+      		findblock = false;
+      		if (blqty!=TBBUrw.Qty) or (blsum!=TBBUrw.Sum) then begin
+      			TBBUrw.Qty = blqty;
+      			TBBUrw.Sum = blsum;
+      			MatRowPut(TBBUp,i,TBBUrw);
+      		end;
+      		blqty = BlankVal;
+      		blsum = BlankVal;
+      	end;
+      end else begin //Edit***************************Sasha2,15:12 07.10.2014 }
+      	  if (TBBUrw.Sum!=subtotv) or (TBBUrw.Cost!=costv) then begin
+	        TBBUrw.Sum = subtotv;
+	        TBBUrw.Cost = costv;
+	        MatRowPut(TBBUp,i,TBBUrw);
+	      end;
+	      subtotv = blankval;
+	      costv = blankval;
+      end; 
     end;
   end;
   TBBUp.SumTime = tt;

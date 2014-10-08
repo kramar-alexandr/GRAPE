@@ -298,7 +298,7 @@ begin
       TBBUSumup(TBBUr);
       PutWindowRecord(wn,TBBUr);          
     end;
-    if (TBBUrw.stp==19) then begin //Edit***************************Sasha2,15:50 07.10.2014 {
+    if (TBBUrw.stp==19 or TBBUrw.stp==21) then begin //Edit***************************Sasha2,15:50 07.10.2014 {
       MatRowPut(TBBUr,rownr,TBBUrw);
       TBBUSumup(TBBUr);
       PutWindowRecord(wn,TBBUr);
@@ -608,6 +608,27 @@ BEGIN
   end;
   GetWindowRecord(wn,TBBUr);
   
+  switch (fieldname) begin //Edit***************************Sasha2,13:44 08.10.2014 {
+  	case "Sum": 
+    	MatRowGet(TBBUr,rownr,TBBUrw);
+    	switch (TBBUrw.stp) begin
+    		case 9:
+    			res = false;
+    		case 19:
+    			res = true;
+    		case 21:
+    			res = false;
+    		otherwise
+    			res = UserCanAction("AllowPRBudgetChangeSum",false);
+    	end;
+    case "Qty":
+    	MatRowGet(TBBUr,rownr,TBBUrw);
+    	switch (TBBUrw.stp) begin
+    		case 21:
+    			res = false;
+    	end;
+  end; //Edit***************************Sasha2,13:45 08.10.2014 }
+  
   if (WindowState(wn)==updatemode) then begin
     GetPrevWindowRecord(wn,TBBUr);
     if(TBBUr.OKFlag!=0) then begin 
@@ -649,8 +670,6 @@ BEGIN
       end;
     case "Price": //Edit***************************Sasha2,10:03 08.10.2014 {
         res = UserCanAction("AllowPRBudgetChangePrice",false);
-    case "Sum": 
-    	res = UserCanAction("AllowPRBudgetChangeSum",false);
     case "Discount": 
     	res = UserCanAction("AllowPRBudgetChangeDiscount",false); //Edit***************************Sasha2,10:03 08.10.2014 }
   end;
@@ -1007,15 +1026,105 @@ BEGIN
   if ((rownr==-1) or (rownr>rwcnt)) then begin
     rownr = rwcnt;
   end;
-  DeselectWindow(wn,false);
-LBREAK:;  
+  DeselectWindow(wn,false); 
   ClearRow(TBBUr,TBBUrw,19);
-  MatRowInsert(TBBUr,rownr,TBBUrw);
-LSubRebateTBBUDsm:;  
+  MatRowInsert(TBBUr,rownr,TBBUrw); 
   PutWindowRecord(wn,TBBUr);
 LOutSubRebateTBBUDsm:;  
   RETURN;
 END; //Edit***************************Sasha2,14:42 07.10.2014 }
+
+global //Edit***************************Sasha2,14:43 07.10.2014 {
+procedure SubBlockStartTBBUDsm()
+BEGIN
+  record TBBUVc TBBUr;
+  row TBBUVc TBBUrw;
+  Integer wn,i,rwcnt,rownr;
+
+  wn = CurWindow;
+  if (WindowState(wn)==Rs_normal) then begin
+    DoUpdate(wn);
+  end;
+  if (WindowState(wn)!=Rs_update) then begin
+    goto LSubBlockStartTBBUDsm;
+  end;
+  GetWindowRecord(wn,TBBUr);
+  rwcnt = MatRowCnt(TBBUr);
+  rownr = WindowActiveRow(wn);
+  if ((rownr==-1) or (rownr>rwcnt)) then begin
+    rownr = rwcnt;
+  end;
+  DeselectWindow(wn,false);
+  ClearRow(TBBUr,TBBUrw,20);
+  MatRowInsert(TBBUr,rownr,TBBUrw);
+  PutWindowRecord(wn,TBBUr);
+LSubBlockStartTBBUDsm:;  
+  RETURN;
+END; //Edit***************************Sasha2,14:42 07.10.2014 }
+
+global //Edit***************************Sasha2,14:34 08.10.2014 {
+procedure SubBlockEndTBBUDsm()
+BEGIN
+  record TBBUVc TBBUr;
+  row TBBUVc TBBUrw;
+  Integer wn,i,rwcnt,rownr,checkblockpair;
+  val pt,pt2;
+  boolean testf;
+
+  checkblockpair = 1;
+  testf = false;
+  wn = CurWindow;
+  GetWindowRecord(wn,TBBUr);
+  rwcnt = MatRowCnt(TBBUr);
+  rownr = WindowActiveRow(wn);
+  if ((rownr==-1) or (rownr>rwcnt)) then begin
+    rownr = rwcnt;
+  end;
+  DeselectWindow(wn,false);
+  
+  for (i=(rownr-1);i>=0;i=i-1) begin
+    MatRowGet(TBBUr,i,TBBUrw);
+    if (TBBUrw.stp!=9 and (TBBUrw.stp<17 or TBBUrw.stp>21) and testf==false) then begin
+      pt = pt + TBBUrw.Sum;
+      pt2 = pt2 + TBBUrw.Qty;
+    end else begin
+      if (TBBUrw.stp==20) then begin
+      	checkblockpair = checkblockpair - 1;
+      end;
+      if (TBBUrw.stp==21) then begin
+      	checkblockpair = checkblockpair + 1;
+      end;
+      if (TBBUrw.stp==20 and checkblockpair==0) then begin 
+        testf = true;
+      end;      
+    end;
+  end;
+  for (i=(rownr+1);i<rwcnt;i=i+1) begin
+  	MatRowGet(TBBUr,i,TBBUrw);
+  	  if (TBBUrw.stp==20) then begin
+	  	checkblockpair = checkblockpair - 1;
+	  end;
+	  if (TBBUrw.stp==21) then begin
+	  	checkblockpair = checkblockpair + 1;
+	  end;
+  end;
+  
+  if (checkblockpair!=0) then begin
+  	testf = false;
+  end;
+  
+  if (testf) then begin
+    ClearRow(TBBUr,TBBUrw,21);
+	TBBUrw.Sum = pt;
+	TBBUrw.Qty = pt2;
+	MatRowInsert(TBBUr,rownr,TBBUrw); 
+	PutWindowRecord(wn,TBBUr);
+  end else begin
+  	MessageBox(31022,"");
+  end;  
+
+  RETURN;
+END; //Edit***************************Sasha2,14:34 08.10.2014 }
 
 global procedure RecalculateTBBUDsm()
 begin
