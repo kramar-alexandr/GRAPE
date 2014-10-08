@@ -93,8 +93,21 @@ BEGIN
   string 255 tstr;
   LongInt prnr;
   val fr,to1,to2,br1,br2;
+  record UserVc User;
       
   BlockLoad(PRb);
+  // Edit Start ---------------------------------------------- Edit Start
+	//Wednesday, 8 October 2014 09:37:05
+	
+  PRr.PrSalesMan = currentuser;
+  PRr.Members = currentuser;
+  PRr.Leader = currentuser;
+  User.Code = PRr.PrSalesMan;
+  readfirstmain(User,1,true);
+  PRr.LeaderName = User.Name;
+  
+	// Edit End ---------------------------------------------- Edit End
+	
   PRr.InvoiceTime = PRb.InvoiceTime;
   PRr.InvoiceStock = PRb.InvoiceStock;
   PRr.InvoicePurch = PRb.InvoicePurch;
@@ -735,7 +748,12 @@ BEGIN
     case typTimeLog: smalldevicesf = true;
   end;
 	if (blank(PRr.PRClass)) then begin			//*** Edit by Victor 17.09.14
-    RecordCheckError(1058,PRr.PRClass,-1,"PRClass");      
+    RecordCheckError(1058,"",-1,"PRClass");      
+    res = -1;
+    goto LPRVcRecordCheck;
+  end;
+  if (blank(PRr.Name)) then begin			// Edit ************************** Wednesday, 8 October 2014 09:31:32
+    RecordCheckError(1058,"",-1,"Name");      
     res = -1;
     goto LPRVcRecordCheck;
   end;
