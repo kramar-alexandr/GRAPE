@@ -28,6 +28,8 @@ BEGIN
   record PRVc PRr;
   record ProjScopeBlock PSB;
   row ProjScopeBlock PSBrw;
+  record PRClassBlock PRB; //Edit***************************Sasha2,9:34 08.10.2014
+  row PRClassBlock PRBrw; //Edit***************************Sasha2,9:35 08.10.2014
   Integer i,rwcnt;
   boolean found;
   record INVc INr;
@@ -39,6 +41,7 @@ BEGIN
   insertmode = 1;//Rs_insert
   updatemode = 2;//Rs_update
   BlockLoad(PSB);
+  BlockLoad(PRB);
   
   if (Blank(TemplateTBBUr.PRClass)) then begin
     RecordCheckError(1058,"",-1,"PRClass");      
@@ -52,12 +55,23 @@ BEGIN
     goto LTBBUVcRecordCheck;
   end;
   
-  /*PRr.PRClass = TemplateTBBUr.PRClass;
-  if (ReadFirstMain(PRr,1,true)==false) then begin
-    RecordCheckError(1290,"",-1,"PRClass");      
+  found = false;
+  rwcnt = MatRowCnt(PRB);
+  for (i=0;i<rwcnt;i=i+1) begin
+  	MatRowGet(PRB,i,PRBrw);
+  	if (NonBlank(PRBrw.Code)) then begin
+  		if (PRBrw.Code==TemplateTBBUr.PRClass) then begin
+  			found = true;
+  			i = rwcnt;
+  		end;
+  	end;
+  end;
+  
+  if (found==false) then begin
+  	RecordCheckError(1290,"",-1,"PRClass");      
     res = -1;
     goto LTBBUVcRecordCheck;
-  end;  */
+  end;
   
   found = false;
   rwcnt = MatRowCnt(PSB);

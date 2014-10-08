@@ -2662,6 +2662,9 @@ begin
   MatCol(t,100,"",0,Spec,false,0);// Edit ************************** Monday, 15 September 2014 14:29:15
   MatCol(t,300,"",0,TypeName,false,0); // Edit by Victor 23.09.14
   MatCol(t,-20,"",0,IdentQuant,false,0);	// Edit by Victor 24.09.14
+  MatText(t=19,30,"Скидка",true); //Edit***************************Sasha2,14:48 07.10.2014 {
+  MatCol(t,100,"",0,Spec,false,0); 
+  MatCol(t,-140,"Сумма",0,Cost,true,0); //Edit***************************Sasha2,14:48 07.10.2014 }
   MatCol(1,30,"Товар",0,ArtCode,false,INSClass);
   MatCol(1,100,"Сотр.",0,EMCode,false,UserSClass);
   MatCol(1,155,"Кол-во",0,Qty,true,0);
@@ -2747,6 +2750,7 @@ begin
     EditField(450,-17,80, "Покупки",Normal,SumOther,true,0);
   end;
   v=v+ vs; VTab(-35,v,-16,v+vs,ToolFlip,6,"F");
+  EditField(63,-55,80, "Скидка",Normal,TotRebate,true,0); //Edit***************************Sasha2,15:16 07.10.2014
   EditField(260,-55,80, "Доходность",Normal,GPTot,true,0);//Edit***************************Sasha2,10:32 10.09.2014
   EditField(450,-55,80, "Доходность в %",Normal,GPTotPercent,true,0);//Edit***************************Sasha2,10:32 10.09.2014
   EditField(450,-36,80, "Наценка бюджета",Normal,Markup,true,0); //vertical position = -45
@@ -2824,6 +2828,7 @@ begin
 	SpecialMenu("Загрузить дочерние бюджеты",' ',0,"RecalculateTBBUDsm");// Edit ************************** Friday, 5 September 2014 13:40:13
   SpecialMenu("Добавить строку заголовка",' ',0,"HeaderLineTBBUDsm");
   SpecialMenu("Добавить итого",' ',0,"SubtotalTBBUDsm");
+  SpecialMenu("Добавить скидку",' ',0,"SubRebateTBBUDsm"); //Edit***************************Sasha2,14:29 07.10.2014
   if (HasApprovals) then begin
   SpecialMenu("Отправить для утверждения",' ',6,"TBBUSendforAcceptanceTBBUDsm");
   SpecialMenu("Отменить запрос на утверждение",' ',2,"CancelApprovalRequestDsm");

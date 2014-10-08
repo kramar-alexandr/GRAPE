@@ -298,6 +298,11 @@ begin
       TBBUSumup(TBBUr);
       PutWindowRecord(wn,TBBUr);          
     end;
+    if (TBBUrw.stp==19) then begin //Edit***************************Sasha2,15:50 07.10.2014 {
+      MatRowPut(TBBUr,rownr,TBBUrw);
+      TBBUSumup(TBBUr);
+      PutWindowRecord(wn,TBBUr);
+    end; //Edit***************************Sasha2,15:50 07.10.2014 }
 
   end;  
   TBBUDClassSumEFAfter = true;
@@ -642,6 +647,12 @@ BEGIN
           res = false;
         end;
       end;
+    case "Price": //Edit***************************Sasha2,10:03 08.10.2014 {
+        res = UserCanAction("AllowPRBudgetChangePrice",false);
+    case "Sum": 
+    	res = UserCanAction("AllowPRBudgetChangeSum",false);
+    case "Discount": 
+    	res = UserCanAction("AllowPRBudgetChangeDiscount",false); //Edit***************************Sasha2,10:03 08.10.2014 }
   end;
 LTBBUDClassActiveEditField:;
   TBBUDClassActiveEditField = res;
@@ -976,6 +987,35 @@ begin
  return;
 end; //Edit***************************Sasha2,11:25 15.09.2014 }
 
+global //Edit***************************Sasha2,14:43 07.10.2014 {
+procedure SubRebateTBBUDsm()
+BEGIN
+  record TBBUVc TBBUr;
+  row TBBUVc TBBUrw;
+  Integer wn,i,rwcnt,rownr;
+
+  wn = CurWindow;
+  if (WindowState(wn)==Rs_normal) then begin
+    DoUpdate(wn);
+  end;
+  if (WindowState(wn)!=Rs_update) then begin
+    goto LOutSubRebateTBBUDsm;
+  end;
+  GetWindowRecord(wn,TBBUr);
+  rwcnt = MatRowCnt(TBBUr);
+  rownr = WindowActiveRow(wn);
+  if ((rownr==-1) or (rownr>rwcnt)) then begin
+    rownr = rwcnt;
+  end;
+  DeselectWindow(wn,false);
+LBREAK:;  
+  ClearRow(TBBUr,TBBUrw,19);
+  MatRowInsert(TBBUr,rownr,TBBUrw);
+LSubRebateTBBUDsm:;  
+  PutWindowRecord(wn,TBBUr);
+LOutSubRebateTBBUDsm:;  
+  RETURN;
+END; //Edit***************************Sasha2,14:42 07.10.2014 }
 
 global procedure RecalculateTBBUDsm()
 begin

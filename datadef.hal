@@ -960,6 +960,7 @@ begin
   RecordField(NoTAXonVAT,M4Long,0,0);//Edit by Victor, 10.09.2014
   RecordField(InclVAT,M4Int,0,0);//Edit by Victor, 10.09.2014
   RecordField(ApproveFlag,M4Mark,0,0); //Edit***************************Sasha2,11:48 16.09.2014
+  RecordField(TotRebate,M423Val,0,0); //Edit***************************Sasha2,15:11 07.10.2014
   ArrayBegin(Math,-,1);
   ArrayField(ArtCode,M4Code,20,INVc);
   ArrayField(Spec,M4Str,100,0);
@@ -1286,6 +1287,17 @@ begin
   ArrayField(Qty,M4UVal,0,0);
   ArrayField(Comment,M4Str,60,0); 
   ArrayField(stp,M4Int,0,0);
+  EndArray;
+  MainKeyBegin(MainKey,0);
+  KeySegment(PRClass);
+  KeySegment(Scope);
+  EndRecord; //Edit***************************Sasha2,11:25 12.09.2014 }
+  
+  RecordBegin(MinRebTBBUVc,-,""); //Edit***************************Sasha2,11:25 12.09.2014 {
+  RecordField(PRClass,M4Code,20,0);
+  RecordField(Scope,M4Str,60,0);
+  RecordField(MinReb,M423Val,0,0);
+  RecordField(MinDevReb,M423Val,0,0);
   EndArray;
   MainKeyBegin(MainKey,0);
   KeySegment(PRClass);

@@ -303,3 +303,43 @@ begin
   
   EndWindow;
 end;//******************* Edit by Victor 12.09.14 }
+
+window MinRebTBBULClass:1 //Edit***************************Sasha2,11:52 12.09.2014 {
+  wtag("language","UKR"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
+begin
+  WindowBegin("Лимиты доходности",MinRebTBBULClass,CGmlist,-);
+  SpawnClass(MinRebTBBUDClass);
+  SetWRect(64,80,700,298);
+  Sizeable(-1,-1,0,0);
+  UseView(MinRebTBBUVc);
+  RecordList(4,17,-21,-39);
+  RlColKey(4,4,"Тип проекта",PRClass,false,MainKey);
+  RlCol(100,100,"Масштаб",Scope,false);
+  RlCol(200,200,"Мин.% дох.",MinReb,false);
+  SearchField("Пошук");
+  if (HasLimitedAccess) then begin 
+  BrowseSubsetButton(-40,-15);
+  end;
+  EndWindow;
+end; //Edit***************************Sasha2,11:52 12.09.2014 }
+
+window MinRebTBBUDClass:1 //Edit***************************Sasha2,13:29 12.09.2014 {
+  wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
+begin
+  real h,h1,h2,h3,t,v,vm,vs;
+  Integer tnr;
+
+  WindowBegin("Лимит доходности",MinRebTBBUDClass,CGview,-);
+  SetWRect(20,80,500,200);
+  //Sizeable(-1,-1,0,0);
+  UseView(MinRebTBBUVc);
+
+  vs=20; h=110; h2=260; h1=50;
+
+  EditField(h,v=10,80, "Тип проекта",Normal,PRClass,false,PRClassSClass);
+  EditField(h,v+=vs,80, "Масштаб проекта",Normal,Scope,false,ProjScopeSClass);
+  EditField(h,v+=vs,80, "Мин. % дох-сти",Normal,MinReb,false,0);
+  EditField(h,v+=vs,80, "Мин. отклон.",Normal,MinDevReb,false,0);
+
+  EndWindow;
+end; //Edit***************************Sasha2,13:29 12.09.2014 }
