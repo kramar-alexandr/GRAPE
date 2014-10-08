@@ -52,12 +52,12 @@ BEGIN
     goto LTBBUVcRecordCheck;
   end;
   
-  PRr.PRClass = TemplateTBBUr.PRClass;
-  if (ReadFirstKey("ActPRClass",PRr,1,true)==false) then begin
+  /*PRr.PRClass = TemplateTBBUr.PRClass;
+  if (ReadFirstMain(PRr,1,true)==false) then begin
     RecordCheckError(1290,"",-1,"PRClass");      
     res = -1;
     goto LTBBUVcRecordCheck;
-  end;  
+  end;  */
   
   found = false;
   rwcnt = MatRowCnt(PSB);
