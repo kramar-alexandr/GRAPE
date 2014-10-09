@@ -21,6 +21,9 @@ remote procedure PRVc_PasteLeader5(var record PRVc);
 external procedure FindOTforPRClass(string,var string);
 external procedure FindClTypeforPRClass(string,var string);
 external function Boolean CheckProjectManager(record PRVc);
+external function Boolean HasContactClassification();
+external function Boolean HasMultiCurrency();
+external function Boolean IsEnterprise();
 
 
 procedure PastePRInQT(record PRVc PRr)
@@ -672,3 +675,236 @@ begin
 	wn = OpenWindow("VIDClass",1,0,"","",VIr);
   return;
 end;
+
+function boolean isDigit(string c)
+begin
+	boolean res;
+	integer i;
+	
+	res = false;
+	for(i=48;i<58;i=i+1)begin
+		if(c==chr(i))then begin
+			res = true;
+			goto LisDigit;
+		end;
+	end;
+	LisDigit:;
+	isDigit = res;
+  return;
+end;
+
+function string 255 incrementVal(var string str)	// Edit by Victor 09.10.14
+begin
+	string 255 res,snum,prCode;
+	integer i,slen, cnt,num;
+	string 1 c;
+	record SysFormatBlock SysFormatRec;
+  
+  BlockLoad(SysFormatRec);
+	
+	cnt = 0;
+	slen = len(str);
+			for(i=slen; i>=0;i=i-1)begin	// <= or < ?
+				c = mid(str,i-1,1);
+				if(isDigit(c))then begin
+					cnt = cnt + 1;
+				end else begin
+					goto LF;
+				end;
+			end;
+			LF:;
+			if(cnt==slen)then begin				// if Project name contains only digits
+				str = str & "-1";
+			end else begin
+				if(cnt==0)then begin				// if there are no digits in MotherProject name
+					str = str & "-1";
+				end else begin							// if PR code contain both digits and letters
+					snum = Right(str,cnt);
+					num = StringToVal(snum,M4Val);
+					num = num + 1;
+					prCode = Left(str,slen - cnt);
+					str = prCode & ValToString(num,M4Val,SysFormatRec.thousSep,SysFormatRec.decimalPt,1);
+				end;
+			end;
+	
+	incrementVal = str;
+  return;
+end;
+
+function boolean isContain(string main, record PRVc PRr)	// Edit by Victor 09.10.14
+begin
+	boolean res;
+	string 255 prCode;
+	
+	prCode = PRr.Code;
+	res = false;
+	if(main==Left(prCode,len(main)))then begin
+		res = true;
+	end;	
+	
+	isContain = res;
+  return;
+end;
+
+function integer findNum(string tail)	// Edit by Victor 09.10.14
+begin
+	integer res,i,tlen,cnt;
+	string 255 prCode,snum;
+	string 1 c;
+	
+	res = 0;
+	tlen = len(tail);
+	for(i=tlen; i>=0;i=i-1)begin	// <= or < ?
+		c = mid(tail,i-1,1);
+		if(isDigit(c))then begin
+			cnt = cnt + 1;
+		end else begin
+			goto LfindNum;
+		end;
+	end;
+	
+	LfindNum:;
+	
+	if(cnt>0)then begin				
+		snum = Right(tail,cnt);
+		res = StringToVal(snum,M4Val);
+	end;	
+	
+	findNum = res;
+  return;
+end;
+
+global updating
+function Integer CreateSubPR(record PRVc PRp,var record PRVc PRr) //Edit by Victor 07.10.14
+begin
+  Integer err,slen,cnt,num,i,max;
+  record PRVc PR2r;
+  string 255 warntext,tstr,prCode,stmp,tail;
+  string 100 snum;
+  string 1 c;
+  boolean testf;
+  record SysFormatBlock SysFormatRec;
+  
+  BlockLoad(SysFormatRec);
+  	
+  	max = 0;
+  	i = 0;
+  	cnt = 0;
+    RecordNew(PRr);
+    PRr.StartDate = PRp.StartDate;
+    PR2r.MotherCode = PRp.Code;
+    
+    tstr = PRp.Code;
+		PR2r.Code = 1;
+		while (LoopMain(PR2r,1,true)) begin
+			testf = true;
+			
+			//if (isContain(tstr, PR2r)==false) then begin testf = false; end;    
+			if (PR2r.MotherCode != PRp.Code) then begin testf = false; end; 
+			 
+			if (testf) then begin
+				stmp = PR2r.Code;
+				tail = Right(stmp,len(stmp) - len(tstr));
+				num = findNum(tail);
+				if(max<num)then begin
+					max = num;
+				end;
+			end;
+		end;
+    
+    if(max==0)then begin
+	    tstr = PRp.Code & "-1";
+    end else begin	   
+     	tstr = PRp.Code & "-" & ValToString(max+1,M4Val,SysFormatRec.thousSep,SysFormatRec.decimalPt,1);;
+    end;
+    
+    PRr.Code = tstr;
+    PRr.Name = PRp.Name;  
+    PRr.MotherCode = PRp.Code;
+    PRr.Scope = PRp.Scope;
+    PRr.CustCode = PRp.CustCode;
+    PRr.CustName = PRp.CustName;
+    PRr.Contact = PRp.Contact;
+    //PRr.Objects = PRp.Objects;
+    if (HasContactClassification) then begin
+    	PRr.PRClassification = PRp.PRClassification ;
+    end;
+    PRr.Desc0 = PRp.Desc0;
+    PRr.Desc1 = PRp.Desc1;
+    PRr.Desc2 = PRp.Desc2;
+    PRr.Terminated = PRp.Terminated;
+    PRr.Type = PRp.Type;
+    PRr.TBIVItemsUsage = PRp.TBIVItemsUsage;
+    PRr.EndDate = PRp.EndDate;
+    PRr.FinishedDate = PRp.FinishedDate;
+    if (HasMultiCurrency) then begin
+    	PRr.CurncyCode = PRp.CurncyCode;
+    end;
+    PRr.StopInvoicing = PRp.StopInvoicing;
+    PRr.PayMode = PRp.PayMode;
+    PRr.PayDeal = PRp.PayDeal;
+    PRr.Leader = PRp.Leader;
+    PRr.Members = PRp.Leader;	//!
+    PRr.PrSalesMan = PRp.PrSalesMan;
+    PRr.SalesGroup = PRp.SalesGroup;
+    PRr.InvoiceTime = PRp.InvoiceTime;
+    PRr.InvoicePurch = PRp.InvoicePurch;
+    PRr.InvoiceStock = PRp.InvoiceStock;
+    PRr.InvoiceMaterial = PRp.InvoiceMaterial;
+    PRr.CustOrdNr = PRp.CustOrdNr;		//???
+    PRr.Email = PRp.Email;
+    PRr.NoInvBefore = PRp.NoInvBefore;	//???
+    PRr.LangCode = PRp.LangCode;
+    if (IsEnterprise) then begin
+	    PRr.MaxRetSum = PRp.MaxRetSum;
+	    PRr.UseWIP = PRp.UseWIP;
+	    PRr.InvSepTB = PRp.InvSepTB;
+	  end;
+    PRr.PRCodeOnInv = PRp.PRCodeOnInv;
+    PRr.PRNameOnInv = PRp.PRNameOnInv;
+    PRr.PRTextOnInv = PRp.PRTextOnInv;
+    PRr.PRLeaderOnInv = PRp.PRLeaderOnInv;
+    PRr.PRContOnInv = PRp.PRContOnInv;
+    PRr.PeriodOnInv = PRp.PeriodOnInv;
+    PRr.TimeAvgPriOnInv = PRp.TimeAvgPriOnInv;
+    PRr.TimeAvgQtyOnInv = PRp.TimeAvgQtyOnInv;
+  	PRr.PurcAvgPriOnInv = PRp.PurcAvgPriOnInv;
+  	PRr.PurcAvgQtyOnInv = PRp.PurcAvgQtyOnInv;
+  	PRr.ItemPerDay = PRp.ItemPerDay;
+  	PRr.InvoicePurch = PRp.InvoicePurch;
+  	PRr.Text0 = PRp.Text0;
+  	PRr.Text1 = PRp.Text1;
+  	PRr.Text2 = PRp.Text2;
+  	PRr.Text3 = PRp.Text3;
+  	PRr.Text4 = PRp.Text4;
+  	PRr.Text5 = PRp.Text5;
+  	PRr.Text6 = PRp.Text6;
+  	PRr.Text7 = PRp.Text7;
+  	PRr.Text8 = PRp.Text8;
+  	PRr.Text9 = PRp.Text9;
+    
+    err = 0;
+        
+  return;
+end;
+
+global updating
+procedure CreateSubPRDsm()		//Edit by Victor 07.10.14
+BEGIN
+  record PRVc PRr,PR2r;
+  Integer wn,err;
+    
+  wn = CurWindow;
+  GetWindowRecord(wn,PRr);
+  DeselectWindow(wn,false);
+  if (WindowState(wn)==0) then begin//Rs_normal
+    err = CreateSubPR(PRr,PR2r);
+    switch (err) begin
+      case 0:
+        wn = OpenWindow("PRDClass",1,0,"","",PR2r);      
+      otherwise
+        MessageBox(err,"");
+    end;
+  end;
+  RETURN;
+END;

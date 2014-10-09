@@ -4295,6 +4295,7 @@ begin
   SpecialMenu("Прикрепить дополнительное соглашение с клиентом",'',11,"AddSAtoPRDsm");//*****Edit by Victor 12.09.14
   SpecialMenu("Прикрепить акт выполненой работы с подрядчиком",'',12,"AddADJVItoPRDsm");//*****Edit by Victor 15.09.14
   SpecialMenu("Прикрепить дополнительное соглашение с подрядчиком",'',13,"AddSAVItoPRDsm");//*****Edit by Victor 15.09.14
+  SpecialMenu("Создать подпроект",'s',14,"CreateSubPRDsm");//*****Edit by Victor 07.10.14
   if (IsEnterprise) then begin
     SpecialMenu("Создать график проекта",' ',7,"CreatePRScheduleFromPRD");
     SpecialMenu("Открыть график проекта",' ',8,"OpenPRSchedulePRD");
