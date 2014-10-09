@@ -200,7 +200,6 @@ BEGIN
   integer blockcnt; //Edit***************************Sasha2,10:37 09.10.2014
   array Integer blnums; //Edit***************************Sasha2,11:05 09.10.2014
     
-    logtext(0,1);
   
   blockcnt = -1; //Edit***************************Sasha2,11:05 09.10.2014 
   rwcnt = MatRowCnt(TBBUp);
