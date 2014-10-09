@@ -531,12 +531,12 @@ begin
   			ClearRow(TBBUr,TBBUrw,17);
   			TBBUrw.Spec = TempTBBUrw.Spec;
   			MatRowPut(TBBUr,i,TBBUrw);
-  		case 20: // Начало группы задач
-  			ClearRow(TBBUr,TBBUrw,20);
+  		case 21: // Начало группы задач
+  			ClearRow(TBBUr,TBBUrw,21);
   			TBBUrw.Spec = TempTBBUrw.Spec;
   			MatRowPut(TBBUr,i,TBBUrw);
-  		Case 21: //Конец группы задач
-  			ClearRow(TBBUr,TBBUrw,21);
+  		Case 22: //Конец группы задач
+  			ClearRow(TBBUr,TBBUrw,22);
   			TBBUrw.Spec = TempTBBUrw.Spec;
   			MatRowPut(TBBUr,i,TBBUrw);
   			TBBUSumup(TBBUr);	

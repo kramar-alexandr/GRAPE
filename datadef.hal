@@ -1288,6 +1288,7 @@ begin
   ArrayField(Comment,M4Str,60,0); 
   ArrayField(stp,M4Int,0,0);
   ArrayField(Sum,M4Val,0,0);
+  ArrayField(IdentQuant,M4Int,0,0);
   EndArray;
   MainKeyBegin(MainKey,0);
   KeySegment(PRClass);

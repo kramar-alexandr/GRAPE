@@ -191,21 +191,22 @@ procedure TBBUSumup(var record TBBUVc TBBUp)
 BEGIN
   row TBBUVc TBBUrw;
   record INVc INr;
-  Integer i,rwcnt;
+  Integer i,rwcnt,j;
   val tt,ot,mt,st,s3,t;
   Integer itemtyp;
   val subtotv,costv;
   val gptot,totrebate; //Edit***************************Sasha2,10:21 08.09.2014
-  Boolean findblock; //Edit***************************Sasha2,16:09 08.10.2014
-  val blqty,blsum; //Edit***************************Sasha2,16:10 08.10.2014
+  array val blqty,blsum; //Edit***************************Sasha2,16:10 08.10.2014
+  integer blockcnt; //Edit***************************Sasha2,10:37 09.10.2014
+  array Integer blnums; //Edit***************************Sasha2,11:05 09.10.2014
     
     logtext(0,1);
-    
-  findblock = false; //Edit***************************Sasha2,16:09 08.10.2014
+  
+  blockcnt = -1; //Edit***************************Sasha2,11:05 09.10.2014 
   rwcnt = MatRowCnt(TBBUp);
   for (i=0;i<rwcnt;i=i+1) begin
     MatRowGet(TBBUp,i,TBBUrw);
-    if (TBBUrw.stp!=9 and (TBBUrw.stp<17 or TBBUrw.stp>21)) then begin //Edit***************************Sasha2,11:49 08.10.2014
+    if (TBBUrw.stp!=9 and (TBBUrw.stp<17 or TBBUrw.stp>23)) then begin //Edit***************************Sasha2,11:49 08.10.2014
       if ((nonblank(TBBUrw.ArtCode)) and (TBBUrw.stp!=9)) then begin
         itemtyp = TBBUrw.ItemType;
         if (itemtyp==0) then begin
@@ -235,27 +236,37 @@ BEGIN
       subtotv = subtotv + TBBUrw.Sum;
       costv = costv + TBBUrw.Qty*TBBUrw.Cost;
       gptot = gptot + TBBUrw.GP; //Edit***************************Sasha2,10:27 08.09.2014
-      if (findblock) then begin //Edit***************************Sasha2,16:11 08.10.2014 {
-      	  blqty = blqty + TBBUrw.Qty;
-      	  blsum = blsum + TBBUrw.Sum;
+      if (blockcnt>-1) then begin //Edit***************************Sasha2,16:11 08.10.2014 {
+      	  for (j=0;j<=blockcnt;j=j+1) begin
+      	  	if (blnums[j]>-1) then begin
+      	  		blqty[blnums[j]] = blqty[blnums[j]] + TBBUrw.Qty;
+      	  		blsum[blnums[j]] = blsum[blnums[j]] + TBBUrw.Sum;
+      	  	end;
+      	  end;
       end; //Edit***************************Sasha2,16:11 08.10.2014 }
     end else begin
       if (TBBUrw.stp>=17) then begin //Edit***************************Sasha2,15:12 07.10.2014 {
-      	if (TBBUrw.stp==19) then begin
+      	if (TBBUrw.stp==23) then begin
       		totrebate = totrebate + TBBUrw.Sum;
       	end;
-      	if (TBBUrw.stp==20) then begin
-      		findblock = true;
-      	end;
       	if (TBBUrw.stp==21) then begin
-      		findblock = false;
-      		if (blqty!=TBBUrw.Qty) or (blsum!=TBBUrw.Sum) then begin
-      			TBBUrw.Qty = blqty;
-      			TBBUrw.Sum = blsum;
+      		blockcnt = blockcnt + 1;
+      		blnums[blockcnt] = TBBUrw.IdentQuant;
+      	end;
+      	if (TBBUrw.stp==22) then begin
+      		for (j=0;j<=blockcnt;j=j+1) begin
+      			if (blnums[j]==TBBUrw.IdentQuant) then begin
+      				blnums[j] = -1;
+      				j = blockcnt;
+      			end;
+      		end;
+      		if (blqty[TBBUrw.IdentQuant]!=TBBUrw.Qty) or (blsum[TBBUrw.IdentQuant]!=TBBUrw.Sum) then begin
+      			TBBUrw.Qty = blqty[TBBUrw.IdentQuant];
+      			TBBUrw.Sum = blsum[TBBUrw.IdentQuant];
       			MatRowPut(TBBUp,i,TBBUrw);
       		end;
-      		blqty = BlankVal;
-      		blsum = BlankVal;
+      		blqty[TBBUrw.IdentQuant] = BlankVal;
+      		blsum[TBBUrw.IdentQuant] = BlankVal;
       	end;
       end else begin //Edit***************************Sasha2,15:12 07.10.2014 }
       	  if (TBBUrw.Sum!=subtotv) or (TBBUrw.Cost!=costv) then begin

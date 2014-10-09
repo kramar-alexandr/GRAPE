@@ -99,9 +99,9 @@ begin
   MatCol(t,100,"",0,Spec,false,0);
   MatText(t=17,30,"Заголовок",true);
   MatCol(t,100,"",0,Spec,false,0);
-  MatText(t=20,30,"Начало группы задач",true); 
+  MatText(t=21,30,"Начало группы задач",true); 
   MatCol(t,155,"",0,Spec,false,0); 
-  MatText(t=21,30,"Конец группы задач",true);
+  MatText(t=22,30,"Конец группы задач",true);
   MatCol(t,155,"",0,Spec,false,0);
   MatText(t,-185,"Кол-во",false); 
   MatCol(t,-140,"Кол-во",0,Qty,true,0);

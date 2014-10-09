@@ -298,7 +298,7 @@ begin
       TBBUSumup(TBBUr);
       PutWindowRecord(wn,TBBUr);          
     end;
-    if (TBBUrw.stp==19 or TBBUrw.stp==21) then begin //Edit***************************Sasha2,15:50 07.10.2014 {
+    if (TBBUrw.stp==22 or TBBUrw.stp==23) then begin //Edit***************************Sasha2,15:50 07.10.2014 {
       MatRowPut(TBBUr,rownr,TBBUrw);
       TBBUSumup(TBBUr);
       PutWindowRecord(wn,TBBUr);
@@ -614,17 +614,17 @@ BEGIN
     	switch (TBBUrw.stp) begin
     		case 9:
     			res = false;
-    		case 19:
-    			res = true;
-    		case 21:
+    		case 22:
     			res = false;
+    		case 23:
+    			res = true;
     		otherwise
     			res = UserCanAction("AllowPRBudgetChangeSum",false);
     	end;
     case "Qty":
     	MatRowGet(TBBUr,rownr,TBBUrw);
     	switch (TBBUrw.stp) begin
-    		case 21:
+    		case 22:
     			res = false;
     	end;
   end; //Edit***************************Sasha2,13:45 08.10.2014 }
@@ -806,9 +806,42 @@ global
 function Boolean TBBUDClassOnOverStrike(Integer wn,Integer rownr)
 BEGIN
   record TBBUVc TBBUr;
+  row TBBUVc TBBUrw; //Edit***************************Sasha2,11:25 09.10.2014
+  Integer i,rwcnt,blockcnt; //Edit***************************Sasha2,11:23 09.10.2014
+  array LongInt lookforblock; //Edit***************************Sasha2,14:21 09.10.2014
+  array Integer blnums; //Edit***************************Sasha2,11:05 09.10.2014
 
   if (rownr>=0) then begin
-    GetWindowRecord(wn,TBBUr);    
+    GetWindowRecord(wn,TBBUr);
+    
+    blockcnt = -1; //Edit***************************Sasha2,11:21 09.10.2014 {
+    rwcnt = MatRowCnt(TBBUr);
+    for (i=0;i<rwcnt;i=i+1) begin
+    	MatRowGet(TBBUr,i,TBBUrw);
+    	if (TBBUrw.stp==21) then begin
+    		blockcnt = blockcnt + 1;
+    		blnums[blockcnt] = TBBUrw.IdentQuant;
+    		lookforblock[TBBUrw.IdentQuant] = i;
+    	end;
+    	if (TBBUrw.stp==22) then begin
+    		blockcnt = blockcnt + 1;
+    		blnums[blockcnt] = TBBUrw.IdentQuant;
+			if (lookforblock[TBBUrw.IdentQuant]>-1) then begin
+				lookforblock[TBBUrw.IdentQuant] = -1;
+			end else begin
+				lookforblock[TBBUrw.IdentQuant] = i;
+			end;
+    	end;
+    end;
+    if (blockcnt>-1) then begin
+    	for (i=0;i<=blockcnt;i=i+1) begin
+    		if (lookforblock[blnums[i]]>-1) then begin
+    			MatRowDelete(TBBUr,lookforblock[blnums[i]]);
+    			i = rwcnt;
+    		end;
+    	end;
+    end; //Edit***************************Sasha2,11:21 09.10.2014 }   
+
     TBBUSumup(TBBUr);
     PutWindowRecord(wn,TBBUr);    
   end;
@@ -1027,7 +1060,7 @@ BEGIN
     rownr = rwcnt;
   end;
   DeselectWindow(wn,false); 
-  ClearRow(TBBUr,TBBUrw,19);
+  ClearRow(TBBUr,TBBUrw,23);
   MatRowInsert(TBBUr,rownr,TBBUrw); 
   PutWindowRecord(wn,TBBUr);
 LOutSubRebateTBBUDsm:;  
@@ -1055,7 +1088,8 @@ BEGIN
     rownr = rwcnt;
   end;
   DeselectWindow(wn,false);
-  ClearRow(TBBUr,TBBUrw,20);
+  ClearRow(TBBUr,TBBUrw,21);
+  TBBUrw.IdentQuant = -1; // Sasha2: I Use it as a task block sequence number 
   MatRowInsert(TBBUr,rownr,TBBUrw);
   PutWindowRecord(wn,TBBUr);
 LSubBlockStartTBBUDsm:;  
@@ -1070,7 +1104,10 @@ BEGIN
   Integer wn,i,rwcnt,rownr,checkblockpair;
   val pt,pt2;
   boolean testf;
+  Integer blockstartrownr,blockcnt;
+  string 255 spec;
 
+  blockcnt = 0;
   checkblockpair = 1;
   testf = false;
   wn = CurWindow;
@@ -1084,40 +1121,55 @@ BEGIN
   
   for (i=(rownr-1);i>=0;i=i-1) begin
     MatRowGet(TBBUr,i,TBBUrw);
-    if (TBBUrw.stp!=9 and (TBBUrw.stp<17 or TBBUrw.stp>21) and testf==false) then begin
+    if (TBBUrw.stp!=9 and (TBBUrw.stp<17 or TBBUrw.stp>23) and testf==false) then begin
       pt = pt + TBBUrw.Sum;
       pt2 = pt2 + TBBUrw.Qty;
     end else begin
-      if (TBBUrw.stp==20) then begin
-      	checkblockpair = checkblockpair - 1;
-      end;
       if (TBBUrw.stp==21) then begin
-      	checkblockpair = checkblockpair + 1;
+      	checkblockpair = checkblockpair - 1;
+      	if (TBBUrw.IdentQuant==-1) then begin
+      		blockstartrownr = i;
+      		testf = true;
+      		spec = TBBUrw.Spec;
+      	end;
+      	if (blockcnt<=TBBUrw.IdentQuant) then begin
+      		blockcnt = TBBUrw.IdentQuant + 1;
+      	end;
       end;
-      if (TBBUrw.stp==20 and checkblockpair==0) then begin 
-        testf = true;
-      end;      
+      if (TBBUrw.stp==22) then begin
+      	checkblockpair = checkblockpair + 1;
+      end;     
     end;
   end;
   for (i=(rownr+1);i<rwcnt;i=i+1) begin
   	MatRowGet(TBBUr,i,TBBUrw);
-  	  if (TBBUrw.stp==20) then begin
+  	  if (TBBUrw.stp==21) then begin
 	  	checkblockpair = checkblockpair - 1;
+	  	if (blockcnt<=TBBUrw.IdentQuant) then begin
+      		blockcnt = TBBUrw.IdentQuant + 1;
+      	end;
 	  end;
-	  if (TBBUrw.stp==21) then begin
+	  if (TBBUrw.stp==22) then begin
 	  	checkblockpair = checkblockpair + 1;
 	  end;
   end;
   
-  if (checkblockpair!=0) then begin
+  if (checkblockpair!=0 or blockstartrownr>rownr) then begin
   	testf = false;
   end;
   
   if (testf) then begin
-    ClearRow(TBBUr,TBBUrw,21);
+    ClearRow(TBBUr,TBBUrw,22);
 	TBBUrw.Sum = pt;
 	TBBUrw.Qty = pt2;
-	MatRowInsert(TBBUr,rownr,TBBUrw); 
+	TBBUrw.IdentQuant = blockcnt; // Sasha2: I Use it as a task block sequence number 
+	if (NonBlank(spec)) then begin
+		TBBUrw.Spec = spec;
+	end;
+	MatRowInsert(TBBUr,rownr,TBBUrw);
+	MatRowGet(TBBUr,blockstartrownr,TBBUrw);
+	TBBUrw.IdentQuant = blockcnt;
+	MatRowPut(TBBUr,blockstartrownr,TBBUrw);
 	PutWindowRecord(wn,TBBUr);
   end else begin
   	MessageBox(31022,"");
