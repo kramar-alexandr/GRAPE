@@ -351,7 +351,10 @@ begin
       MatRowPut(TBBUr,rownr,TBBUrw);
       if ((INr.ExplodeRec==0) or (blank(TBBUrw.Recepy))) then begin
         TBBUMultiLineText(TBBUr,INr,TBBUr.LangCode,rownr);
-      end;          
+      end;
+      if (NonBlank(INr.Notification)) then begin //Edit***************************Sasha2,13:12 10.10.2014 {
+      	TBBUrw.Comment2 = INr.Notification;
+      end; //Edit***************************Sasha2,13:12 10.10.2014 }       
       res = true;
     end else begin
       res = false;
