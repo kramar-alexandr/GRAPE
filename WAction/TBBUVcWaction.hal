@@ -329,6 +329,76 @@ begin
   return;
 end;
 
+//Edit***************************Sasha2,17:11 09.10.2014 {
+function Boolean TBBUDClassTypeNameEFAfter(Integer wn,Integer rownr,Integer changed)
+begin  
+  record TBBUVc TBBUr;
+  row TBBUVc TBBUrw, TBBU2rw;
+  Integer i,rwcnt,length;
+  val rebval,rebsize;
+  boolean testf;
+  string 255 tstr;
+  string 1 cs;
+	
+  if (changed!=0) then begin  
+    //DeselectWindow(wn,false);
+    GetWindowRecord(wn,TBBUr);
+    MatRowGet(TBBUr,rownr,TBBUrw);
+    
+    if (TBBUrw.stp==23) then begin
+    	if (blank(TBBUrw.TypeName)) then begin
+    		rebval = BlankVal;
+    	end else begin
+    		rebval = BlankVal;
+	    	testf = false;
+	    	length = len(TBBUrw.TypeName);
+	    	for (i=0;i<length;i=i+1) begin
+	    		cs = mid(TBBUrw.TypeName,i,1);
+			    if (asc(cs)==37) then begin
+			      tstr = Left(TBBUrw.TypeName,i);
+			      rebsize = EvalToVal(tstr);
+			      testf = true;
+			      i = length;
+			    end;
+	    	end;
+	    	
+		    if (testf) then begin
+		    	rwcnt = MatRowCnt(TBBUr);
+				for (i=(rownr-1);i>=0;i=i-1) begin
+					MatRowGet(TBBUr,i,TBBU2rw);
+					if (TBBU2rw.stp!=9 and (TBBU2rw.stp<17 or TBBU2rw.stp>23)) then begin
+						rebval = rebval + TBBU2rw.Sum;
+					end;
+					if (TBBU2rw.stp==18) then begin
+						i = -1;
+					end;
+				end;
+				for (i=(rownr+1);i<rwcnt;i=i+1) begin
+			  		MatRowGet(TBBUr,i,TBBU2rw);
+					if (TBBU2rw.stp!=9 and (TBBU2rw.stp<17 or TBBU2rw.stp>23)) then begin
+						rebval = rebval + TBBU2rw.Sum;
+					end;
+					if (TBBU2rw.stp==18) then begin
+						i = rwcnt;
+					end;
+		    	end;
+		    	rebval = rebval*(rebsize/100);
+		    end else begin
+		    	rebval = EvalToVal(TBBUrw.TypeName);
+			end;
+    	end;
+  
+		TBBUrw.Sum = rebval;
+		MatRowPut(TBBUr,rownr,TBBUrw);
+		TBBUSumup(TBBUr);
+
+	    PutWindowRecord(wn,TBBUr);
+    end;
+  end;
+  TBBUDClassTypeNameEFAfter = true;
+  return;
+end; //Edit***************************Sasha2,17:11 09.10.2014 }
+
 global
 function Boolean TBBUDClassAfterEditField(Integer wn,string fieldname,Integer fn, Integer rownr,Integer changed)
 BEGIN
@@ -350,6 +420,8 @@ BEGIN
     case "CurncyCode": res = TBBUDClassCurncyCodeEFAfter(wn,changed!=0);
     case "TransDate": res = TBBUDClassCurncyCodeEFAfter(wn,changed!=0);
     case "VATCode": res = TBBUDClassVATCodeEFAfter(wn,fn,rownr,changed); //Edit by Victor 09.09.14
+    case "TypeName": res = TBBUDClassTypeNameEFAfter(wn,rownr,changed); //Edit***************************Sasha2,11:03 10.10.2014
+    
   end;
   TBBUDClassAfterEditField = res;
   RETURN;
@@ -1006,6 +1078,58 @@ begin
   TBBUDClassSpecPasteName = psname;
   return;
 end;
+
+global
+procedure SubtotalTBBUDsm()
+BEGIN
+  record TBBUVc TBBUr;
+  row TBBUVc TBBUrw;
+  Integer wn,i,rwcnt,rownr,starti;
+  val pt,pt2;
+
+  wn = CurWindow;
+  GetWindowRecord(wn,TBBUr);
+  rwcnt = MatRowCnt(TBBUr);
+  rownr = WindowActiveRow(wn);
+  if ((rownr==-1) or (rownr>rwcnt)) then begin
+    rownr = rwcnt;
+  end;
+  DeselectWindow(wn,false);
+  for (i=(rownr-1);i>=0;i=i-1) begin
+    MatRowGet(TBBUr,i,TBBUrw);
+    if (TBBUrw.stp!=kInvoiceRowTypeSubtotal and TBBUrw.stp!=21 and TBBUrw.stp!=22) then begin //Edit***************************Sasha2,11:32 10.10.2014
+      pt = pt + TBBUrw.Sum;
+      pt2 = pt2 + TBBUrw.Qty*TBBUrw.Cost;
+    end else begin
+      if (TBBUrw.Sum!=0 and TBBUrw.stp!=22) then begin //Edit***************************Sasha2,11:35 10.10.2014
+        starti = i;
+        goto LBREAK; 
+      end;      
+    end;
+  end;
+LBREAK:;  
+  ClearRow(TBBUr,TBBUrw,9);
+  TBBUrw.Sum = pt;
+  TBBUrw.Cost = pt2;
+  MatRowInsert(TBBUr,rownr,TBBUrw);
+  if (rownr<rwcnt) then begin
+    rwcnt = MatRowCnt(TBBUr);
+    for (i=starti+1;i<rwcnt;i=i+1) begin
+      if (i!=rownr) then begin
+        MatRowGet(TBBUr,i,TBBUrw);
+        if (TBBUrw.stp==kInvoiceRowTypeSubtotal) then begin
+          TBBUrw.Sum = TBBUrw.Sum - pt;
+          TBBUrw.Cost = TBBUrw.Cost - pt2;
+          MatRowPut(TBBUr,i,TBBUrw);
+          goto LSubtotalTBBUDsm;
+        end;
+      end;
+    end;
+  end;
+LSubtotalTBBUDsm:;  
+  PutWindowRecord(wn,TBBUr);
+  RETURN;
+END;
 
 //Edit***************************Sasha2,11:25 15.09.2014 {
 global procedure CreateTBBUFromTemplateDsm() 

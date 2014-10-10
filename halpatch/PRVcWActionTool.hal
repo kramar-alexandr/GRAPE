@@ -438,11 +438,11 @@ BEGIN
   end;
   for (i=(rownr-1);i>=0;i=i-1) begin
     MatRowGet(TBBUr,i,TBBUrw);
-    if (TBBUrw.stp!=kInvoiceRowTypeSubtotal) then begin
+    if (TBBUrw.stp!=kInvoiceRowTypeSubtotal and TBBUrw.stp!=21 and TBBUrw.stp!=22) then begin
       pt = pt + TBBUrw.Sum;
       pt2 = pt2 + TBBUrw.Qty*TBBUrw.Cost;
     end else begin
-      if (TBBUrw.Sum!=0) then begin 
+      if (TBBUrw.Sum!=0 and TBBUrw.stp!=22) then begin 
         starti = i;
         goto LBREAK; 
       end;      

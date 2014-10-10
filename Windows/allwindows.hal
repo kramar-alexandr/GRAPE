@@ -2672,10 +2672,10 @@ begin
   MatCol(t,-140,"Кол-во",0,Qty,true,0);
   MatText(t,-100,"Сумма",false);
   MatCol(t,-60,"Сумма",0,Sum,true,0); 
-  MatText(t=23,30,"Скидка",true); 
-  MatCol(t,100,"",0,Spec,false,0);
-  MatText(t,-100,"Сумма",false); 
-  MatCol(t,-60,"Сумма",0,Sum,true,0);//Edit***************************Sasha2,14:48 07.10.2014 }
+  MatText(t=23,30,"Скидка/Агентская комиссия",true); 
+  MatCol(t,190,"",0,Spec,false,0);
+  MatText(t,-105,"Размер",false); 
+  MatCol(t,-60,"Сумма",0,TypeName,true,0);//Edit***************************Sasha2,14:48 07.10.2014 }
   MatCol(1,30,"Товар",0,ArtCode,false,INSClass);
   MatCol(1,100,"Сотр.",0,EMCode,false,UserSClass);
   MatCol(1,155,"Кол-во",0,Qty,true,0);
