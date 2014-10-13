@@ -1,6 +1,6 @@
 external function Boolean ReadFirstItem(string,var record INVc,Boolean,Boolean);
 external function Integer TestAcceptanceStatus(Integer);
-external procedure TBBUDchrsum(var record TBBUVc,Integer,Boolean,Integer);
+/*external*/remote procedure TBBUDchrsum(var record TBBUVc,Integer,Boolean,Integer); //Edit***************************Sasha2,11:02 13.10.2014
 remote function Boolean TBBUVc_PasteTimeClass(var record TBBUVc,Integer);
 remote procedure TBBUVc_PastePRCode(var record TBBUVc);
 remote procedure TBBUVc_PasteSalesMan(var record TBBUVc,string);
@@ -18,7 +18,7 @@ external procedure CalcProc(val,val,var val);
 external procedure RecordActionTBBU_Print(var record TBBUVc,string);
 external procedure CalcSum(val,val,val,val,var val,Integer);
 external procedure CalcExtra(val,string,var val);
-external procedure TBBUSumup(var record TBBUVc);
+/*external*/remote procedure TBBUSumup(var record TBBUVc); //Edit***************************Sasha2,11:02 13.10.2014
 external function Boolean GetItemNameStr(Integer,var string,string,string,string);
 remote updating procedure GenProInvoices(var record RcVc,Boolean);
 external function Boolean UserCanChangePendingRecord(Integer);
@@ -170,6 +170,13 @@ begin
   if (changedf!=0) then begin
     BlockLoad(GenOptRec);
     GetWindowRecord(wn,TBBUr);
+    MatRowGet(TBBUr,rownr,TBBUrw); //Edit***************************Sasha2,10:21 13.10.2014 {
+    if (TBBUrw.Qty<>0) then begin
+    	TBBUrw.SumCost = TBBUrw.Qty * TBBUrw.Cost;
+    end else begin
+    	TBBUrw.SumCost = TBBUrw.Cost;
+    end;
+    MatRowPut(TBBUr,rownr,TBBUrw); //Edit***************************Sasha2,10:21 13.10.2014 }
     TBBUDchrsum(TBBUr,rownr,false,GenOptRec.UseDiscount);
     TBBUSumup(TBBUr);
     PutWindowRecord(wn,TBBUr);
@@ -177,7 +184,36 @@ begin
   TBBUDClassCostEFAfter = true;
   return;
 end;
- 
+
+//Edit***************************Sasha2,10:15 13.10.2014 {
+function Boolean TBBUDClassSumCostEFAfter(Integer wn,Integer fn,Integer rownr,Integer changedf)
+begin  
+  record TBBUVc TBBUr;
+  row TBBUVc TBBUrw;
+  record GeneralOptionBlock GenOptRec;
+
+  if (changedf!=0) then begin
+    BlockLoad(GenOptRec);
+    GetWindowRecord(wn,TBBUr);
+    MatRowGet(TBBUr,rownr,TBBUrw);
+    if (TBBUrw.Qty<>0) then begin
+    	if (TBBUrw.SumCost<>0) then begin
+    		TBBUrw.Cost = TBBUrw.SumCost/TBBUrw.Qty;
+    	end;
+    end else  begin
+    	if (TBBUrw.SumCost<>0) then begin
+    		TBBUrw.Cost = TBBUrw.SumCost;
+    	end;
+    end;
+    MatRowPut(TBBUr,rownr,TBBUrw);
+    TBBUDchrsum(TBBUr,rownr,false,GenOptRec.UseDiscount);
+    TBBUSumup(TBBUr);
+    PutWindowRecord(wn,TBBUr);
+  end;
+  TBBUDClassSumCostEFAfter = true;
+  return;
+end; //Edit***************************Sasha2,10:15 13.10.2014 }
+
 function Boolean TBBUDClassEMCodeEFAfter(Integer wn,Integer fn,Integer rownr,Integer changedf)
 begin  
   record TBBUVc TBBUr;
@@ -228,14 +264,27 @@ begin
   if (changedf!=0) then begin
     BlockLoad(GenOptRec);
     GetWindowRecord(wn,TBBUr);
-    if (TBBUVc_PasteQty(TBBUr,rownr)) then begin      
+    if (TBBUVc_PasteQty(TBBUr,rownr)) then begin 
       TBBUDchrsum(TBBUr,rownr,true,GenOptRec.UseDiscount);
+        MatRowGet(TBBUr,rownr,TBBUrw); //Edit***************************Sasha2,10:28 13.10.2014 {
+	    if (TBBUrw.Qty<>0) then begin
+	    	TBBUrw.SumCost = TBBUrw.Qty * TBBUrw.Cost;
+	    end else  begin
+	    	TBBUrw.SumCost = TBBUrw.Cost;
+	    end;
+	    MatRowPut(TBBUr,rownr,TBBUrw); //Edit***************************Sasha2,10:28 13.10.2014 }
       TBBUSumup(TBBUr);
       PutWindowRecord(wn,TBBUr);          
     end else begin
       MatRowGet(TBBUr,rownr,TBBUrw);
       if (nonblank(TBBUrw.TimeClass)) then begin
         TBBUDchrsum(TBBUr,rownr,true,GenOptRec.UseDiscount);
+	    if (TBBUrw.Qty<>0) then begin //Edit***************************Sasha2,10:28 13.10.2014 {
+	    	TBBUrw.SumCost = TBBUrw.Qty * TBBUrw.Cost;
+	    end else  begin
+	    	TBBUrw.SumCost = TBBUrw.Cost;
+	    end;
+	    MatRowPut(TBBUr,rownr,TBBUrw); //Edit***************************Sasha2,10:28 13.10.2014 }
         TBBUSumup(TBBUr);
         PutWindowRecord(wn,TBBUr);
       end;
@@ -411,6 +460,7 @@ BEGIN
     case "ArtCode": res = TBBUDClassArtCodeEFAfter(wn,fn,rownr,changed);
     case "EMCode": res = TBBUDClassEMCodeEFAfter(wn,fn,rownr,changed);
     case "Cost": res = TBBUDClassCostEFAfter(wn,fn,rownr,changed);
+    case "SumCost": res = TBBUDClassSumCostEFAfter(wn,fn,rownr,changed); //Edit***************************Sasha2,17:26 10.10.2014
     case "TimeClass": res = TBBUDClassTimeClassEFAfter(wn,fn,rownr,changed);
     case "Discount": res = TBBUDClassDiscountEFAfter(wn,fn,rownr,changed);
     case "PRCode": res = TBBUDClassPRCodeEFAfter(wn,fn,rownr,changed);
@@ -421,6 +471,7 @@ BEGIN
     case "TransDate": res = TBBUDClassCurncyCodeEFAfter(wn,changed!=0);
     case "VATCode": res = TBBUDClassVATCodeEFAfter(wn,fn,rownr,changed); //Edit by Victor 09.09.14
     case "TypeName": res = TBBUDClassTypeNameEFAfter(wn,rownr,changed); //Edit***************************Sasha2,11:03 10.10.2014
+    
     
   end;
   TBBUDClassAfterEditField = res;
@@ -691,7 +742,7 @@ BEGIN
     		case 23:
     			res = true;
     		otherwise
-    			res = UserCanAction("AllowPRBudgetChangeSum",false);
+    			res = false; //UserCanAction("AllowPRBudgetChangeSum",false); if AllowPRBudgetChangeSum" is allowed then row Discount will be counted
     	end;
     case "Qty":
     	MatRowGet(TBBUr,rownr,TBBUrw);
@@ -718,6 +769,13 @@ BEGIN
           res = false;
         end;
       end;
+    case "SumCost": //Edit***************************Sasha2,17:27 10.10.2014 {
+      if (rownr>=0) then begin
+        MatRowGet(TBBUr,rownr,TBBUrw);
+        if (nonblank(TBBUrw.EMCode)) then begin
+          res = false;
+        end;
+      end; //Edit***************************Sasha2,17:27 10.10.2014 }
     case "MotherArtCode": res = false;
     case "RecipeQuant": res = false;
     case "Recepy": res = false;
@@ -743,7 +801,7 @@ BEGIN
     case "Price": //Edit***************************Sasha2,10:03 08.10.2014 {
         res = UserCanAction("AllowPRBudgetChangePrice",false);
     case "Discount": 
-    	res = UserCanAction("AllowPRBudgetChangeDiscount",false); //Edit***************************Sasha2,10:03 08.10.2014 }
+    	res = false; //UserCanAction("AllowPRBudgetChangeDiscount",false); //Edit***************************Sasha2,10:03 08.10.2014 }
   end;
 LTBBUDClassActiveEditField:;
   TBBUDClassActiveEditField = res;

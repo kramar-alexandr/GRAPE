@@ -9,9 +9,9 @@ begin
   Report("Бюджет проекта",ExportBudgetRClass,ExpBudgetRn,0,modTS); //Edit by Victor 15.09.14
 
 	Setting("Масштабы проектов",ProjScopeTClass,modTS); //Edit***************************Sasha2,17:26 11.09.2014
-	Setting("Акты выполеных работ с клиентами",ADJLClass,modTS); //Edit by Victor 12.09.2014
+	Setting("Акты выполненных работ с клиентами",ADJLClass,modTS); //Edit by Victor 12.09.2014
 	Setting("Дополнительные соглашения с клиентами",SALClass,modTS); //Edit by Victor 12.09.2014
-	Setting("Акты выполеных работ с подрядчиками",ADJVILClass,modTS); //Edit by Victor 12.09.2014
+	Setting("Акты выполненных работ с подрядчиками",ADJVILClass,modTS); //Edit by Victor 12.09.2014
 	Setting("Дополнительные соглашения с подрядчиками",SAVILClass,modTS); //Edit by Victor 12.09.2014
 	Setting("Шаблоны для бюджетов проектов",TemplateTBBULClass,modTS); //Edit***************************Sasha2,11:49 12.09.2014
 	Setting("Цены",PLLClass,modTS); //Edit***************************Sasha2,11:49 12.09.2014
@@ -21,6 +21,7 @@ begin
 	SString(31020,"Способ оплаты платежа не совпадает со способом оплаты проекта по сч/ф № "); //Edit***********************Vitalii 10:51 16.09.2014
 	SString(31021,"Процент доходности ниже допустимого"); //Edit***************************Sasha2,17:43 07.10.2014
 	SString(31022,"Первым должно быть \"Начало группы задач\""); //Edit***************************Sasha2,17:44 08.10.2014
+	SString(31023,"Сумма продаж ниже допустимой"); //Edit***************************Sasha2,12:08 13.10.2014
   
   StrSetBegin(3); /* Try to keep them in alphabetical order */
   StrSetText(AllowAddingINtoRet,"Добавлять товары в возвраты");
@@ -248,10 +249,10 @@ begin
   StrSetText(WSToPO,"Заказ постащику из таблицы работ");
   StrSetText(StockMovOK,"Получение перемещения товара");
   StrSetText(AllowNPTSReprint," Перепечатать строки сч/ф (сенсорный экран)");
-  StrSetText(CutPRList,"Разрешить весь спискок проектов(только свои)");// Edit ************************** Friday, 12 September 2014 14:17:43
-  StrSetText(CutPRListViewGroup,"Разрешить список проектов группы продаж");// Edit ************************** Friday, 12 September 2014 14:17:43
-  StrSetText(CutTBBUList,"Разрешить весь спискок бюджетов(только свои)");// Edit ************************** Friday, 12 September 2014 14:17:43
-  StrSetText(CutTBBUListViewGroup,"Разрешить список бюджетов группы продаж");// Edit ************************** Friday, 12 September 2014 14:17:43
+  StrSetText(CutPRList,"Разрешить весь спискок проектов(только свои)"); // Edit ************************** Friday, 12 September 2014 14:17:43
+  StrSetText(CutPRListViewGroup,"Разрешить список проектов группы продаж"); // Edit ************************** Friday, 12 September 2014 14:17:43
+  StrSetText(CutTBBUList,"Разрешить весь спискок бюджетов(только свои)"); // Edit ************************** Friday, 12 September 2014 14:17:43
+  StrSetText(CutTBBUListViewGroup,"Разрешить список бюджетов группы продаж"); // Edit ************************** Friday, 12 September 2014 14:17:43
   StrSetText(JobCheckOut,"Резервирование - Выезд");
   StrSetText(JobAddItem,"Резервирование - Добавить товар");
   StrSetText(JobChargeStay,"Резервирование - Оплатить пребывание");
@@ -284,12 +285,15 @@ begin
   StrSetText(AllowTransfertoSL,"Перемещение сч/ф касс. терм. в книгу продаж");
   StrSetText(AllowTransfertoOrder,"Перемещение сч/ф касс. терм. в счёт клиенту");
   StrSetText(AllowPRBudgetChangePrice,"Разрешить править цены в бюджете проекта"); //Edit***************************Sasha2,9:59 08.10.2014
-  StrSetText(AllowPRBudgetChangeDiscount,"Разрешить править скидки в бюджете проекта"); //Edit***************************Sasha2,9:59 08.10.2014
-  StrSetText(AllowPRBudgetChangeSum,"Разрешить править суммы в бюджете проекта"); //Edit***************************Sasha2,9:59 08.10.2014
+  			// Скидки были закомментированы в окошках
+  //StrSetText(AllowPRBudgetChangeDiscount,"Разрешить править скидки в бюджете проекта"); //Edit***************************Sasha2,9:59 08.10.2014
+  			//Если разрешить менять суммы построчно, то будет рассчитываться скидка построчно!!!!!!!!!!
+  //StrSetText(AllowPRBudgetChangeSum,"Разрешить править суммы в бюджете проекта"); //Edit***************************Sasha2,9:59 08.10.2014
   StrSetText(AllowPutOKFlagAllBudget,"Разрешить утверждать все бюджеты"); //Edit***************************Sasha2,12:20 16.09.2014
   StrSetText(AllowPutOKFlagOnlyProjectBudget,"Разрешить утверждать бюджеты только своих проектов"); //Edit***************************Sasha2,12:20 16.09.2014
   StrSetText(AllowPutApproveFlagAllBudget,"Разрешить ставить подтверждение клиентом для всех бюджетов"); //Edit***************************Sasha2,12:20 16.09.2014
   StrSetText(AllowPutApproveFlagOnlyProjectBudget,"Разрешить ставить подтверждение клиентом бюджетов только для своих проектов"); //Edit***************************Sasha2,12:20 16.09.2014
+  StrSetText(AllowSaveBudgetWithUnacceptableProfitORSellSum,"Разрешить сохранять бюджет с показателем доходности или суммы продаж ниже допустимого"); //Edit***************************Sasha2,11:56 13.10.2014
   StrSetText(AllowTakeOutOKFlagAllBudget,"Разрешить снимать утверждение со всех бюджетов");// Edit ************************** Friday, 5 September 2014 13:39:15 //Edit***************************Sasha2,12:37 16.09.2014
   StrSetText(AllowTakeOutOKFlagOnlyProjectBudget,"Разрешить снимать утверждение с бюджетов только своих проектов"); //Edit***************************Sasha2,12:37 16.09.2014
   StrSetText(AllowTakeOutApproveFlagAllBudget,"Разрешить снимать подтверждение клиентом со всех бюджетов"); //Edit***************************Sasha2,12:39 16.09.2014

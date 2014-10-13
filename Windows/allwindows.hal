@@ -2688,7 +2688,7 @@ begin
   MatCol(t,200,"Наименование",0,Comment,false,0);
   Flip(1);
   MatCol(t=1,-300,"Примечание",0,Comment2,true,0); //Edit***************************Sasha2,13:00 10.10.2014
-  MatCol(t=1,-140,"Цена",0,Price,true,0); //Edit***************************Sasha2,12:56 10.10.2014 orgrinal pos = - 285
+  MatCol(t=1,-140,"Цена",0,Price,true,0); //Edit***************************Sasha2,12:56 10.10.2014 orgrinal pos = - 285  
   //MatCol(t,-215,"%",0,Discount,true,0); //Edit***************************Sasha2,12:44 10.10.2014
   MatCol(t,-70,"Сумма",0,Sum,true,0); //Edit***************************Sasha2,12:56 10.10.2014 orgrinal pos = - 175
 /* Invoiced should be changeable, but I put it on this flip only. */
@@ -2705,7 +2705,8 @@ begin
   MatCol(t=1,-235,"Наценка",0,Markup,true,0);
   MatCol(t,-180,"Ст-ть за ед.",0,Cost,true,0); //Edit***************************Sasha2,9:41 10.09.2014
   MatCol(t,-115,"Прибыль",0,GP,true,0);
-  MatCol(t,-50,"№ сч/ф",0,Invoiced,true,0);
+  MatCol(t,-50,"Сум.Стоим",0,SumCost,true,0); //temporary
+  //MatCol(t,-50,"№ сч/ф",0,Invoiced,true,0); temporary
 //  MatColTL(1,-50,"Inv. No.",0,-1,0,-1,Invoiced,true,0);
   MatCol(t=kInvoiceRowTypeStructuredItemComponent,-235,"Наценка",0,Markup,true,0);
   MatCol(t,-180,"Ст-ть за ед.",0,Cost,true,0);//Edit***************************Sasha2,9:40 10.09.2014

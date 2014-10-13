@@ -1172,6 +1172,7 @@ begin
   ArrayField(IdentQuant,M4Int,0,0);
   ArrayField(SubContractor,M4Code,20,CUVc); //Edit***************************Sasha2,12:43 10.10.2014
   ArrayField(Comment2,M4Str,255,0); //Edit***************************Sasha2,12:56 10.10.2014
+  ArrayField(SumCost,M4Val,0,0); //Edit***************************Sasha2,17:10 10.10.2014
   EndArray;
   MainKeyBegin(MainKey,1);
   StoreInBaseKey;
@@ -1479,7 +1480,7 @@ begin
   RecordField(PRClass,M4Code,20,0);
   RecordField(Scope,M4Str,60,0);
   RecordField(MinReb,M423Val,0,0);
-  RecordField(MinDevReb,M423Val,0,0);
+  RecordField(MinSellSum,M423Val,0,0);
   EndArray;
   MainKeyBegin(MainKey,0);
   KeySegment(PRClass);

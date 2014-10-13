@@ -134,13 +134,14 @@ begin
   real h,h2,v,vs,vm;
   string 255 label;
   
-  WindowBegin("Акт выполеных работ",ADJDClass,CGview,-);
+  WindowBegin("Акт выполненных работ",ADJDClass,CGview,-);
   UseView(ADJVc);
+  ActiveFieldOnNew("ADJNum"); //Edit***************************Sasha2,14:46 13.10.2014
 //  FormName(ADJForm);
 	DynamicWindow;
   SetWRect(20,80,600,390);
   
-  EditField(120,vm=(v=6), 80,"Номер",Normal,SerNr,false,0);
+  EditField(120,vm=(v=6), 80,"Код",ViewOnly,SerNr,false,0);
   EditField(320,v,80,"Проект",ViewOnly,PRCode,false,PRSClass);
   EditField(120,v+=20,80,"Дата",Normal,TransDate,false,PasteCurDate);
   EditField(320,v,200,"Название проекта",Normal,PRName,false,PRSClass);
@@ -155,13 +156,13 @@ end;
 window ADJLClass:2
   wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer,android,iPad,iPhone")
 begin
-  WindowBegin("Акты выполненых работ",ADJLClass,CGmlist,-);
+  WindowBegin("Акты выполненных работ",ADJLClass,CGmlist,-);
   SetWRect(20,80,850,298); 
   SpawnClass(ADJDClass);
   Sizeable(-1,-1,0,0);
   UseView(ADJVc);
   RecordList(4,17,-21,-39);
-  RlColKey(4,1, "Номер",SerNr,false,SerNr);
+  RlColKey(4,1, "Код",SerNr,false,SerNr);
   RlColKey(75,75,"Дата",TransDate,false,TransDate);
   RlColKey(160,160, "Проект",PRCode,false,PRCode);
   RlColKey(260,260, "Название проекта",PRName,false,PRName);
@@ -184,11 +185,12 @@ begin
   
   WindowBegin("Дополнительное соглашение",SADClass,CGview,-);
   UseView(SAVc);
+  ActiveFieldOnNew("SANum"); //Edit***************************Sasha2,15:00 13.10.2014
 //  FormName(SAForm);
   DynamicWindow;
   SetWRect(20,80,600,390);
   
-  EditField(120,vm=(v=6), 80,"Номер",Normal,SerNr,false,0);
+  EditField(120,vm=(v=6), 80,"Код",ViewOnly,SerNr,false,0);
   EditField(320,v,80,"Проект",ViewOnly,PRCode,false,PRSClass);
   EditField(120,v+=20,80,"Дата",Normal,TransDate,false,PasteCurDate);
   EditField(320,v,200,"Название проекта",Normal,PRName,false,PRSClass);
@@ -209,7 +211,7 @@ begin
   Sizeable(-1,-1,0,0);
   UseView(SAVc);
   RecordList(4,17,-21,-39);
-  RlColKey(4,1, "Номер",SerNr,false,SerNr);
+  RlColKey(4,1, "Код",SerNr,false,SerNr);
   RlColKey(75,75,"Дата",TransDate,false,TransDate);
   RlColKey(160,160, "Проект",PRCode,false,PRCode);
   RlColKey(260,260, "Название проекта",PRName,false,PRName);
@@ -230,11 +232,12 @@ begin
   
   WindowBegin("Дополнительное соглашение с подрядчиком",SAVIDClass,CGview,-);
   UseView(SAVIVc);
+  ActiveFieldOnNew("SANum"); //Edit***************************Sasha2,15:00 13.10.2014
 //  FormName(SAVIForm);
   DynamicWindow;
   SetWRect(20,80,600,390);
   
-  EditField(120,vm=(v=6), 80,"Номер",Normal,SerNr,false,0);
+  EditField(120,vm=(v=6), 80,"Код",ViewOnly,SerNr,false,0);
   EditField(320,v,80,"Проект",ViewOnly,PRCode,false,PRSClass);
   EditField(120,v+=20,80,"Дата",Normal,TransDate,false,PasteCurDate);
   EditField(320,v,200,"Название проекта",Normal,PRName,false,PRSClass);
@@ -255,7 +258,7 @@ begin
   Sizeable(-1,-1,0,0);
   UseView(SAVIVc);
   RecordList(4,17,-21,-39);
-  RlColKey(4,1, "Номер",SerNr,false,SerNr);
+  RlColKey(4,1, "Код",SerNr,false,SerNr);
   RlColKey(75,75,"Дата",TransDate,false,TransDate);
   RlColKey(160,160, "Проект",PRCode,false,PRCode);
   RlColKey(260,260, "Название проекта",PRName,false,PRName);
@@ -274,13 +277,14 @@ begin
   real h,h2,v,vs,vm;
   string 255 label;
   
-  WindowBegin("Акт выполеных работ с подрядчиком",ADJVIDClass,CGview,-);
+  WindowBegin("Акт выполненных работ с подрядчиком",ADJVIDClass,CGview,-);
   UseView(ADJVIVc);
+  ActiveFieldOnNew("ADJNum"); //Edit***************************Sasha2,15:00 13.10.2014
 //  FormName(ADJVIForm);
   DynamicWindow;
   SetWRect(20,80,600,390);
   
-  EditField(120,vm=(v=6), 80,"Номер",Normal,SerNr,false,0);
+  EditField(120,vm=(v=6), 80,"Код",ViewOnly,SerNr,false,0);
   EditField(320,v,80,"Проект",ViewOnly,PRCode,false,PRSClass);
   EditField(120,v+=20,80,"Дата",Normal,TransDate,false,PasteCurDate);
   EditField(320,v,200,"Название проекта",Normal,PRName,false,PRSClass);
@@ -295,13 +299,13 @@ end;
 window ADJVILClass:2
   wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer,android,iPad,iPhone")
 begin
-  WindowBegin("Акты выполненых работ с подрядчиками",ADJVILClass,CGmlist,-);
+  WindowBegin("Акты выполненных работ с подрядчиками",ADJVILClass,CGmlist,-);
   SetWRect(20,80,850,298); 
   SpawnClass(ADJVIDClass);
   Sizeable(-1,-1,0,0);
   UseView(ADJVIVc);
   RecordList(4,17,-21,-39);
-  RlColKey(4,1, "Номер",SerNr,false,SerNr);
+  RlColKey(4,1, "Код",SerNr,false,SerNr);
   RlColKey(75,75,"Дата",TransDate,false,TransDate);
   RlColKey(160,160, "Проект",PRCode,false,PRCode);
   RlColKey(260,260, "Название проекта",PRName,false,PRName);
@@ -328,6 +332,7 @@ begin
   RlColKey(4,4,"Тип проекта",PRClass,false,MainKey);
   RlCol(100,100,"Масштаб",Scope,false);
   RlCol(200,200,"Мин.% дох.",MinReb,false);
+  RlCol(300,300,"Мин.сум.продаж",MinSellSum,false);
   SearchField("Пошук");
   if (HasLimitedAccess) then begin 
   BrowseSubsetButton(-40,-15);
@@ -351,7 +356,7 @@ begin
   EditField(h,v=10,80, "Тип проекта",Normal,PRClass,false,PRClassSClass);
   EditField(h,v+=vs,80, "Масштаб проекта",Normal,Scope,false,ProjScopeSClass);
   EditField(h,v+=vs,80, "Мин. % дох-сти",Normal,MinReb,false,0);
-  EditField(h,v+=vs,80, "Мин. отклон.",Normal,MinDevReb,false,0);
+  EditField(h,v+=vs,80, "Мин.сум.продаж",Normal,MinSellSum,false,0);
 
   EndWindow;
 end; //Edit***************************Sasha2,13:29 12.09.2014 }
