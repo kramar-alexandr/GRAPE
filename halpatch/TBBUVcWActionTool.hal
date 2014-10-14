@@ -35,6 +35,8 @@ external procedure CalcSum(val,val,val,val,var val,Integer);
 external procedure GetItemVATCode(string,Integer,var string,Boolean);
 external procedure RoundRowSum(string,string,string,var val);
 external procedure POSumup(var record POVc);
+external function Boolean SetInSet2(string,string); //Edit***************************Sasha2,10:55 14.10.2014
+external function Boolean POVc_PasteVECode(var record POVc,Boolean); //Edit***************************Sasha2,13:33 14.10.2014
 
 function Boolean CheckPOPRITHandle(record INVc INp,Integer ItemType,record PRITHandleBlock PRITRecp)
 BEGIN
@@ -55,7 +57,7 @@ BEGIN
   RETURN;
 END;
 
-procedure PutOnPORow(record POVc POp,row POVc POrwp,var Integer porownr,row TBBUVc TBBUrwp,record TBBUVc TBBUp,record INVc INp,string vevatcode,Integer exportflag)
+procedure PutOnPORow(var record POVc POp,row POVc POrwp,var Integer porownr,row TBBUVc TBBUrwp,record TBBUVc TBBUp,record INVc INp,string vevatcode,Integer exportflag)
 BEGIN
   string 255 tstr;
   val t;
@@ -575,3 +577,95 @@ begin
   TBBUVc_PasteTimeClass = res;
   return;
 end;
+
+global //Edit***************************Sasha2,9:50 14.10.2014 {
+updating function LongInt RecordAction_raPasteTBBUInSeparatePO(record TBBUVc TBBUp)
+BEGIN
+  LongInt res;
+  record PRVc PRr;
+  vector record POVc vectPOr;
+  record PRITHandleBlock PRITRec;
+  record CUVc VEr;
+  record INVc INr;
+  record POVc POr;
+  row POVc POrw;
+  row TBBUVc TBBUrw;
+  integer i,rwcnt,rownr;
+  vector Integer porownr;
+  string 50 subcontrname;
+  string 255 subcontrlist;
+  Integer pos;
+  
+  if (ReadFirstMain(TBBUp,0,true)) then begin end;  
+  PRr.Code = TBBUp.PRCode;
+  if (ReadFirstMain(PRr,1,true)==false) then begin goto LRecordAction_raPasteTBBUInSeparatePO; end;
+  if (PRr.Terminated!=0) then begin goto LRecordAction_raPasteTBBUInSeparatePO; end;
+  
+  BlockLoad(PRITRec);  
+  rwcnt = MatRowCnt(TBBUp);
+  for (i=0;i<rwcnt;i=i+1) begin
+  	MatRowGet(TBBUp,i,TBBUrw);
+  	if (NonBlank(TBBUrw.ArtCode) and TBBUrw.stp==1) then begin
+		INr.Code = TBBUrw.ArtCode;
+		if (ReadFirstMain(INr,1,true)) then begin
+		    if (INr.ItemType==kItemTypePlain or INr.ItemType==kItemTypeStocked/*CheckPOPRITHandle(INr,TBBUrw.ItemType,PRITRec)*/) then begin
+			    if (NonBlank(TBBUrw.SubContractor)) then begin
+	  				subcontrname = TBBUrw.SubContractor;
+			  	end else begin
+			  		subcontrname = "nosubcontr";
+			  	end;
+			  	if (!SetInSet2(subcontrname,subcontrlist)) then begin
+			  		RecordNew(POr);
+			  		POr.VECode = TBBUrw.SubContractor;
+			  		if (subcontrname!="nosubcontr") then begin
+			  			POVc_PasteVECode(POr,false);
+			  		end;
+			  		vectPOr[subcontrname] = POr;
+			  		porownr[subcontrname] = 0;
+			  		if (blank(subcontrlist)) then begin
+			  			subcontrlist = subcontrname;
+			  		end else begin
+			  			subcontrlist = subcontrlist & "," & subcontrname;
+			  		end;
+			  	end;
+  				POr = vectPOr[subcontrname];
+  				rownr = porownr[subcontrname];
+		      	PutOnPORow(POr,POrw,rownr,TBBUrw,TBBUp,INr,VEr.VEVATCode,POr.ExportFlag);
+		      	porownr[subcontrname] = rownr;
+		      	vectPOr[subcontrname] = POr;
+		    end;
+	    end;
+	end;
+  end;
+  
+  pos = 0; 
+  ExtractObj(subcontrlist,pos,subcontrname);
+  while (nonblank(subcontrname)) begin
+  
+  	  POr = vectPOr[subcontrname];
+	  POr.PRCode = TBBUp.PRCode;
+	  POr.Comment = TBBUp.Comment; 
+	  
+	  if (POr.SerNr<=0) then begin
+	    POr.SerNr = NextSerNr("POVc",POr.TransDate,-1,false,"");
+	  end;  
+	  if (POr.SerNr<=0) then begin goto LRecordAction_raPasteTBBUInSeparatePO; end;  
+	  if (MatRowCnt(POr)>0) then begin
+	    POSumup(POr);
+	    if (RecordStore(POr,false)) then begin
+	      CreateRecordLink(TBBUp,CurrentCompany,POr,CurrentCompany);  
+	      CreateRecordLink(POr,CurrentCompany,TBBUp,CurrentCompany); 
+	      if (res==-1) then begin
+	      	res = POr.SerNr;
+	      end; 
+	    end;
+	  end;
+	
+  	ExtractObj(subcontrlist,pos,subcontrname);
+  end;
+ 
+  
+LRecordAction_raPasteTBBUInSeparatePO:;
+  RecordAction_raPasteTBBUInSeparatePO = res;
+  RETURN;
+END; //Edit***************************Sasha2,9:50 14.10.2014 }

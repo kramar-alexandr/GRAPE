@@ -2842,7 +2842,7 @@ begin
     RadioButton(h3,v+=16,kAcceptanceStateRejected,0,"отклонено",AcceptanceStatus);
   end;
   
-	SpecialMenu("Загрузить дочерние бюджеты",' ',0,"RecalculateTBBUDsm");// Edit ************************** Friday, 5 September 2014 13:40:13
+  SpecialMenu("Загрузить дочерние бюджеты",' ',0,"RecalculateTBBUDsm");// Edit ************************** Friday, 5 September 2014 13:40:13
   SpecialMenu("Добавить строку заголовка",' ',0,"HeaderLineTBBUDsm");
   SpecialMenu("Добавить итого",' ',0,"SubtotalTBBUDsm");
   SpecialMenu("Добавить скидку",' ',0,"SubRebateTBBUDsm"); //Edit***************************Sasha2,14:29 07.10.2014
@@ -2855,6 +2855,7 @@ begin
   if (HasModPO) then begin
   SpecialMenu("Сделать заказ поставщику",'u',1,"POFromTBBUDsm");
   end;
+  SpecialMenu("Разбить заказы поставщикам по субподрядчикам",'',1,"SeparatePOFromTBBUDsm"); //Edit***************************Sasha2,17:21 13.10.2014
   if (HasModSO) then begin
   SpecialMenu("Создать счёт клиенту",'l',2,"ORFromTBBUDsm");
   end;

@@ -25,6 +25,7 @@ external function Boolean UserCanChangePendingRecord(Integer);
 remote procedure IVVc_PasteVATCode(var record IVVc,Integer,string,var Boolean);
 remote procedure CalculateBudget(var record TBBUVc);// Edit ************************** Friday, 12 September 2014 15:34:35
 remote procedure CreateTBBUFromTemplate(record PRVc,var record TBBUVc); //Edit***************************Sasha2,11:02 15.09.2014
+remote updating function LongInt RecordAction_raPasteTBBUInSeparatePO(record TBBUVc); //Edit***************************Sasha2,9:55 14.10.2014
 
 SetLangMode(LangRussian,"RUS",0); //Edit***************************Sasha2,11:27 15.09.2014
 
@@ -1424,3 +1425,44 @@ begin
  	RunProgram(CurrentPath & "ExcelFormating/ExcelFormating.sh",path); // Put path 
  return;
 end;
+
+global //Edit***************************Sasha2,17:38 13.10.2014 {
+updating procedure SeparatePOFromTBBUDsm()
+BEGIN
+  record TBBUVc TBBUr;
+  record POVc PO2r;
+  LongInt r;
+  Integer wn,nwn,err;
+  Boolean testf;  
+  
+  wn = CurWindow;
+  if (WindowState(wn)==0) then begin//Rs_normal
+    GetWindowRecord(wn,TBBUr);
+    testf = true;
+    err = TestAcceptanceStatus(TBBUr.AcceptanceStatus);
+    if (err!=0) then begin
+      MessageBox(err,"");
+      testf = false;
+    end;
+    if (testf) then begin
+      if (UserCanAction("TBBUToPO",true)) then begin
+        r = RecordAction_raPasteTBBUInSeparatePO(TBBUr);
+        switch (r) begin
+          case -1: Beep;
+          case -2: MessageBox(1281,"");
+          otherwise
+          	PO2r.SerNr = r;
+          	if (ReadFirstMain(PO2r,1,true)) then begin
+          		nwn = OpenWindow("PODClass",1,0,"","",PO2r);
+          	end;
+        end;
+        UpdateBrowses("POVc");
+      end else begin
+        MessageBox(1274,StringFromStringSet(3,"TBBUToPO"));
+      end;
+    end;
+  end else begin
+    Beep;
+  end;
+  RETURN;
+END; //Edit***************************Sasha2,17:38 13.10.2014 }
