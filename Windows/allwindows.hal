@@ -2855,7 +2855,7 @@ begin
   if (HasModPO) then begin
   SpecialMenu("Сделать заказ поставщику",'u',1,"POFromTBBUDsm");
   end;
-  SpecialMenu("Разбить заказы поставщикам по субподрядчикам",'',1,"SeparatePOFromTBBUDsm"); //Edit***************************Sasha2,17:21 13.10.2014
+  SpecialMenu("Разбить на заказы поставщикам по субподрядчикам",'',1,"SeparatePOFromTBBUDsm"); //Edit***************************Sasha2,17:21 13.10.2014
   if (HasModSO) then begin
   SpecialMenu("Создать счёт клиенту",'l',2,"ORFromTBBUDsm");
   end;
