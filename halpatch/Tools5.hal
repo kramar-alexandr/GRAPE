@@ -195,7 +195,7 @@ BEGIN
   val tt,ot,mt,st,s3,t;
   Integer itemtyp;
   val subtotv,costv;
-  val gptot,totrebate,vatreb; //Edit***************************Sasha2,10:21 08.09.2014
+  val gptot,totrebate,vatrebate; //Edit***************************Sasha2,10:21 08.09.2014
   array val blqty,blsum; //Edit***************************Sasha2,16:10 08.10.2014
   integer blockcnt; //Edit***************************Sasha2,10:37 09.10.2014
   array Integer blnums; //Edit***************************Sasha2,11:05 09.10.2014
@@ -247,7 +247,7 @@ BEGIN
       if (TBBUrw.stp>=17) then begin //Edit***************************Sasha2,15:12 07.10.2014 {
       	if (TBBUrw.stp==23) then begin
       		totrebate = totrebate + TBBUrw.Sum;
-      		vatreb = vatreb + TBBUrw.SumCost; //Sasha2: rebate VAT value
+      		vatrebate = vatrebate + TBBUrw.SumCost; //Sasha2: rebate VAT value
       	end;
       	if (TBBUrw.stp==21) then begin
       		blockcnt = blockcnt + 1;
@@ -286,8 +286,8 @@ BEGIN
   tt = tt + ot;
   tt = tt + st;
   tt = tt + mt;
-  if (vatreb<>0) then begin //Edit***************************Sasha2,17:29 20.10.2014 {
-  	s3 = s3 + vatreb;
+  if (vatrebate<>0) then begin //Edit***************************Sasha2,17:29 20.10.2014 {
+  	s3 = s3 + vatrebate;
   end; //Edit***************************Sasha2,17:29 20.10.2014 }
   TBBUp.Sum3 = s3;//Edit by Victor 10.09.14
   TBBUp.TotSum = tt + totrebate;//Edit***************************Sasha2,16:54 07.10.2014

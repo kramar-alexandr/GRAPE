@@ -1314,6 +1314,7 @@ begin
   RecordField(PayMode,M4UStr,20,0);// Edit ************************** Friday, 12 September 2014 16:02:55
   RecordField(BUOKFlag,M4Mark,0,0);// Edit ************************** Friday, 12 September 2014 16:19:55
   RecordField(BUApproveFlag,M4Mark,0,0) //Edit***************************Sasha2,14:44 16.09.2014
+  RecordField(MotherProjectName,M4Str,60,0); //Edit***************************Sasha2,11:07 21.10.2014
   ArrayBegin(Math,-,1);
   ArrayField(PlanDate,M4Date,0,0);
   ArrayField(InvNr,M4Long,0,IVVc);
