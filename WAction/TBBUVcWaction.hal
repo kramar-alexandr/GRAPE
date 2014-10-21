@@ -26,6 +26,7 @@ remote procedure IVVc_PasteVATCode(var record IVVc,Integer,string,var Boolean);
 remote procedure CalculateBudget(var record TBBUVc);// Edit ************************** Friday, 12 September 2014 15:34:35
 remote procedure CreateTBBUFromTemplate(record PRVc,var record TBBUVc); //Edit***************************Sasha2,11:02 15.09.2014
 remote updating function LongInt RecordAction_raPasteTBBUInSeparatePO(record TBBUVc); //Edit***************************Sasha2,9:55 14.10.2014
+remote procedure TBBUVc_PasteTypeName_Rebate(record TBBUVc,integer,var row TBBUVc); //Edit***************************Sasha2,10:02 21.10.2014
 
 SetLangMode(LangRussian,"RUS",0); //Edit***************************Sasha2,11:27 15.09.2014
 
@@ -383,65 +384,16 @@ end;
 function Boolean TBBUDClassTypeNameEFAfter(Integer wn,Integer rownr,Integer changed)
 begin  
   record TBBUVc TBBUr;
-  row TBBUVc TBBUrw, TBBU2rw;
-  Integer i,rwcnt,length;
-  val rebval,rebsize;
-  boolean testf;
-  string 255 tstr;
-  string 1 cs;
+  row TBBUVc TBBUrw;
 	
   if (changed!=0) then begin  
     //DeselectWindow(wn,false);
     GetWindowRecord(wn,TBBUr);
     MatRowGet(TBBUr,rownr,TBBUrw);
-    
     if (TBBUrw.stp==23) then begin
-    	if (blank(TBBUrw.TypeName)) then begin
-    		rebval = BlankVal;
-    	end else begin
-    		rebval = BlankVal;
-	    	testf = false;
-	    	length = len(TBBUrw.TypeName);
-	    	for (i=0;i<length;i=i+1) begin
-	    		cs = mid(TBBUrw.TypeName,i,1);
-			    if (asc(cs)==37) then begin
-			      tstr = Left(TBBUrw.TypeName,i);
-			      rebsize = EvalToVal(tstr);
-			      testf = true;
-			      i = length;
-			    end;
-	    	end;
-	    	
-		    if (testf) then begin
-		    	rwcnt = MatRowCnt(TBBUr);
-				for (i=(rownr-1);i>=0;i=i-1) begin
-					MatRowGet(TBBUr,i,TBBU2rw);
-					if (TBBU2rw.stp!=9 and (TBBU2rw.stp<17 or TBBU2rw.stp>23)) then begin
-						rebval = rebval + TBBU2rw.Sum;
-					end;
-					if (TBBU2rw.stp==18) then begin
-						i = -1;
-					end;
-				end;
-				for (i=(rownr+1);i<rwcnt;i=i+1) begin
-			  		MatRowGet(TBBUr,i,TBBU2rw);
-					if (TBBU2rw.stp!=9 and (TBBU2rw.stp<17 or TBBU2rw.stp>23)) then begin
-						rebval = rebval + TBBU2rw.Sum;
-					end;
-					if (TBBU2rw.stp==18) then begin
-						i = rwcnt;
-					end;
-		    	end;
-		    	rebval = rebval*(rebsize/100);
-		    end else begin
-		    	rebval = EvalToVal(TBBUrw.TypeName);
-			end;
-    	end;
-  
-		TBBUrw.Sum = rebval;
+    	TBBUVc_PasteTypeName_Rebate(TBBUr,rownr,TBBUrw);
 		MatRowPut(TBBUr,rownr,TBBUrw);
 		TBBUSumup(TBBUr);
-
 	    PutWindowRecord(wn,TBBUr);
     end;
   end;
