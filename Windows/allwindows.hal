@@ -2678,7 +2678,8 @@ begin
   MatCol(t,190,"",0,Spec,false,0);
   MatText(t,-105,"Размер",false); 
   MatCol(t,-60,"Сумма",0,TypeName,true,0);//Edit***************************Sasha2,14:48 07.10.2014 }
-  MatCol(1,30,"Товар",0,ArtCode,false,INSClass);
+  MatCol(1,30,"Тип",0,ToUserBud,false,SetSClass);// Edit ************************** Tuesday, 21 October 2014 10:21:09
+  MatCol(1,60,"Товар",0,ArtCode,false,INSClass);
   //MatCol(1,100,"Сотр.",0,EMCode,false,UserSClass); //Edit***************************Sasha2,12:45 10.10.2014
   MatCol(1,155,"Кол-во",0,Qty,true,0);
   MatCol(1,200,"Наименование",0,Comment,false,0);

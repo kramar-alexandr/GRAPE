@@ -323,5 +323,11 @@ begin
   StrSetText(ApproveSchedImport,"Approve Scheduled Import");  
   StrSetText(ApproveSchedMaint,"Approve Scheduled Maintenance"); 
 	EndStrSet;
+	
+	SetBegin(999);
+		SetText(0,"Клиет.");
+		SetText(1,"Внутр.");
+  EndSet;
+	
 	return;
 end;
