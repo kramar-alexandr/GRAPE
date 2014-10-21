@@ -793,7 +793,7 @@ begin
   	
   recordcopy(PRr,PRp);	
   
-  rwcnt = =matrowcnt(PRr);
+  rwcnt = matrowcnt(PRr);
   For(i=0;i<rwcnt;i=i+1) begin
 	  matrowdelete(PRr,0);
 	end; 
@@ -801,22 +801,24 @@ begin
   PRr.MotherCode = PRp.Code;
   PRr.MotherProjectName = PRp.Name;
 	PRr.Members = PRp.Leader;
+  PRr.Name = "";
   
-	PRp.Leader2 = "";
-	PRp.Leader3 = "";
-	PRp.Leader4 = "";
-	PRp.Leader5 = "";
+	PRr.Leader2 = "";
+	PRr.Leader3 = "";
+	PRr.Leader4 = "";
+	PRr.Leader5 = "";
 	
-	PRp.LeaderName2 = "";
-	PRp.LeaderName3 = "";
-	PRp.LeaderName4 = "";
-	PRp.LeaderName5 = "";
+	PRr.Leader2Name = "";
+	PRr.Leader3Name = "";
+	PRr.Leader4Name = "";
+	PRr.Leader5Name = "";
 	
-	PR2r.MotherCode = PRp.Code;
 	tstr = PRp.Code;
+	PR2r.MotherCode = PRp.Code;
+	TrHs = true;
 	while (LoopKey("MotherCode",PR2r,1,TrHs)) begin
 		testf = true;
-		if (PR2r.MotherCode != PRp.Code) then begin testf = false; TrHs = false; end; 
+		if (PR2r.MotherCode!=PRp.Code) then begin testf = false; TrHs = false; end; 
 		 
 		if (testf) then begin
 			stmp = PR2r.Code;
@@ -833,7 +835,7 @@ begin
 	end else begin	   
 		tstr = PRp.Code & "-" & ValToString(max+1,M4Val,SysFormatRec.thousSep,SysFormatRec.decimalPt,1);;
 	end;
-  
+  PRr.Code = tstr;
   	
   	/*max = 0;
   	i = 0;
