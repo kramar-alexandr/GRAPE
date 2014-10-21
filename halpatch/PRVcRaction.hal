@@ -765,7 +765,7 @@ BEGIN
   		if (Blank(PRr.Code) or lPRr.MotherCode!=PRr.Code) then begin TrHs=false; end;
   		if (TrHs) then begin
   			if (lPRr.StopInvoicing==PRr.StopInvoicing) then begin
-  				TrHs=false;
+  				TrHs = false;
   				found = true;
   			end;
   		end;
