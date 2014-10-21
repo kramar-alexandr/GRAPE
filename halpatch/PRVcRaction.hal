@@ -743,13 +743,38 @@ BEGIN
   Integer rwcnt,i,errcode;
   LongInt prnr;
   Boolean gentrans,smalldevicesf;
+  Boolean TrHs,found; //Edit***************************Sasha2,12:44 21.10.2014
   record UserVc Userr;
 
   res = 0;
   switch (ProgramType) begin
     case typTimeLog: smalldevicesf = true;
   end;
-	if (blank(PRr.PRClass)) then begin			//*** Edit by Victor 17.09.14
+  if (NonBlank(PRr.MotherCode)) then begin //Edit***************************Sasha2,12:17 21.10.2014 {
+  	lPRr.Code=PRr.MotherCode;
+  	if (ReadFirstMain(lPRr,1,true)) then begin
+  		if (lPRr.StopInvoicing==PRr.StopInvoicing) then begin
+  			MessageBox(31024,"");
+  		end;
+  	end;
+  end else begin
+  	lPRr.MotherCode=PRr.Code;
+  	TrHs = true;
+  	found = false;
+  	while (LoopKey("MotherCode",lPRr,1,TrHs)) begin
+  		if (Blank(PRr.Code) or lPRr.MotherCode!=PRr.Code) then begin TrHs=false; end;
+  		if (TrHs) then begin
+  			if (lPRr.StopInvoicing==PRr.StopInvoicing) then begin
+  				TrHs=false;
+  				found = true;
+  			end;
+  		end;
+  	end;
+  	if (found) then begin
+  		MessageBox(31024,"");
+  	end;
+  end; //Edit***************************Sasha2,12:17 21.10.2014 }
+  if (blank(PRr.PRClass)) then begin			//*** Edit by Victor 17.09.14
     RecordCheckError(1058,"",-1,"PRClass");      
     res = -1;
     goto LPRVcRecordCheck;
