@@ -23,7 +23,7 @@ external function Boolean GetItemNameStr(Integer,var string,string,string,string
 remote updating procedure GenProInvoices(var record RcVc,Boolean);
 external function Boolean UserCanChangePendingRecord(Integer);
 remote procedure IVVc_PasteVATCode(var record IVVc,Integer,string,var Boolean);
-remote procedure CalculateBudget(var record TBBUVc);// Edit ************************** Friday, 12 September 2014 15:34:35
+remote procedure CalculateBudget(var record TBBUVc,var string);// Edit ************************** Friday, 12 September 2014 15:34:35
 remote procedure CreateTBBUFromTemplate(record PRVc,var record TBBUVc); //Edit***************************Sasha2,11:02 15.09.2014
 remote updating function LongInt RecordAction_raPasteTBBUInSeparatePO(record TBBUVc); //Edit***************************Sasha2,9:55 14.10.2014
 remote procedure TBBUVc_PasteTypeName_Rebate(record TBBUVc,integer,var row TBBUVc); //Edit***************************Sasha2,10:02 21.10.2014
@@ -1317,15 +1317,19 @@ global procedure RecalculateTBBUDsm()
 begin
 	record TBBUVc TBBUr;
 	Integer wn;
+	string 255 cautionbudgetsnr;
   
   wn = CurWindow;
   DeselectWindow(wn,false);
   GetWindowRecord(wn,TBBUr);
 	
-	CalculateBudget(TBBUr);
+	CalculateBudget(TBBUr,cautionbudgetsnr);
 	
 	PutWindowRecord(wn,TBBUr);
-		
+	
+	if (NonBlank(cautionbudgetsnr)) then begin //Edit***************************Sasha2,16:02 21.10.2014 {
+		MessageBox(0,"Есть бюджеты с неподходящим статусом утверждения:" & Chr(13) & cautionbudgetsnr);
+	end; //Edit***************************Sasha2,16:02 21.10.2014 }
 	return;
 end;
 
@@ -1365,6 +1369,11 @@ begin
 	wn = CurWindow;
   DeselectWindow(wn,false);
   GetWindowRecord(wn,TBBUr);
+  
+  if (TBBUr.AcceptanceStatus!=kAcceptanceStateNotRequired and TBBUr.AcceptanceStatus!=kAcceptanceStateApproved) then begin //Edit***************************Sasha2,15:32 21.10.2014 {
+  	MessageBox(0,"Неподходящий статус утверждения бюджета");
+  	return; 
+  end; //Edit***************************Sasha2,15:32 21.10.2014 }
 
   //RepSpec.Media = mtExcel; 
   RepSpec.Media = mtClipBoard; // Edit by Victor 25.09.14

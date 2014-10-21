@@ -4,7 +4,7 @@ external procedure TBBUDchrsum(var record TBBUVc,Integer,Boolean,Integer);
 SetLangMode(LangRussian,"RUS",0);
 
 
-global procedure CalculateBudget(var record TBBUVc TBBUr)
+global procedure CalculateBudget(var record TBBUVc TBBUr,var string budgeterrors)
 begin
 	integer i,rwcnt,rwnum,j,rwcnt2,rwcnt3,k,q;
 	record PRVc PRr,PR2r;
@@ -44,6 +44,9 @@ begin
 					
 					TBBU2r.PRCode = PRr.Code;
 					if(readfirstmain(TBBU2r,1,true))then begin
+						if (TBBU2r.AcceptanceStatus!=kAcceptanceStateNotRequired and TBBU2r.AcceptanceStatus!=kAcceptanceStateApproved) then begin
+							budgeterrors = budgeterrors & "Ü " & TBBU2r.PRCode & Chr(13); //Edit***************************Sasha2,16:00 21.10.2014
+						end;
 						if(MatRowCnt(TBBUr)==0)then begin
 							rwcnt = MatRowCnt(TBBU2r);
 							name = "";
