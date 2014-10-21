@@ -784,10 +784,58 @@ begin
   string 1 c;
   boolean testf;
   record SysFormatBlock SysFormatRec;
+  boolean TrHs;
+  row PRvc PRrw;
+  integer rwcnt;
   
   BlockLoad(SysFormatRec);
   	
-  	max = 0;
+  	
+  recordcopy(PRr,PRp);	
+  
+  rwcnt = =matrowcnt(PRr);
+  For(i=0;i<rwcnt;i=i+1) begin
+	  matrowdelete(PRr,0);
+	end; 
+  
+  PRr.MotherCode = PRp.Code;
+  PRr.MotherProjectName = PRp.Name;
+	PRr.Members = PRp.Leader;
+  
+	PRp.Leader2 = "";
+	PRp.Leader3 = "";
+	PRp.Leader4 = "";
+	PRp.Leader5 = "";
+	
+	PRp.LeaderName2 = "";
+	PRp.LeaderName3 = "";
+	PRp.LeaderName4 = "";
+	PRp.LeaderName5 = "";
+	
+	PR2r.MotherCode = PRp.Code;
+	tstr = PRp.Code;
+	while (LoopKey("MotherCode",PR2r,1,TrHs)) begin
+		testf = true;
+		if (PR2r.MotherCode != PRp.Code) then begin testf = false; TrHs = false; end; 
+		 
+		if (testf) then begin
+			stmp = PR2r.Code;
+			tail = Right(stmp,len(stmp) - len(tstr));
+			num = findNum(tail);
+			if(max<num)then begin
+				max = num;
+			end;
+		end;
+	end;
+	
+	if(max==0)then begin
+		tstr = PRp.Code & "-1";
+	end else begin	   
+		tstr = PRp.Code & "-" & ValToString(max+1,M4Val,SysFormatRec.thousSep,SysFormatRec.decimalPt,1);;
+	end;
+  
+  	
+  	/*max = 0;
   	i = 0;
   	cnt = 0;
     RecordNew(PRr);
@@ -881,7 +929,7 @@ begin
   	PRr.Text6 = PRp.Text6;
   	PRr.Text7 = PRp.Text7;
   	PRr.Text8 = PRp.Text8;
-  	PRr.Text9 = PRp.Text9;
+  	PRr.Text9 = PRp.Text9;*/
     
     err = 0;
         
