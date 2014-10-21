@@ -2702,7 +2702,7 @@ begin
   //MatCol(t,-100,"Этап",0,PRStage,false,PRStageSClass); //Edit***************************Sasha2,12:45 10.10.2014
   //MatCol(t,-50,"Подпись",0,PRStageSign,false,UserSClass); //Edit***************************Sasha2,12:46 10.10.2014
   Flip(2);
-  MatCol(1,-290,"Субп-чик",0,SubContractor,false,CUSClass); //Edit***************************Sasha2,12:48 10.10.2014
+  MatCol(1,-290,"Субп-чик",0,SubContractor,false,VESClass); //Edit***************************Sasha2,12:48 10.10.2014
   MatCol(t=1,-235,"Наценка",0,Markup,true,0);
   MatCol(t,-180,"Ст-ть за ед.",0,Cost,true,0); //Edit***************************Sasha2,9:41 10.09.2014
   MatCol(t,-115,"Прибыль",0,GP,true,0);
@@ -4096,7 +4096,7 @@ begin
   ButtonFrame(h=280,v=vm,150,3,"Вид проекта");
   RadioButton(h,v,0,0,"Фактурируемый",Type);
   RadioButton(h,v+=16,1,255,"Внутренний",Type);
-  RadioButton(h,v+=16,2,255,"Другой",Type);
+  RadioButton(h,v+=16,2,255,"Тендерный",Type); //Edit***************************Sasha2,11:44 21.10.2014
   if (IsEnterprise) then begin
     ButtonFrame(h=460,v=vm+20,220,3,"Использов. товаров в бюдж. проекта");
     RadioButton(h,v,0,0,"Не предупреждать",TBIVItemsUsage);
