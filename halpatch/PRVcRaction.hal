@@ -269,7 +269,9 @@ BEGIN
   record SRBlock SRRec;
       
   BlockLoad(SRRec);
-  SRRec.LastPRCode = PRr.Code;
+  if(blank(PRr.MotherCode))then begin// Edit ************************** Tuesday, 21 October 2014 10:51:11
+		SRRec.LastPRCode = PRr.Code;
+  end;
   BlockStore(SRRec);
   PRVcRecordSaveAfter = res; 
   RETURN;
