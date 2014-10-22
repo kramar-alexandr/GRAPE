@@ -27,6 +27,8 @@ remote procedure CalculateBudget(var record TBBUVc,var string);// Edit *********
 remote procedure CreateTBBUFromTemplate(record PRVc,var record TBBUVc); //Edit***************************Sasha2,11:02 15.09.2014
 remote updating function LongInt RecordAction_raPasteTBBUInSeparatePO(record TBBUVc); //Edit***************************Sasha2,9:55 14.10.2014
 remote procedure TBBUVc_PasteTypeName_Rebate(record TBBUVc,integer,var row TBBUVc); //Edit***************************Sasha2,10:02 21.10.2014
+remote function Integer SendForAcceptance_TBBUVc(var record TBBUVc,var record RcVc); //Edit***************************Sasha2,17:15 21.10.2014
+external function Integer CountObjects(string); //Edit***************************Sasha2,17:23 21.10.2014
 
 SetLangMode(LangRussian,"RUS",0); //Edit***************************Sasha2,11:27 15.09.2014
 
@@ -390,7 +392,7 @@ begin
     //DeselectWindow(wn,false);
     GetWindowRecord(wn,TBBUr);
     MatRowGet(TBBUr,rownr,TBBUrw);
-    if (TBBUrw.stp==23) then begin
+    if (TBBUrw.stp==23) then begin //Sasha2: count Rebate
     	TBBUVc_PasteTypeName_Rebate(TBBUr,rownr,TBBUrw);
 		MatRowPut(TBBUr,rownr,TBBUrw);
 		TBBUSumup(TBBUr);
@@ -1198,6 +1200,7 @@ BEGIN
   ClearRow(TBBUr,TBBUrw,23);
   MatRowInsert(TBBUr,rownr,TBBUrw); 
   PutWindowRecord(wn,TBBUr);
+  //WindowFieldGoto(wn,TBBUr,rownr,"Sum",true);
 LOutSubRebateTBBUDsm:;  
   RETURN;
 END; //Edit***************************Sasha2,14:42 07.10.2014 }
@@ -1427,3 +1430,89 @@ BEGIN
   end;
   RETURN;
 END; //Edit***************************Sasha2,17:38 13.10.2014 }
+
+global
+updating procedure TBBUSendforAcceptanceTBBUDsmExecute(Integer wn,string acceptanceby,string acceptancefyi)
+begin
+  Integer err,nwn;
+  record TBBUVc TBBUr;
+  Integer ApproverSelection;
+  record RcVc RepSpec;
+  record MinRebTBBUVc MRTBBUr; //Edit***************************Sasha2,17:17 21.10.2014
+  record PRVc PRr; //Edit***************************Sasha2,17:18 21.10.2014
+  
+  GetWindowRecord(wn,TBBUr);
+  if (WindowState(wn)!=Rs_normal) then begin
+    if (WindowDoOK(wn,0)==false) then begin
+      goto LTBBUSendforAcceptanceTBBUDsm;
+    end;
+  end;
+  PRr.Code = TBBUr.PRCode; //Edit***************************Sasha2,17:44 07.10.2014 {
+  ReadFirstMain(PRr,1,true);
+  MRTBBUr.PRClass = PRr.PRClass; 
+  MRTBBUr.Scope = PRr.Scope;
+  if (ReadFirstMain(MRTBBUr,2,true)) then begin
+  	if (MRTBBUr.MinReb>0 and TBBUr.GPTotPercent<MRTBBUr.MinReb) then begin
+  		if (!UserCanAction("AllowSaveBudgetWithUnacceptableProfitORSellSum",false)) then begin
+  			RecordCheckError(31021,"",-1,"GPTotPercent");      
+      		return;
+  		end;
+  	end;
+  	if (MRTBBUr.MinSellSum>0 and TBBUr.TotSum<MRTBBUr.MinSellSum) then begin
+  		if (!UserCanAction("AllowSaveBudgetWithUnacceptableProfitORSellSum",false)) then begin
+  			RecordCheckError(31023,"",-1,"TotSum");      
+      		return;
+  		end;
+  	end;
+  end; //Edit***************************Sasha2,17:45 07.10.2014 }
+  TBBUr.AcceptanceBy = acceptanceby;
+  TBBUr.AcceptanceFYI = acceptancefyi;
+  switch (TBBUr.AcceptanceStatus) begin
+    case kAcceptanceStateNotRequired:
+      MessageBox(22404,"");
+      goto LTBBUSendforAcceptanceTBBUDsm;
+    case kAcceptanceStatePending:
+      MessageBox(22400,"");
+      goto LTBBUSendforAcceptanceTBBUDsm;
+    case kAcceptanceStateApproved:
+      MessageBox(22400,"");
+      goto LTBBUSendforAcceptanceTBBUDsm;
+    case kAcceptanceStateRejected:
+      MessageBox(22400,"");
+      goto LTBBUSendforAcceptanceTBBUDsm;
+  end;
+  err = SendForAcceptance_TBBUVc(TBBUr,RepSpec);
+  ApproverSelection = RepSpec.ArtMode;
+  if ((ApproverSelection==kAcceptanceApproverSelectionManual) and (blank(TBBUr.AcceptanceBy))) then begin
+    switch (err) begin  
+      case 0:
+        if (CountObjects(RepSpec.f12)==1) then begin
+          RepSpec.f1 = RepSpec.f12;
+        end;
+        if (CountObjects(RepSpec.f11)==1) then begin
+          RepSpec.f2 = RepSpec.f11;
+        end;
+        nwn = OpenWindow("SelectApproverWClass",0,wn,"","",RepSpec);
+      otherwise
+        MessageBox(err,"");
+    end;
+  end else begin
+    switch (err) begin  
+      case 0:
+        PutWindowRecord(wn,TBBUr);
+        if (WindowDoOK(wn,0)) then begin
+        end;
+      otherwise
+        MessageBox(err,"");
+    end;
+  end;
+LTBBUSendforAcceptanceTBBUDsm:;  
+  return;
+end;
+
+global
+updating procedure TBBUSendforAcceptanceTBBUDsm()
+begin
+  TBBUSendforAcceptanceTBBUDsmExecute(CurWindow,"","");
+  return;
+end;
