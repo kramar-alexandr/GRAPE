@@ -2703,10 +2703,10 @@ begin
   //MatCol(t,-50,"Подпись",0,PRStageSign,false,UserSClass); //Edit***************************Sasha2,12:46 10.10.2014
   Flip(2);
   MatCol(1,-290,"Субп-чик",0,SubContractor,false,VESClass); //Edit***************************Sasha2,12:48 10.10.2014
-  MatCol(t=1,-235,"Наценка",0,Markup,true,0);
-  MatCol(t,-180,"Ст-ть за ед.",0,Cost,true,0); //Edit***************************Sasha2,9:41 10.09.2014
-  MatCol(t,-115,"Прибыль",0,GP,true,0);
-  MatCol(t,-50,"Сум.Стоим",0,SumCost,true,0); //temporary
+  //MatCol(t=1,-235,"Наценка",0,Markup,true,0);	//Edit by Victor 24.10.14
+  MatCol(t=1,-235,"Ст-ть за ед.",0,Cost,true,0); //Edit***************************Sasha2,9:41 10.09.2014
+  MatCol(t,-140,"Прибыль",0,GP,true,0);
+  MatCol(t,-80,"Сум.Стоим",0,SumCost,true,0); //temporary
   //MatCol(t,-50,"№ сч/ф",0,Invoiced,true,0); temporary
 //  MatColTL(1,-50,"Inv. No.",0,-1,0,-1,Invoiced,true,0);
   MatCol(t=kInvoiceRowTypeStructuredItemComponent,-235,"Наценка",0,Markup,true,0);
@@ -2846,9 +2846,9 @@ begin
   SpecialMenu("Загрузить дочерние бюджеты",' ',0,"RecalculateTBBUDsm");// Edit ************************** Friday, 5 September 2014 13:40:13
   SpecialMenu("Добавить строку заголовка",' ',0,"HeaderLineTBBUDsm");
   SpecialMenu("Добавить итого",' ',0,"SubtotalTBBUDsm");
-  SpecialMenu("Добавить скидку",' ',0,"SubRebateTBBUDsm"); //Edit***************************Sasha2,14:29 07.10.2014
-  SpecialMenu("Добавить начало группы задач",' ',0,"SubBlockStartTBBUDsm"); //Edit***************************Sasha2,14:29 07.10.2014
-  SpecialMenu("Добавить конец группы задач",' ',0,"SubBlockEndTBBUDsm"); //Edit***************************Sasha2,14:29 07.10.2014
+  SpecialMenu("Добавить скидку/коммисию",' ',0,"SubRebateTBBUDsm"); //Edit***************************Sasha2,14:29 07.10.2014
+  //SpecialMenu("Добавить начало группы задач",' ',0,"SubBlockStartTBBUDsm"); //Edit***************************Sasha2,14:29 07.10.2014
+  //SpecialMenu("Добавить конец группы задач",' ',0,"SubBlockEndTBBUDsm"); //Edit***************************Sasha2,14:29 07.10.2014
   if (HasApprovals) then begin
   SpecialMenu("Отправить для утверждения",' ',6,"TBBUSendforAcceptanceTBBUDsm");
   SpecialMenu("Отменить запрос на утверждение",' ',2,"CancelApprovalRequestDsm");

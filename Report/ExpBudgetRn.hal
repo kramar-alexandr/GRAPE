@@ -83,80 +83,91 @@ begin
 	mtrw = matrowcnt(TBBUr);
 	for (i=0;i<mtrw;i=i+1) begin
 		matrowget(TBBUr,i,TBBUrw);
-		if(TBBUrw.stp == 18)then begin
-			flag1 = CountStp(TBBUr,i) - 1;
-			stp18 = stp18 + 1;
-			if(stp18>1) then begin 
-				stp18 = 1; 
-				stp17 = 0;
-				tot = 0;
-				totvat = 0;
-			end;
+		if(TBBUrw.ToUserBud == 0)then begin
+			if(TBBUrw.stp == 18)then begin
+				flag1 = CountStp(TBBUr,i) - 1;
+				stp18 = stp18 + 1;
+				if(stp18>1) then begin 
+					stp18 = 1; 
+					stp17 = 0;
+					tot = 0;
+					totvat = 0;
+				end;
 						
-			startformat(15);
-				outstring(0,0,TBBUrw.stp,false);
-				outstring(10,0,TBBUrw.Spec,false);
-				outstring(100,0,TBBUrw.TypeName,false);
-				outstring(150,0,TBBUrw.IdentQuant,false);
-				outstring(210,0,"",false);
-			endformat;
-		end else begin
-			if(TBBUrw.stp == 17)then begin
-				stp17 = stp17 + 1;
 				startformat(15);
 					outstring(0,0,TBBUrw.stp,false);
 					outstring(10,0,TBBUrw.Spec,false);
-					outstring(100,0,"",false);
-					outstring(150,0,"",false);
+					outstring(100,0,TBBUrw.TypeName,false);
+					outstring(150,0,TBBUrw.IdentQuant,false);
 					outstring(210,0,"",false);
 				endformat;
 			end else begin
-				if(TBBUrw.stp == 1)then begin
+				if(TBBUrw.stp == 17)then begin
+					stp17 = stp17 + 1;
 					startformat(15);
 						outstring(0,0,TBBUrw.stp,false);
-						outstring(10,0,TBBUrw.Comment,false);
-						outstring(100,0,TBBUrw.Price,false);
-						outstring(150,0,TBBUrw.Qty,false);
-						outstring(210,0,TBBUrw.Sum,false);
+						outstring(10,0,TBBUrw.Spec,false);
+						outstring(100,0,"",false);
+						outstring(150,0,"",false);
+						outstring(210,0,"",false);
 					endformat;
 				end else begin
-					if(TBBUrw.stp == 9)then begin
+					if(TBBUrw.stp == 1)then begin
 						startformat(15);
 							outstring(0,0,TBBUrw.stp,false);
-							outstring(10,0,"",false);
-							outstring(50,0,"",false);
-							outstring(150,0,"ИТОГО Проект:",false);
-							outstring(210,0,TBBUrw.Cost,false);
-						endformat;
-						tot = tot + TBBUrw.Cost;
-												
-						startformat(15);
-							outstring(0,0,TBBUrw.stp,false);
-							outstring(0,0,"",false);
-							outstring(50,0,"",false);
-							outstring(150,0,"ИТОГО, с НДС:",false);
+							outstring(10,0,TBBUrw.Comment,false);
+							outstring(100,0,TBBUrw.Price,false);
+							outstring(150,0,TBBUrw.Qty,false);
 							outstring(210,0,TBBUrw.Sum,false);
 						endformat;
-						totvat = totvat + TBBUrw.Sum;
+					end else begin
+						if(TBBUrw.stp == 23)then begin
+							startformat(15);
+									outstring(0,0,TBBUrw.stp,false);
+									outstring(10,0,"Скидка/Агентская комиссия:",false);
+									outstring(50,0,TBBUrw.Spec,false);
+									outstring(150,0,"Размер:",false);
+									outstring(210,0,TBBUrw.Sum,false);
+								endformat;
+						end else begin
+							if(TBBUrw.stp == 9)then begin
+								startformat(15);
+									outstring(0,0,TBBUrw.stp,false);
+									outstring(10,0,"",false);
+									outstring(50,0,"",false);
+									outstring(150,0,"ИТОГО Проект:",false);
+									outstring(210,0,TBBUrw.Cost,false);
+								endformat;
+								tot = tot + TBBUrw.Cost;
 												
-						if(stp17==flag1)then begin
-							startformat(15);
-								outstring(0,0,"19",false);
-								outstring(10,0,"",false);
-								outstring(50,0,"",false);
-								outstring(150,0,"ИТОГО по проектам:",false);
-								outstring(210,0,tot,false);
-							endformat;
-							startformat(15);
-								outstring(0,0,"19",false);
-								outstring(10,0,"",false);
-								outstring(50,0,"",false);
-								outstring(150,0,"ИТОГО по проектам с НДС:",false);
-								outstring(210,0,totvat,false);
-							endformat;
-						end;
-						
-					end;	
+								startformat(15);
+									outstring(0,0,TBBUrw.stp,false);
+									outstring(0,0,"",false);
+									outstring(50,0,"",false);
+									outstring(150,0,"ИТОГО, с НДС:",false);
+									outstring(210,0,TBBUrw.Sum,false);
+								endformat;
+								totvat = totvat + TBBUrw.Sum;
+												
+								if(stp17==flag1)then begin
+									startformat(15);
+										outstring(0,0,"19",false);
+										outstring(10,0,"",false);
+										outstring(50,0,"",false);
+										outstring(150,0,"ИТОГО по проектам:",false);
+										outstring(210,0,tot,false);
+									endformat;
+									startformat(15);
+										outstring(0,0,"19",false);
+										outstring(10,0,"",false);
+										outstring(50,0,"",false);
+										outstring(150,0,"ИТОГО по проектам с НДС:",false);
+										outstring(210,0,totvat,false);
+									endformat;
+								end;
+							end;
+						end;	
+					end;
 				end;
 			end;
 		end;
