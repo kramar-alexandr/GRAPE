@@ -317,7 +317,13 @@ BEGIN
       case "Comment": if (PRrw.InvNr!=-1) then begin res = false; end;
       case "InvFlag": if (PRrw.InvNr!=-1) then begin res = false; end;
     end;
+  end else begin //Edit***************************Sasha2,10:32 25.11.2014 {
+  	GetWindowRecord(wn,PRr);
+  	switch (fieldname) begin 
+  		case "LaunchingDate": if (NonBlankDate(PRr.LaunchingDate)) then begin res = false; end;
+  	end; //Edit***************************Sasha2,10:32 25.11.2014 }
   end;
+  
 LPRDClassActiveEditField:;  
   PRDClassActiveEditField = res;
   RETURN;

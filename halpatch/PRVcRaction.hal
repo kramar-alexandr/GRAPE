@@ -732,7 +732,7 @@ LUserExists:;
 end;
 
 global
-function LongInt PRVcRecordCheck(var record PRVc PRr,record PRVc PR2r,LongInt stat,LongInt long4)
+updating function LongInt PRVcRecordCheck(var record PRVc PRr,record PRVc PR2r,LongInt stat,LongInt long4) //Edit***************************Sasha2,10:59 25.11.2014
 BEGIN
   LongInt res;
   record ProjectBlock PRRec;
@@ -744,36 +744,13 @@ BEGIN
   LongInt prnr;
   Boolean gentrans,smalldevicesf;
   Boolean TrHs,found; //Edit***************************Sasha2,12:44 21.10.2014
+  Integer stopchildinv; //Edit***************************Sasha2,10:55 25.11.2014
   record UserVc Userr;
 
   res = 0;
   switch (ProgramType) begin
     case typTimeLog: smalldevicesf = true;
   end;
-  if (NonBlank(PRr.MotherCode)) then begin //Edit***************************Sasha2,12:17 21.10.2014 {
-  	lPRr.Code=PRr.MotherCode;
-  	if (ReadFirstMain(lPRr,1,true)) then begin
-  		if (lPRr.StopInvoicing==PRr.StopInvoicing) then begin
-  			MessageBox(31024,"");
-  		end;
-  	end;
-  end else begin
-  	lPRr.MotherCode=PRr.Code;
-  	TrHs = true;
-  	found = false;
-  	while (LoopKey("MotherCode",lPRr,1,TrHs)) begin
-  		if (Blank(PRr.Code) or lPRr.MotherCode!=PRr.Code) then begin TrHs=false; end;
-  		if (TrHs) then begin
-  			if (lPRr.StopInvoicing==PRr.StopInvoicing) then begin
-  				TrHs = false;
-  				found = true;
-  			end;
-  		end;
-  	end;
-  	if (found) then begin
-  		MessageBox(31024,"");
-  	end;
-  end; //Edit***************************Sasha2,12:17 21.10.2014 }
   if (blank(PRr.PRClass)) then begin			//*** Edit by Victor 17.09.14
     RecordCheckError(1058,"",-1,"PRClass");      
     res = -1;
@@ -998,6 +975,37 @@ BEGIN
       goto LPRVcRecordCheck;
     end;
   end;
+  if (NonBlank(PRr.MotherCode)) then begin //Edit***************************Sasha2,12:17 21.10.2014 {
+  	lPRr.Code=PRr.MotherCode;
+  	if (ReadFirstMain(lPRr,1,true)) then begin
+  		if (lPRr.StopInvoicing==PRr.StopInvoicing) then begin
+  			MessageBox(31024,"");
+  		end;
+  	end;
+  end else begin
+  	lPRr.MotherCode=PRr.Code;
+  	TrHs = true;
+  	found = false;
+  	switch (PRr.StopInvoicing) begin
+  		case 0: stopchildinv = 1;
+  		case 1: stopchildinv = 0;
+  	end;
+  	while (LoopKey("MotherCode",lPRr,1,TrHs)) begin
+  		if (Blank(PRr.Code) or lPRr.MotherCode!=PRr.Code) then begin TrHs=false; end;
+  		if (TrHs) then begin
+  			if (lPRr.StopInvoicing==PRr.StopInvoicing) then begin
+  				lPRr.StopInvoicing = stopchildinv;
+  				RECORDSTORE(lPRr,true);
+  				//TrHs = false;
+  				//found = true;
+  			end;
+  		end;
+  	end;
+  	if (found) then begin
+  		MessageBox(31024,"");
+  	end;
+  end; //Edit***************************Sasha2,12:17 21.10.2014 }
+  
 LPRVcRecordCheck:;
   PRVcRecordCheck = res;
   RETURN;
