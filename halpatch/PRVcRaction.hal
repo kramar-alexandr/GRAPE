@@ -1001,9 +1001,9 @@ BEGIN
   			end;
   		end;
   	end;
-  	if (found) then begin
+  	/*if (found) then begin
   		MessageBox(31024,"");
-  	end;
+  	end;*/
   end; //Edit***************************Sasha2,12:17 21.10.2014 }
   
 LPRVcRecordCheck:;
