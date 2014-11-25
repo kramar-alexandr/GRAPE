@@ -671,9 +671,12 @@ global
 function Boolean TBBUDClassActiveEditField(Integer wn,string fieldname,Integer fn,Integer wnst,Integer rownr,Integer changed)
 BEGIN
   Boolean res;
-  record TBBUVc TBBUr;
+  record TBBUVc TBBUr,TBBU2r;
   row TBBUVc TBBUrw;
   Integer nwn,updatemode;
+  record PLVc PLr;
+  record INVc INr;
+  record CUVc CUr;
   
   updatemode = 2;
   res = true;
@@ -685,6 +688,7 @@ BEGIN
     end;
   end;
   GetWindowRecord(wn,TBBUr);
+  GetWindowRecord(wn,TBBU2r);
   
   switch (fieldname) begin //Edit***************************Sasha2,13:44 08.10.2014 {
   	case "Sum": 
@@ -754,7 +758,24 @@ BEGIN
         end;
       end;
     case "Price": //Edit***************************Sasha2,10:03 08.10.2014 {
-        res = UserCanAction("AllowPRBudgetChangePrice",false);
+    		res = false;
+    		CUr.Code = TBBU2r.CustCode;
+    		if(readfirstmain(CUr,1,true))then begin
+					if (rownr>=0) then begin
+						MatRowGet(TBBU2r,rownr,TBBUrw);
+						PLr.PLCode = CUr.PLCode;
+						PLr.ArtCode = TBBUrw.ArtCode;
+						if(readfirstkey("ArtCode",PLr,2,true)==true)then begin// Edit ************************** Monday, 24 November 2014 17:01:32
+							res = UserCanAction("AllowPRBudgetChangePrice",false);
+						end else begin
+							res = true;
+						end;
+					END else begin
+						res = true;
+					end;
+        end else begin
+        	res = true;
+        end;
     case "Discount": 
     	res = false; //UserCanAction("AllowPRBudgetChangeDiscount",false); //Edit***************************Sasha2,10:03 08.10.2014 }
   end;
