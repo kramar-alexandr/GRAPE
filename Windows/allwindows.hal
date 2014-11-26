@@ -4104,9 +4104,9 @@ begin
     RadioButton(h,v+=16,2,255,"Не разрешать",TBIVItemsUsage);
   end;
   EditField(-110,v=26,70,"Дата начала",Normal ,StartDate,false,PasteCurDate);
-  EditField(-110,v+=20,70,"Дата окончания",Normal ,EndDate,false,PasteCurDate);
-  EditField(-110,v+=30,70,"Дата старта проекта",Normal,LaunchingDate,false,PasteCurDate); //Edit***************************Sasha2,10:28 25.11.2014
-  EditField(-110,v+=20,70,"Дата завершения",ViewOnly,FinishedDate,false,0);
+  EditField(-110,v+=20,70,"Дата старта проекта",Normal,LaunchingDate,false,PasteCurDate); //Edit***************************Sasha2,10:28 25.11.2014
+  EditField(-110,v+=30,70,"Дата окончания",Normal ,EndDate,false,PasteCurDate);
+  EditField(-110,v+=20,70,"Дата завершения проекта",ViewOnly,FinishedDate,false,0);
   if (HasMultiCurrency) then begin
     EditField(-110,v+=20,70,"Валюта проекта",Normal,CurncyCode,false,CurncyCodeSClass);
   end;
