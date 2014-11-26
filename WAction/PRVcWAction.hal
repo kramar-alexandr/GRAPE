@@ -299,6 +299,23 @@ BEGIN
   RETURN;
 END;
 
+global //Edit***************************Sasha2,10:10 26.11.2014 {
+function Boolean PRDClassStopInvoicingButtonAction(Integer wn,Integer value)
+BEGIN
+  Boolean res;
+  record PRVc PRr;
+  
+  res = true;
+  
+  GetWindowRecord(wn,PRr);
+  if (NonBlank(PRr.MotherCode)) then begin
+  	res = false;
+  end;
+  
+  PRDClassStopInvoicingButtonAction = res;
+  RETURN;
+END; //Edit***************************Sasha2,10:11 26.11.2014 }
+
 global
 function Boolean PRDClassActiveEditField(Integer wn,string fieldname,Integer fn,Integer wnst,Integer rownr,Integer changed)
 BEGIN
@@ -482,6 +499,7 @@ BEGIN
   PRDClassLeader5EFAfter = res;
   return;
 END;
+
 global
 function Boolean PRDClassAfterEditField(Integer wn,string fieldname,Integer fn, Integer rownr,Integer changed)
 BEGIN
