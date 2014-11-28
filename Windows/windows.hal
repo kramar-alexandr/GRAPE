@@ -360,3 +360,32 @@ begin
 
   EndWindow;
 end; //Edit***************************Sasha2,13:29 12.09.2014 }
+
+
+window PLImportIClass:1  // added ************ Dima, 19.11.2014
+  wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
+begin
+real h,v,vs;
+Integer i;
+  WindowBegin("Импорт цен",PLImportIClass,CGIcW,-);
+  SetWRect(20,80,470,280);
+  i=1; //номер колонки
+  h=10;  v=15; 
+  StaticText(h,v,"Формат импорта",false);
+  h=20;  v=40;
+  StaticText(h,v,"Список колонок:",false);
+  v=v+30; vs=25;
+  StaticText(h,v,i &". Код прайс-листа",false);
+	 StaticText(h+150,v,"Обязательное поле",false);
+	 i=i+1;
+  StaticText(h,v+=vs,i &". Код товара",false);
+	 StaticText(h+150,v,"Обязательное поле",false);
+	 i=i+1;
+  StaticText(h,v+=vs,i &". Цена",false);
+	 StaticText(h+150,v,"Обязательное поле",false);
+	 i=i+1;
+  h=10;
+  StaticText(h,v+=45,"Примечание:   Все столбцы разделены <Tab>",false);
+
+  EndWindow;
+end;

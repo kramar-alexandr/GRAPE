@@ -2682,12 +2682,12 @@ begin
   MatCol(1,60,"Товар",0,ArtCode,false,INSClass);
   //MatCol(1,100,"Сотр.",0,EMCode,false,UserSClass); //Edit***************************Sasha2,12:45 10.10.2014
   MatCol(1,155,"Кол-во",0,Qty,true,0);
-  MatCol(1,200,"Наименование",0,Comment,false,0);
   MatCol(t=kInvoiceRowTypeStructuredItemComponent,30,"Товар",0,ArtCode,false,INSClass);
   //MatCol(t,100,"Сотр.",0,EMCode,false,UserSClass); //Edit***************************Sasha2,12:45 10.10.2014
   MatCol(t,155,"Кол-во",0,Qty,true,0);
   MatCol(t,200,"Наименование",0,Comment,false,0);
   Flip(1);
+  MatCol(1,200,"Наименование",0,Comment,false,0);
   MatCol(t=1,-300,"Примечание",0,Comment2,true,0); //Edit***************************Sasha2,13:00 10.10.2014
   MatCol(t=1,-140,"Цена",0,Price,true,0); //Edit***************************Sasha2,12:56 10.10.2014 orgrinal pos = - 285  
   //MatCol(t,-215,"%",0,Discount,true,0); //Edit***************************Sasha2,12:44 10.10.2014
@@ -2702,9 +2702,10 @@ begin
   //MatCol(t,-100,"Этап",0,PRStage,false,PRStageSClass); //Edit***************************Sasha2,12:45 10.10.2014
   //MatCol(t,-50,"Подпись",0,PRStageSign,false,UserSClass); //Edit***************************Sasha2,12:46 10.10.2014
   Flip(2);
-  MatCol(1,-290,"Субп-чик",0,SubContractor,false,VESClass); //Edit***************************Sasha2,12:48 10.10.2014
+  MatCol(1,200,"Субподрядчик",0,SubContractor,false,VESClass); //Edit***************************Sasha2,12:48 10.10.2014
+  MatCol(t=1,-350,"Комментарий",0,Comment3,false,0); //Edit***************************Sasha2,17:23 28.11.2014
   //MatCol(t=1,-235,"Наценка",0,Markup,true,0);	//Edit by Victor 24.10.14
-  MatCol(t=1,-235,"Ст-ть за ед.",0,Cost,true,0); //Edit***************************Sasha2,9:41 10.09.2014
+  //MatCol(t=1,-235,"Ст-ть за ед.",0,Cost,true,0); //Edit***************************Sasha2,9:41 10.09.2014
   MatCol(t,-140,"Прибыль",0,GP,true,0);
   MatCol(t,-80,"Сум.Стоим",0,SumCost,true,0); //temporary
   //MatCol(t,-50,"№ сч/ф",0,Invoiced,true,0); temporary
@@ -2715,6 +2716,7 @@ begin
   MatCol(t,-50,"№ сч/ф",0,Invoiced,true,0);
   Flip(3);
   t = 1;
+  MatCol(1,200,"Наименование",0,Comment,false,0);
   if (IsEnterprise) then begin
     MatCol(t,-255,"Врем. класс",0,TimeClass,false,TimeClassSClass);
   end;
@@ -2728,6 +2730,7 @@ begin
   MatCol(t,-50,"№ сч/ф",0,Invoiced,true,0);
   Flip(4);
   t=1;
+  MatCol(1,200,"Наименование",0,Comment,false,0);
   if (HasObjects) then begin
     MatCol(t,-235,"Объекты",0,Objects,false,ObjSClass);
   end;
@@ -2739,6 +2742,7 @@ begin
   MatCol(t,-50,"№ сч/ф",0,Invoiced,true,0);
   if (IsEnterprise) then begin
     Flip(5);
+    MatCol(1,200,"Наименование",0,Comment,false,0);
     MatCol(t=1,-115,"Маржа",0,GM,false,0);
     MatCol(t,-50,"№ сч/ф",0,Invoiced,true,0);
 //  MatColTL(1,-50,"Inv. No.",0,-1,0,-1,Invoiced,true,0);
@@ -2747,6 +2751,7 @@ begin
   end;
   Flip(6);//Add by	 Victor 09.09.14
   t=1;
+  MatCol(1,200,"Наименование",0,Comment,false,0);
   MatCol(t=1,-210,"Цена",0,Price,true,0);
   //MatCol(t,-140,"%",0,Discount,true,0); //Edit***************************Sasha2,12:44 10.10.2014
   MatCol(t,-110,"Сумма",0,Sum,true,0);

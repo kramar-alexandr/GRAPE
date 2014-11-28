@@ -403,6 +403,29 @@ begin
   return;
 end; //Edit***************************Sasha2,17:11 09.10.2014 }
 
+//Edit***************************Sasha2,17:11 09.10.2014 {
+function Boolean TBBUDClassSubContractorEFAfter(Integer wn,Integer rownr,Integer changed)
+begin  
+  record TBBUVc TBBUr;
+  row TBBUVc TBBUrw;
+  record CUVc CUr;
+	
+  if (changed!=0) then begin  
+    //DeselectWindow(wn,false);
+    GetWindowRecord(wn,TBBUr);
+    MatRowGet(TBBUr,rownr,TBBUrw);
+    CUr.Code = TBBUrw.SubContractor;
+    if (ReadFirstMain(CUr,1,true)) then begin
+    	TBBUrw.Comment3 = CUr.Comment;
+    	MatRowPut(TBBUr,rownr,TBBUrw);
+		PutWindowRecord(wn,TBBUr);
+    end;
+
+  end;
+  TBBUDClassSubContractorEFAfter = true;
+  return;
+end; //Edit***************************Sasha2,17:11 09.10.2014 }
+
 global
 function Boolean TBBUDClassAfterEditField(Integer wn,string fieldname,Integer fn, Integer rownr,Integer changed)
 BEGIN
@@ -426,7 +449,7 @@ BEGIN
     case "TransDate": res = TBBUDClassCurncyCodeEFAfter(wn,changed!=0);
     case "VATCode": res = TBBUDClassVATCodeEFAfter(wn,fn,rownr,changed); //Edit by Victor 09.09.14
     case "TypeName": res = TBBUDClassTypeNameEFAfter(wn,rownr,changed); //Edit***************************Sasha2,11:03 10.10.2014
-    
+    case "SubContractor": res = TBBUDClassSubContractorEFAfter(wn,rownr,changed); //Edit***************************Sasha2,17:29 28.11.2014
     
   end;
   TBBUDClassAfterEditField = res;
