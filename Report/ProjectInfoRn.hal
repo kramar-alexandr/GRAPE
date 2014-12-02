@@ -1,5 +1,5 @@
 external procedure CurValToOtherCur(Date,string,val,string,var val,roundmode);
-
+external function roundmode DefaultRoundMode(); //Edit***************************Sasha2,14:27 02.12.2014
 
 SetLangMode(LangRussian,"RUS",0);
 
@@ -50,10 +50,12 @@ begin
 		budj = TBBUr.TotSumVAT;
 		budjsum = TBBUr.TotSum;
 		budjVAT = TBBUr.Sum3;
+		dohod = TBBUr.GPTot; //Edit***************************Sasha2,14:20 02.12.2014
 	end else begin
 		budj = TBBUr.TotSum;
 		budjsum = TBBUr.TotSum;
 		budjVAT = 0;
+		dohod = TBBUr.GPTot; //Edit***************************Sasha2,14:20 02.12.2014
 	end;
 	VIr.PRCode = PRr.Code;
 	TrHs = true;
@@ -69,7 +71,7 @@ begin
 		end;
 	end;
 	VIsum = VIrashod - VIvat;
-	dohod = budj - VIrashod;
+	//dohod = budj - VIrashod; //Edit***************************Sasha2,14:20 02.12.2014
 	ResetLoop(VIr);
 	if Blank(budj) then begin budj = 0; end;
 	if Blank(budjsum) then begin budjsum = 0; end;
@@ -90,7 +92,7 @@ begin
 		outstring(315,0,VIsum,false);
 		outstring(365,0,VIvat,false);
 		outstring(400,0,dohod,false);
-		outstring(450,0,dohod/budj*100 & " %",false);
+		outstring(450,0,Round((dohod/budj*100),DefaultRoundMode) & " %",false);
 	endformat;
 	Black_Divider(0,1);
 	startformat(15);
