@@ -416,7 +416,7 @@ begin
     MatRowGet(TBBUr,rownr,TBBUrw);
     CUr.Code = TBBUrw.SubContractor;
     if (ReadFirstMain(CUr,1,true)) then begin
-    	TBBUrw.Comment3 = CUr.Comment;
+    	TBBUrw.Comment3 = CUr.Comment0;
     	MatRowPut(TBBUr,rownr,TBBUrw);
 		PutWindowRecord(wn,TBBUr);
     end;
