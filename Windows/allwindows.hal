@@ -5250,3 +5250,72 @@ begin
   end;
   EndWindow;
 end;
+
+window PDDClass:3
+  wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
+begin
+  real h,h2,v,vm,vs;
+  WindowBegin("Условия оплаты",PDDClass,CGview,-);
+  SetWRect(64,80,509,440+40); //Edit***************************Sasha2,12:19 08.12.2014
+  UseView(PDVc);
+  v = 6; vs = 20; h = 120; h2 = 300;
+  EditField(h,v, 30,"Код",St_i,Code,false,0);
+  EditField(200,v,-40,"Комм.",Normal,pdComment,false,0);
+  if (HasStandardCRM==false) or (IsEnterprise) then begin
+    EditField(h,vm=(v+=vs),30,"Дней",Normal,pdays,true,0);
+    RadioButton(160,vm,0,0,"Календарных",DayType);  //Edit***************************Sasha2,12:03 08.12.2014 {
+    RadioButton(160,vm+16,1,0,"Рабочих",DayType);
+    v=2*vs; //Edit***************************Sasha2,11:58 08.12.2014 }
+    if (HasSettlementDiscount) then begin
+      EditField(h,v+=vs,40,"Скидка %",Normal,pdvrebt,true,0);
+      EditField(h,v+=vs,30,"Срок действ.ск.",Normal,pdrdays,true,0);
+    end;
+    if (HasPriceLists) then begin
+      EditField(h,v+=vs,30,"Прейскурант",Normal,PriceList,true,PLDefSClass);
+    end;
+    if (IsEnterprise and StandardHansa==false) then begin
+      EditField(h,v+=vs,30,"Взнос",Normal,Installment,true,InstallmentSClass);
+    end;
+    if (HasModNL) then begin
+      EditField(h,v+=vs,50,"Счет кассы",Normal,pdCashAcc,true,AccSClass);
+    end;
+    if (HasSettlementDiscount) then begin
+      EditField(h,v+=vs,50,"Счет реализации",Normal,pdSalesAcc,true,AccSClass);
+      if (StandardHansa==false) then begin
+        EditField(h2,v=vm+20+20,40,"Скидка % 2",Normal,pdvrebt2,true,0); //Edit***************************Sasha2,12:12 08.12.2014
+        EditField(h2,v+=vs,30,"Срок действ.ск. 2",Normal,pdrdays2,true,0);
+      end;
+    end;
+    if (IsEnterprise or HasSettlementDiscount) then begin
+      ButtonFrame(h=200,v=(vm+80+20),200,8,"Тип"); //Edit***************************Sasha2,12:12 08.12.2014
+    end else begin
+      ButtonFrame(h=200,v=(vm+20+20),200,8,"Тип"); //Edit***************************Sasha2,12:12 08.12.2014
+    end;
+    RadioButton(h,v,kInvoiceTypeNormal,0,"Обычный",PDType);
+    RadioButton(h,v+=16,kInvoiceTypeCredit,0,"Кредитный счет",PDType);
+    RadioButton(h,v+=16,kInvoiceTypeCash,0,"Наличный расчет",PDType);
+    if (HasLocalization("PRT")) then begin  
+      RadioButton(h,v+=16,kInvoiceTypeCashInvoiceReceiptPRT,0,"Invoice/Receipt",PDType);  
+    end;
+    if (IsEnterprise or Left(BuildProductCode,5)=="Books") then begin
+      RadioButton(h,v+=16,4,0,"Следующий месяц",PDType);
+    end;
+    if (IsEnterprise or HasLocalization("PRT")) then begin
+      RadioButton(h,v+=16,kInvoiceTypeDebit,0,"Сч/ф пени (вручную)",PDType);
+    end;
+    if (IsEnterprise and StandardHansa==false) then begin
+      RadioButton(h,v+=16,kInvoiceTypeDownpayment,0,"Учетный период + Дней",PDType);
+      RadioButton(h,v+=16,kInvoiceTypeNormalSpecialSales,0,"Обычный (Спец. продажи)",PDType);
+      RadioButton(h,v+=16,kInvoiceTypeCreditSpecialSales,0,"Кредитный (Спец. продажи)",PDType);
+    end;
+    EndFrame;
+  end;
+//kInvoiceTypePrepayment
+  if (HasLanguages) then begin
+    MatrixBegin(4,v+=40,-32,-20,INTextRowType,99);
+    MatCol(1,24,"Язык",0,LangCode,false,LangSClass);
+    MatCol(1,84,"Текст",0,Text,false,0);
+    EndMatrix;
+  end;
+  EndWindow;
+end;

@@ -1,5 +1,6 @@
 external procedure CurValToOtherCur(Date,string,val,string,var val,roundmode);
 external function roundmode DefaultRoundMode(); //Edit***************************Sasha2,14:27 02.12.2014
+external function val FindVAT(string,val,Integer,Integer); //Edit***************************Sasha2,11:06 08.12.2014
 
 SetLangMode(LangRussian,"RUS",0);
 
@@ -8,6 +9,7 @@ global procedure ProjectInfoRn(record RcVc RepSpec)
 begin
 	record PRVc PRr;
 	record TBBUVc TBBUr;
+	row TBBUVc TBBUrw;
 	record VIVc VIr;
 	record IVVc IVr;
 	record IPrsVc IPrsr;
@@ -20,26 +22,30 @@ begin
 	record SAVc SAr;
 	record ADJVIVc ADJVIr;
 	record SAVIVc SAVIr;
-	val VIrashod,VIsum,VIvat,dohod,budj,budjsum,budjVAT;
+	val bud_rashod,real_VIrashod,real_VIsum,real_VIvat,bud_dohod,real_dohod,budj,budjsum,budjVAT;
 	val deb,cl,cred,sup;
 	val totdeb,totcl,totcred,totsup;
 	Boolean TrHs,TrHs2,testf,oncef;
-	integer mtrw,i;
+	integer mtrw,i,pos;
 	
 	startreportnoheaderjob("Информация о проекте");
+	pos = 0;
 	startformat(15);
 		outstring(0,0,"№ проекта",false);
-		outstring(50,0,"Описание",false);
-		outstring(85,0,"Вид деят.",false);
-		outstring(120,0,"Валюта",false);
-		outstring(150,0,"Утв. бюджет",false);
-		outstring(195,0,"Сумма без НДС",false);
-		outstring(250,0,"НДС",false);
-		outstring(280,0,"Расход",false);
-		outstring(315,0,"Сумма без НДС",false);
-		outstring(365,0,"НДС",false);
-		outstring(400,0,"Доходность",false);
-		outstring(450,0,"%",false);
+		outstring(pos+=30,0,"Описание",false);
+		outstring(pos+=40,0,"Вид деят.",false);
+		outstring(pos+=25,0,"Валюта",false);
+		outstring(pos+=25,0,"Утв. бюджет",false);
+		outstring(pos+=35,0,"Сум.без НДС",false);
+		outstring(pos+=30,0,"НДС",false);
+		outstring(pos+=25,0,"Бюдж.Расход",false);
+		outstring(pos+=35,0,"Реал.Расход",false);
+		outstring(pos+=30,0,"Р.Расх.без НДС",false);
+		outstring(pos+=35,0,"Р.НДС",false);
+		outstring(pos+=25,0,"Бюдж.дох-сть",false);
+		outstring(pos+=35,0,"Бюдж.%",false);
+		outstring(pos+=25,0,"Реал.дох-сть",false); //Edit***************************Sasha2,10:47 08.12.2014
+		outstring(pos+=35,0,"Реал.%",false); //Edit***************************Sasha2,10:48 08.12.2014
 	endformat;
 	Gray_Divider(0,1);
   PRr.Code = RepSpec.f1;
@@ -50,49 +56,62 @@ begin
 		budj = TBBUr.TotSumVAT;
 		budjsum = TBBUr.TotSum;
 		budjVAT = TBBUr.Sum3;
-		dohod = TBBUr.GPTot; //Edit***************************Sasha2,14:20 02.12.2014
+		bud_dohod = TBBUr.GPTot; //Edit***************************Sasha2,14:20 02.12.2014
 	end else begin
 		budj = TBBUr.TotSum;
 		budjsum = TBBUr.TotSum;
 		budjVAT = 0;
-		dohod = TBBUr.GPTot; //Edit***************************Sasha2,14:20 02.12.2014
+		bud_dohod = TBBUr.GPTot; //Edit***************************Sasha2,14:20 02.12.2014
 	end;
+	bud_rashod = 0; //Edit***************************Sasha2,11:12 08.12.2014 {
+	mtrw = MatRowCnt(TBBUr);
+	for (i=0;i<mtrw;i=i+1) begin
+		MatRowGet(TBBUr,i,TBBUrw);
+		if (nonblank(TBBUrw.SubContractor)) then begin
+			bud_rashod = bud_rashod + (TBBUrw.Qty * TBBUrw.Cost);
+		end;
+	end; //Edit***************************Sasha2,11:12 08.12.2014 }
 	VIr.PRCode = PRr.Code;
 	TrHs = true;
 	while (loopkey("PRCodeDueDate",VIr,1,TrHs)) begin
 		if (VIr.PRCode != PRr.Code) then begin TrHs = false; end;
 		if (TrHs) then begin
-	  	VIrashod = VIrashod + VIr.PayVal;
+	  	real_VIrashod = real_VIrashod + VIr.PayVal;
 	  	if NonBlank(VIr.CalcVATVal) then begin
-		 		VIvat = VIvat + VIr.CalcVATVal;
+		 		real_VIvat = real_VIvat + VIr.CalcVATVal;
 			end else begin
-				VIvat = VIvat + VIr.VATVal;
+				real_VIvat = real_VIvat + VIr.VATVal;
 			end;
 		end;
 	end;
-	VIsum = VIrashod - VIvat;
-	//dohod = budj - VIrashod; //Edit***************************Sasha2,14:20 02.12.2014
+	real_VIsum = real_VIrashod - real_VIvat;
+	real_dohod = budj - real_VIrashod; //Edit***************************Sasha2,14:20 02.12.2014
 	ResetLoop(VIr);
 	if Blank(budj) then begin budj = 0; end;
 	if Blank(budjsum) then begin budjsum = 0; end;
 	if Blank(budjVAT) then begin budjVAT = 0; end;
-	if Blank(VIrashod) then begin VIrashod = 0; end;
-	if Blank(VIsum) then begin VIsum = 0; end;
-	if Blank(VIvat) then begin VIvat = 0; end;
-	if Blank(dohod) then begin dohod = 0; end;
+	if Blank(real_VIrashod) then begin real_VIrashod = 0; end;
+	if Blank(real_VIsum) then begin real_VIsum = 0; end;
+	if Blank(real_VIvat) then begin real_VIvat = 0; end;
+	if Blank(bud_dohod) then begin bud_dohod = 0; end;
+	if Blank(real_dohod) then begin real_dohod = 0; end; //Edit***************************Sasha2,10:46 08.12.2014
+	pos = 0;
 	startformat(15);
 		outstring(0,"DblPRVc",PRr.Code,false);
-		outstring(50,0,PRr.Name,false);
-		outstring(85,0,PRr.PRClass,false);
-		outstring(120,0,PRr.CurncyCode,false);
-		outstring(150,0,budj,false);
-		outstring(195,0,budjsum,false);
-		outstring(245,0,budjVAT,false);
-		outstring(280,0,VIrashod,false);
-		outstring(315,0,VIsum,false);
-		outstring(365,0,VIvat,false);
-		outstring(400,0,dohod,false);
-		outstring(450,0,Round((dohod/budj*100),DefaultRoundMode) & " %",false);
+		outstring(pos+=30,0,PRr.Name,false);
+		outstring(pos+=40,0,PRr.PRClass,false);
+		outstring(pos+=25,0,PRr.CurncyCode,false);
+		outstring(pos+=25,0,budj,false);
+		outstring(pos+=35,0,budjsum,false);
+		outstring(pos+=30,0,budjVAT,false);
+		outstring(pos+=25,0,bud_rashod,false);
+		outstring(pos+=35,0,real_VIrashod,false);
+		outstring(pos+=30,0,real_VIsum,false);
+		outstring(pos+=35,0,real_VIvat,false);
+		outstring(pos+=25,0,bud_dohod,false);
+		outstring(pos+=35,0,Round((bud_dohod/budj*100),DefaultRoundMode) & " %",false);
+		outstring(pos+=25,0,real_dohod,false); //Edit***************************Sasha2,10:48 08.12.2014
+		outstring(pos+=35,0,Round((real_dohod/budj*100),DefaultRoundMode) & " %",false); //Edit***************************Sasha2,10:48 08.12.2014
 	endformat;
 	Black_Divider(0,1);
 	startformat(15);

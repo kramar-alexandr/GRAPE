@@ -2340,6 +2340,33 @@ begin
   KeySegment(Group);
   KeySegment(Code);
   EndRecord;
+  
+  RecordBegin(PDVc,-,"pd3");
+  NewAutosyncRegister(kSyncDirectionToClient,true);
+  RecordField(Code,M4Code,2,0);
+  RecordField(PDType,M4Int,0,0);
+  RecordField(pdays,M4Long,0,0);
+  RecordField(pdvrebt,M4Qty,0,0);
+  RecordField(pdrdays,M4Long,0,0);
+  RecordField(pdComment,M4Str,60,0);
+  RecordField(pdCashAcc,M4Code,10,AccVc);
+  RecordField(PriceList,M4Code,5,0);
+  RecordField(Installment,M4Code,5,0);
+  RecordField(pdSalesAcc,M4Code,10,AccVc);
+  RecordField(pdvrebt2,M4Qty,0,0);
+  RecordField(pdrdays2,M4Long,0,0);
+  RecordField(Math,M4Matrix,0,0);
+  RecordField(DayType,M4Int,0,0); //Edit***************************Sasha2,11:56 08.12.2014
+  ArrayBegin(Math,-,1);
+  ArrayField(LangCode,M4Code,5,0);
+  ArrayField(Text,M4Str,100,0);
+  EndArray;
+  MainKeyBegin(Code,0);
+  KeySegment(Code);
+  KeyBegin(pdComment);
+  KeySegment(pdComment);
+  KeySegment(Code);
+  EndRecord;
     
 return;
 end;

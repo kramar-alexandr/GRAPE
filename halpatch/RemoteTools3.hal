@@ -753,18 +753,16 @@ BEGIN
  	
  	PDr.Code = IVp.PayDeal;
   if (GetPD(PDr)) then begin end;
- 	
-  CUr.Code = IVp.CustCode;	//******** Edit by Victor 23.09.14 {
+  pdays = IVp.pdays;
+  
+  if (PDr.DayType==1) then begin //Edit***************************Sasha2,13:09 08.12.2014 {
+  	CUr.Code = IVp.CustCode;	//******** Edit by Victor 23.09.14 {
 	if(readfirstmain(CUr,1,true))then begin
 		country = CUr.CountryCode;
 	end else begin
 		country = "UA";
 	end;
-			
-  pdays = IVp.pdays;
-  
-  datedif = CountWorkingDays(IVp.InvDate,AddDay(IVp.InvDate,IVp.pdays),IVp.CustCode,country);
-	
+  	datedif = CountWorkingDays(IVp.InvDate,AddDay(IVp.InvDate,IVp.pdays),IVp.CustCode,country);
 	if(datedif>0 and datedif<pdays)then begin
 		while(datedif<pdays)begin
 			i=i+1;
@@ -773,8 +771,9 @@ BEGIN
 		pdays = pdays + i - 1;
 	end;
 	IVp.pdays = pdays;
-	
-	if (pdays<0) then begin pdays = 0; end;	//******* Edit by Victor 23.09.14 }
+  end; //Edit***************************Sasha2,13:09 08.12.2014 }
+
+  if (pdays<0) then begin pdays = 0; end;	//******* Edit by Victor 23.09.14 }
 	    
   if (IVp.pdays!=-1) then begin
     if (ARAb.DueDateBasedOnServDelDate==0) then begin

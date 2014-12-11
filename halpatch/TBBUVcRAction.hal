@@ -13,7 +13,7 @@ external procedure B1ToB2Val(val,val,val,var val);
 external procedure GetFullCurncyRate (var string,Date,var val,var val,var val,var val,var val);
 external procedure GetSalesGroup(string,var string);
 external updating function Integer SinglePRDownPayInvoice(var record PRVc);// Edit ************************** Wednesday, 20 August 2014 15:29:35
-
+external function LongInt PasteTBBUInVIFunc(record TBBUVc);
 
 // Edit Start ---------------------------------------------- Edit Start
 	//Friday, 12 September 2014 16:24:32
