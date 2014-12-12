@@ -751,7 +751,7 @@ BEGIN
     IVp.PayDeal = PRp.PayDeal;
   end;
  	
- 	PDr.Code = IVp.PayDeal;
+  PDr.Code = IVp.PayDeal;
   if (GetPD(PDr)) then begin end;
   pdays = IVp.pdays;
   
@@ -764,7 +764,7 @@ BEGIN
 	end;
   	datedif = CountWorkingDays(IVp.InvDate,AddDay(IVp.InvDate,IVp.pdays),IVp.CustCode,country);
 	if(datedif>0 and datedif<pdays)then begin
-		while(datedif<pdays)begin
+		while(datedif<pdays) begin
 			i=i+1;
 			datedif = CountWorkingDays(AddDay(IVp.InvDate,1),AddDay(IVp.InvDate,pdays + i),IVp.CustCode,country);
 		end;
@@ -800,7 +800,6 @@ BEGIN
   IVp.BaseRate2 = br2;*/
   IVp.SerNr = NextSerNr("IVVc",IVp.TransDate,-1,false,IVp.LangCode);
 	
-	logtext(0,"IVrSerNr " & IVp.SerNr);
   SRRec.LastInvNr = IVp.SerNr;
   if (IVp.SerNr<=-1) then begin 
     res = 1747;
@@ -916,7 +915,7 @@ BEGIN
     rownr = rownr + 1;
   end;
 LProInvHead:;
-	logtext(0,"RES " & res);
+
   ProInvHead = res;
   RETURN;
 END;
@@ -1166,24 +1165,23 @@ BEGIN
     TBBUr.PRCode = lPRr.Code;
     ReadFirstMain(TBBUr,1,true);
     prrwcnt = MatRowCnt(lPRr);
-    logtext(0,"prrwcnt " & prrwcnt);
     for (i=0;i<prrwcnt;i=i+1) begin
-    	logtext(0,"PrInv " & i);
       MatRowGet(lPRr,i,prrw);
       tot = 0;// Edit ************************** Wednesday, 20 August 2014 15:33:39
       testf = true;
       if (prrw.RowType!=0) then begin testf = false; end;
       if(prrw.InvNr>-1)then begin testf = false; end;
 			
-			if(prrw.InvNr>-1)then begin
-				IVr.SerNr = prrw.InvNr;
-				if(readfirstmain(IVr,1,true))then begin
-					totinvoiced = totinvoiced + IVr.Sum4;
-				end;
+		if(prrw.InvNr>-1)then begin
+			IVr.SerNr = prrw.InvNr;
+			if(readfirstmain(IVr,1,true))then begin
+				totinvoiced = totinvoiced + IVr.Sum4;
 			end;
-			if(totinvoiced>=TBBUr.TotSum)then begin
-				testf = false;
-			end;
+		end;
+		if(totinvoiced>=TBBUr.TotSum)then begin
+			testf = false;
+		end;
+			
       if (testf) then begin
         switch (prrw.InvFlag) begin
           case 0:
@@ -1193,7 +1191,6 @@ BEGIN
             end;
             comment = prrw.Comment;
        
-      		logtext(0,"tot " & tot);
 					if (tot>0) then begin
 						RecordNew(IVr);
 						/*IVr.SerNr = nextsernr("IVVc",CurrentDate,-1,false,"");
@@ -1204,7 +1201,6 @@ BEGIN
 						IVr.PayDeal = lPRr.PayDeal;*/
 						res = 1;
 						res = ProInvHead(IVr,lPRr);
-						logtext(0,"RES1" & res);
 						if (res!=0) then begin
 							goto LPRDownPayInvoice;
 						end;
@@ -1243,7 +1239,7 @@ BEGIN
 							rwcnt = rwcnt + 1;
 						end;
 						IVr.InvComment = PRp.Name;//Edit by Victor 10.09.14
-						IVr.PayDate = prrw.PlanDate;
+						//IVr.PayDate = prrw.PlanDate;
 						IVSumup(IVr,true);
 						IVr.PayDate = prrw.PlanDate;
 						if (IVr.Sum4!=0) then begin
@@ -1251,16 +1247,16 @@ BEGIN
 							if (ReadFirstMain(CUr,1,true)) then begin end;
 			//        IVr.OfficialSerNr = FindNextLegalSerNr(IVr,CUr.Classification);// POSN
 							if (RecordStore(IVr,false)) then begin end;
-								testf = true;
-								CreateRecordLink(IVr,CurrentCompany,lPRr,CurrentCompany);  
-      					CreateRecordLink(lPRr,CurrentCompany,IVr,CurrentCompany);
-								if (testf) then begin
-									prrw.InvNr = IVr.SerNr;
-									if (blank(prrw.Person)) then begin
-										prrw.Person = CurrentUser;
-									end;
-									MatRowPut(lPRr,i,prrw);
+							testf = true;
+							CreateRecordLink(IVr,CurrentCompany,lPRr,CurrentCompany);  
+      						CreateRecordLink(lPRr,CurrentCompany,IVr,CurrentCompany);
+							if (testf) then begin
+								prrw.InvNr = IVr.SerNr;
+								if (blank(prrw.Person)) then begin
+									prrw.Person = CurrentUser;
 								end;
+								MatRowPut(lPRr,i,prrw);
+							end;
 							UpdatePRRetRow(lPRr,IVr.SerNr,rettot,false);
 						end;
 					end;

@@ -2713,7 +2713,7 @@ begin
   MatCol(t=kInvoiceRowTypeStructuredItemComponent,-235,"Наценка",0,Markup,true,0);
   MatCol(t,-180,"Ст-ть за ед.",0,Cost,true,0);//Edit***************************Sasha2,9:40 10.09.2014
   MatCol(t,-115,"Прибыль",0,GP,true,0);
-  MatCol(t,-50,"№ сч/ф",0,Invoiced,true,0);
+  MatCol(t,-50,"Cч/ф пост",0,Invoiced,true,0);
   Flip(3);
   t = 1;
   MatCol(1,200,"Наименование",0,Comment,false,0);
@@ -2722,12 +2722,12 @@ begin
   end;
   MatCol(t,-185,"Вид",0,BudType,false,SetSClass);
   MatCol(t,-115,"С/ф после",0,InvAfter,false,PasteCurDate);
-  MatCol(t,-50,"№ сч/ф",0,Invoiced,true,0);
+  MatCol(t,-50,"Cч/ф пост",0,Invoiced,true,0);
 //  MatColTL(1,-50,"Inv. No.",0,-1,0,-1,Invoiced,true,0);
   MatCol(t=kInvoiceRowTypeStructuredItemComponent,-255,"Класс вр.",0,TimeClass,false,TimeClassSClass);
   MatCol(t,-185,"Вид",0,BudType,false,SetSClass);
   MatCol(t,-115,"С/ф после",0,InvAfter,false,PasteCurDate);
-  MatCol(t,-50,"№ сч/ф",0,Invoiced,true,0);
+  MatCol(t,-50,"Cч/ф пост",0,Invoiced,true,0);
   Flip(4);
   t=1;
   MatCol(1,200,"Наименование",0,Comment,false,0);
@@ -2735,19 +2735,19 @@ begin
     MatCol(t,-235,"Объекты",0,Objects,false,ObjSClass);
   end;
   MatCol(t,-115,"Дата сч/ф",0,InvDate,false,PasteCurDate);
-  MatCol(t,-50,"№ сч/ф",0,Invoiced,true,0);
+  MatCol(t,-50,"Cч/ф пост",0,Invoiced,true,0);
 //  MatColTL(1,-50,"Inv. No.",0,-1,0,-1,Invoiced,true,0);
   MatCol(t=kInvoiceRowTypeStructuredItemComponent,-235,"Объекты",0,Objects,false,ObjSClass);
   MatCol(t,-115,"Дата сч/ф",0,InvDate,false,PasteCurDate);
-  MatCol(t,-50,"№ сч/ф",0,Invoiced,true,0);
+  MatCol(t,-50,"Cч/ф пост",0,Invoiced,true,0);
   if (IsEnterprise) then begin
     Flip(5);
     MatCol(1,200,"Наименование",0,Comment,false,0);
     MatCol(t=1,-115,"Маржа",0,GM,false,0);
-    MatCol(t,-50,"№ сч/ф",0,Invoiced,true,0);
+    MatCol(t,-50,"Cч/ф пост",0,Invoiced,true,0);
 //  MatColTL(1,-50,"Inv. No.",0,-1,0,-1,Invoiced,true,0);
     MatCol(t=kInvoiceRowTypeStructuredItemComponent,-115,"Маржа",0,GM,false,0);
-    MatCol(t,-50,"№ сч/ф",0,Invoiced,true,0);
+    MatCol(t,-50,"Cч/ф пост",0,Invoiced,true,0);
   end;
   Flip(6);//Add by	 Victor 09.09.14
   t=1;

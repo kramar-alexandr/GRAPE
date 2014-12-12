@@ -84,8 +84,22 @@ begin
 			end;
 		end;
 	end;
+	IVr.PRCode = PRr.Code;
+	TrHs = true;
+	while (loopkey("PRCodePayDate",IVr,1,TrHs)) begin
+		if (IVr.PRCode != PRr.Code) then begin TrHs = false; end;
+		if (TrHs) then begin
+			if (IVr.CurncyCode != PRr.CurncyCode) then begin
+				CurValToOtherCur(IVr.InvDate,IVr.CurncyCode,IVr.Sum4,PRr.CurncyCode,deb,DefaultCurRoundOff);
+			end else begin
+				deb = IVr.Sum4;
+			end;
+			totdeb = totdeb + deb;
+		end;
+	end;
+	ResetLoop(IVr);
 	real_VIsum = real_VIrashod - real_VIvat;
-	real_dohod = budj - real_VIrashod; //Edit***************************Sasha2,14:20 02.12.2014
+	real_dohod = totdeb - real_VIrashod; //Edit***************************Sasha2,14:20 02.12.2014
 	ResetLoop(VIr);
 	if Blank(budj) then begin budj = 0; end;
 	if Blank(budjsum) then begin budjsum = 0; end;
@@ -109,9 +123,9 @@ begin
 		outstring(pos+=30,0,real_VIsum,false);
 		outstring(pos+=35,0,real_VIvat,false);
 		outstring(pos+=25,0,bud_dohod,false);
-		outstring(pos+=35,0,Round((bud_dohod/budj*100),DefaultRoundMode) & " %",false);
+		outstring(pos+=35,0,Round(((bud_dohod+budjVAT)/budj*100),DefaultRoundMode) & " %",false);
 		outstring(pos+=25,0,real_dohod,false); //Edit***************************Sasha2,10:48 08.12.2014
-		outstring(pos+=35,0,Round((real_dohod/budj*100),DefaultRoundMode) & " %",false); //Edit***************************Sasha2,10:48 08.12.2014
+		outstring(pos+=35,0,Round((real_dohod/totdeb*100),DefaultRoundMode) & " %",false); //Edit***************************Sasha2,10:48 08.12.2014
 	endformat;
 	Black_Divider(0,1);
 	startformat(15);
@@ -131,6 +145,7 @@ begin
 		outstring(430,0,"Форма оплаты",false);
 	endformat;
 	Gray_Divider(0,1);
+	deb = 0;
 	IVr.PRCode = PRr.Code;
 	TrHs = true;
 	while (loopkey("PRCodePayDate",IVr,1,TrHs)) begin
@@ -141,7 +156,7 @@ begin
 			end else begin
 				deb = IVr.Sum4;
 			end;
-			totdeb = totdeb + deb;
+			//totdeb = totdeb + deb;
 			startformat(15);
 				outstring(0,0,"",false);
 				outstring(50,0,"",false);

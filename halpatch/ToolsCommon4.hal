@@ -1062,9 +1062,7 @@ BEGIN
     TBBUrw.Cost = t;
   end;
   totrowcost = TBBUrw.Cost*TBBUrw.Qty;
-  if (TBBUrw.Qty==0) then begin
-  	totrowcost = TBBUrw.Cost; //Edit***************************Sasha2,10:59 13.10.2014
-  end;
+  totrowcost = TBBUrw.SumCost; //Edit***************************Sasha2,10:59 13.10.2014
   if (TBBUrw.Price!=0) then begin
     CalcSum(TBBUrw.Qty,TBBUrw.Price,0,TBBUrw.Discount,t,UseDiscount);
     CalcExtra(t,TBBUrw.Markup,v);

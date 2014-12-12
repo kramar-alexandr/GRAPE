@@ -9,6 +9,7 @@ external function val MulRateToBase1(var string,val,val,val,val,val,val,roundmod
 external procedure VIVc_PastePRCode(var record VIVc,Integer); //Edit***************************Sasha2,17:54 08.12.2014
 external procedure VICalcVals(var record VIVc); //Edit***************************Sasha2,18:05 08.12.2014
 external procedure RowCalculateTaxMatrix_VIVc(var record VIVc,Integer,row VIVc,Integer);
+external procedure VIDDefault(Integer,string,var record VIVc); //Edit***************************Sasha2,17:08 12.12.2014
 
 SetLangMode(LangRussian,"RUS",0);
 
@@ -31,19 +32,21 @@ BEGIN
   MatRowGet(VIr,virownr,VIrw);
   VIrw.qty = TBBUrwp.Qty;
   VIrw.Sum = TBBUrwp.Qty * TBBUrwp.Cost;
-  VIrw.VATCode = vevatcode;
+  //VIrw.VATCode = TBBUrwp.VATCode;
+  /*VIrw.VATCode = vevatcode;
   if (blank(VIrw.VATCode)) then begin
     GetItemVATCode(VIrw.Item,exportflag,tstr,false);
     VIrw.VATCode = tstr;
-  end;    
-  MatRowPut(VIr,virownr,VIrw);
+  end;*/
+  MatRowPut(VIr,virownr,VIrw); 
+  //VIDDefault(virownr,"VATCode",VIr);   
   virownr = virownr + 1;
   RETURN;
 END;
 
 
 global //Edit***************************Sasha2,9:50 14.10.2014 {
-updating function LongInt PasteTBBUInVIFunc(record TBBUVc TBBUp)
+updating procedure PasteTBBUInVIFunc(record TBBUVc TBBUp)
 BEGIN
   LongInt res;
   record PRVc PRr;
@@ -52,6 +55,7 @@ BEGIN
   record INVc INr;
   record VIVc VIr;
   row VIVc VIrw;
+  record TBBUVc oldTBBUp;
   row TBBUVc TBBUrw;
   integer i,rwcnt,rownr;
   vector Integer porownr;
@@ -64,37 +68,49 @@ BEGIN
   PRr.Code = TBBUp.PRCode;
   if (ReadFirstMain(PRr,1,true)==false) then begin goto LPasteTBBUInVIFunc; end;
   if (PRr.Terminated!=0) then begin goto LPasteTBBUInVIFunc; end;
-   
+  
+  RecordCopy(oldTBBUp,TBBUp);
+  
   rwcnt = MatRowCnt(TBBUp);
   for (i=0;i<rwcnt;i=i+1) begin
   	MatRowGet(TBBUp,i,TBBUrw);
-  	if (NonBlank(TBBUrw.ArtCode) and TBBUrw.stp==1 and NonBlank(TBBUrw.SubContractor)) then begin
+  	if (NonBlank(TBBUrw.ArtCode) and TBBUrw.stp==1 and NonBlank(TBBUrw.SubContractor) and TBBUrw.Invoiced==-1) then begin
 		INr.Code = TBBUrw.ArtCode;
+		subcontrname = TBBUrw.SubContractor; 
 		if (ReadFirstMain(INr,1,true)) then begin
-		    if (INr.ItemType==kItemTypePlain or INr.ItemType==kItemTypeStocked) then begin
-			  	if (!SetInSet2(subcontrname,subcontrlist)) then begin
-			  		RecordNew(VIr);
-			  		VIr.VECode = TBBUrw.SubContractor;
-			  		if (subcontrname!="nosubcontr") then begin
-			  			VIVc_PasteVECode(VIr,0,false,false,vewarn);
-			  		end;
-			  		vectVIr[subcontrname] = VIr;
-			  		porownr[subcontrname] = 0;
-			  		if (blank(subcontrlist)) then begin
-			  			subcontrlist = subcontrname;
-			  		end else begin
-			  			subcontrlist = subcontrlist & "," & subcontrname;
-			  		end;
-			  	end;
-  				VIr = vectVIr[subcontrname];
-  				rownr = porownr[subcontrname];
-		      	PutOnVIRow(VIr,VIrw,rownr,TBBUrw,TBBUp,VEr.VEVATCode,VIr.ExportFlag);/////
-		      	porownr[subcontrname] = rownr;
-		      	vectVIr[subcontrname] = VIr;
-		    end;
-	    end;
+		  	if (!SetInSet2(subcontrname,subcontrlist)) then begin
+		  		RecordNew(VIr);
+		  		if (VIr.SerNr<=0) then begin
+					VIr.SerNr = NextSerNr("VIVc",VIr.TransDate,-1,false,"");
+				end; 
+		  		VIr.VECode = TBBUrw.SubContractor;
+		  		if (subcontrname!="nosubcontr") then begin
+		  			VIVc_PasteVECode(VIr,0,false,false,vewarn);
+		  		end;
+		  		vectVIr[subcontrname] = VIr;
+		  		porownr[subcontrname] = 0;
+		  		if (blank(subcontrlist)) then begin
+		  			subcontrlist = subcontrname;
+		  		end else begin
+		  			subcontrlist = subcontrlist & "," & subcontrname;
+		  		end;
+		  		TBBUrw.Invoiced = VIr.SerNr;
+	      		MatRowPut(TBBUp,i,TBBUrw);
+		  	end;
+				VIr = vectVIr[subcontrname];
+				rownr = porownr[subcontrname];
+	      	PutOnVIRow(VIr,VIrw,rownr,TBBUrw,TBBUp,VEr.VEVATCode,VIr.ExportFlag);
+	      	porownr[subcontrname] = rownr;
+	      	vectVIr[subcontrname] = VIr;
+    	end;
 	end;
   end;
+  
+  if (blank(subcontrlist)) then begin
+  	goto LPasteTBBUInVIFunc;
+  end;
+  
+  RECORDUPDATE(oldTBBUp,TBBUp,false);
   
   pos = 0; 
   ExtractObj(subcontrlist,pos,subcontrname);
@@ -102,24 +118,22 @@ BEGIN
   
   	  VIr = vectVIr[subcontrname];
 	  VIr.PRCode = TBBUp.PRCode;
-	  VIr.Comment = TBBUp.Comment; 
+	  VIr.Comment = TBBUp.Comment;
+	  VIr.CurncyCode = TBBUp.CurncyCode;
+  	  VIr.FrRate = TBBUp.FrRate;
+  	  VIr.ToRateB1 = TBBUp.ToRateB1; 
+  	  VIr.ToRateB2 = TBBUp.ToRateB2;
+  	  VIr.BaseRate1 = TBBUp.BaseRate1;
+  	  VIr.BaseRate2 = TBBUp.BaseRate2; 
 	  
-	  if (VIr.SerNr<=0) then begin
-	    VIr.SerNr = NextSerNr("VIVc",VIr.TransDate,-1,false,"");
-	  end;  
 	  if (VIr.SerNr<=0) then begin goto LPasteTBBUInVIFunc; end;  
 	  if (MatRowCnt(VIr)>0) then begin
 	    VICalcVals(VIr);
 	    VISumup(VIr,bal);
-	    ////////////
-	    ////////
-	    //////
+	    VIr.PayVal = -bal;
 	    if (RecordStore(VIr,false)) then begin
-	      CreateRecordLink(TBBUp,CurrentCompany,VIr,CurrentCompany);  
-	      CreateRecordLink(VIr,CurrentCompany,TBBUp,CurrentCompany);
-	      if (res==-1) then begin
-	      	res = VIr.SerNr;
-	      end; 
+	      CreateRecordLink(PRr,CurrentCompany,VIr,CurrentCompany);  
+	      CreateRecordLink(VIr,CurrentCompany,PRr,CurrentCompany);
 	    end;
 	  end;
 	
@@ -128,7 +142,7 @@ BEGIN
  
   
 LPasteTBBUInVIFunc:;
-  PasteTBBUInVIFunc = res;
+
   RETURN;
 END; //Edit***************************Sasha2,9:50 14.10.2014 }
 

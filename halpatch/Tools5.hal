@@ -293,7 +293,7 @@ BEGIN
   TBBUp.TotSum = tt + totrebate;//Edit***************************Sasha2,16:54 07.10.2014
   TBBUp.TotSumVAT = tt + s3 + totrebate; //Edit***************************Sasha2,16:07 07.10.2014
   TBBUp.GPTot = gptot + totrebate; //Edit***************************Sasha2,10:29 08.09.2014
-  TBBUp.GPTotPercent = (gptot/tt)*100; //Edit***************************Sasha2,10:29 08.09.2014
+  TBBUp.GPTotPercent = ((gptot+s3)/(tt+s3))*100; //Edit***************************Sasha2,10:29 08.09.2014
   TBBUp.GPTotPercent = Round(TBBUp.GPTotPercent,DefaultRoundMode); //Edit***************************Sasha2,11:00 08.09.2014
   TBBUp.TotRebate = totrebate; //Edit***************************Sasha2,15:14 07.10.2014
   RETURN;

@@ -65,6 +65,7 @@ external function Boolean GetItemPriceDiscount3(string,val,var record INVc,strin
                                                 string,Boolean,var Boolean,string,var string,var val,string,string,var string);
 external function Boolean INVc_AllowSales(record INVc,var LongInt);
 external function LongInt CountWorkingDays(Date,Date,string,string);
+external function Boolean GetPD(var record PDVc);
 
 global
 function Integer VATCalcRule(string VATCode)
@@ -1386,6 +1387,7 @@ BEGIN
   record AccBlock Accb;
   record OrdSettBlock OSb;
   record IVVc tmpIVr;
+  record PDVc PDr; //Edit***************************Sasha2,10:57 12.12.2014
   date toworkdate;// Edit ************************** Thursday, 18 September 2014 11:33:33
   integer datedif,i;// Edit ************************** Thursday, 18 September 2014 11:33:52
   record CUVc CUr;// Edit ************************** Thursday, 18 September 2014 11:39:00
@@ -1428,25 +1430,30 @@ BEGIN
         IVp.PayDate = AddDay(IVp.PayDate,pdays);
       end;
     end else begin
-      pdays = IVp.pdays;
-			datedif = DateDiff(IVp.InvDate,AddDay(IVp.InvDate,pdays));
-			
-			CUr.Code = IVp.CustCode;
-			if(readfirstmain(CUr,1,true))then begin
-				country = CUr.CountryCode;
-			end else begin
-				country = "UA";
+      //pdays = IVp.pdays;  Think it's not correct Sasha2
+      PDr.Code = IVp.PayDeal; //Edit***************************Sasha2,13:09 08.12.2014 {
+  	  if (GetPD(PDr)) then begin end;
+      if (PDr.DayType==1) then begin 
+		datedif = DateDiff(IVp.InvDate,AddDay(IVp.InvDate,pdays));
+		
+		CUr.Code = IVp.CustCode;
+		if(readfirstmain(CUr,1,true))then begin
+			country = CUr.CountryCode;
+		end else begin
+			country = "UA";
+		end;
+		datedif = CountWorkingDays(IVp.InvDate,AddDay(IVp.InvDate,pdays),IVp.CustCode,country);// Edit ************************** Thursday, 18 September 2014 11:32:46
+
+		if(datedif>0 and datedif<pdays)then begin
+			while(datedif<pdays) begin
+				i=i+1;
+				datedif = CountWorkingDays(AddDay(IVp.InvDate,1),AddDay(IVp.InvDate,pdays + i),IVp.CustCode,country);// Edit ************************** Thursday, 18 September 2014 11:53:15
 			end;
-			datedif = CountWorkingDays(IVp.InvDate,AddDay(IVp.InvDate,pdays),IVp.CustCode,country);// Edit ************************** Thursday, 18 September 2014 11:32:46
-			//logtext(0,datedif);
-			if(datedif>0 and datedif<pdays)then begin
-				while(datedif<pdays)begin
-					i=i+1;
-					datedif = CountWorkingDays(AddDay(IVp.InvDate,1),AddDay(IVp.InvDate,pdays + i),IVp.CustCode,country);// Edit ************************** Thursday, 18 September 2014 11:53:15
-					//logtext(0,AddDay(IVp.InvDate,pdays + i) & "   " & datedif);
-				end;
-				pdays = pdays + i - 1;
-			end;
+			pdays = pdays + i - 1;
+		end;
+	  end; //Edit***************************Sasha2,13:09 08.12.2014 }
+	  
+	  IVp.pdays = pdays; //Edit***************************Sasha2,10:51 12.12.2014
 			
       if (pdays<0) then begin pdays = 0; end;
       if (Accb.DueDateBasedOnServDelDate==0) then begin

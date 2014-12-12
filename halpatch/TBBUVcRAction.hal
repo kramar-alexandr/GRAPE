@@ -13,7 +13,8 @@ external procedure B1ToB2Val(val,val,val,var val);
 external procedure GetFullCurncyRate (var string,Date,var val,var val,var val,var val,var val);
 external procedure GetSalesGroup(string,var string);
 external updating function Integer SinglePRDownPayInvoice(var record PRVc);// Edit ************************** Wednesday, 20 August 2014 15:29:35
-external function LongInt PasteTBBUInVIFunc(record TBBUVc);
+remote procedure PasteTBBUInVIFunc(record TBBUVc);
+external function LongInt CountWorkingDays(Date,Date,string,string); //Edit***************************Sasha2,11:05 12.12.2014
 
 // Edit Start ---------------------------------------------- Edit Start
 	//Friday, 12 September 2014 16:24:32
@@ -392,6 +393,9 @@ begin
 	val budsum;
 	integer sumday,prevday;
 	record IVVc IVr;
+	Integer pdays,datedif; //Edit***************************Sasha2,11:06 12.12.2014
+	record CUVc CUr; //Edit***************************Sasha2,11:08 12.12.2014
+	string 20 country; //Edit***************************Sasha2,11:14 12.12.2014
 	
 	sumday = 0;
 	//budsum = TBBUr.SumTime + TBBUr.SumMaterial + TBBUr.SumStocked;
@@ -404,7 +408,26 @@ begin
 		invprc[0] = "100%";
 		invday[0] = 0;
 		if(readfirstmain(PDr,1,true))then begin
-			invday[0] = PDr.pdays;
+			if (PDr.DayType==1) then begin //Edit***************************Sasha2,13:09 08.12.2014 {
+			  	pdays = PDr.pdays;
+			  	CUr.Code = PRr.CustCode;
+				if(readfirstmain(CUr,1,true))then begin
+					country = CUr.CountryCode;
+				end else begin
+					country = "UA";
+				end;
+			  	datedif = CountWorkingDays(PRr.EndDate,AddDay(PRr.EndDate,pdays),PRr.CustCode,country);
+				if(datedif>0 and datedif<pdays)then begin
+					while(datedif<pdays) begin
+						i=i+1;
+						datedif = CountWorkingDays(AddDay(PRr.EndDate,1),AddDay(PRr.EndDate,pdays + i),PRr.CustCode,country);
+					end;
+					pdays = pdays + i - 1;
+				end;
+				invday[0] = pdays;
+			end else begin //Edit***************************Sasha2,13:09 08.12.2014 }
+				invday[0] = PDr.pdays;
+			end;
 			if(nonblank(PDr.Installment))then begin
 				Installmentr.Code = PDr.Installment;
 				if(readfirstmain(Installmentr,1,true))then begin
@@ -466,7 +489,8 @@ begin
   LongInt res;
 	
 	if(TBBUr.OKFlag==1)then begin
-		CreateProjInvoice(TBBUr)// Edit ************************** Wednesday, 20 August 2014 11:45:45
+		PasteTBBUInVIFunc(TBBUr); //Edit***************************Sasha2,14:40 12.12.2014
+		CreateProjInvoice(TBBUr); // Edit ************************** Wednesday, 20 August 2014 11:45:45
 		UpdatePRBUOkFlag(TBBUr);
 	end;
 	if (TBBUr.ApproveFlag==1) then begin
@@ -495,7 +519,8 @@ begin
   val bc1v;
 	
 	if(TBBUr.OKFlag==1 and TBBU2r.OKFlag==0)then begin
-		CreateProjInvoice(TBBUr)// Edit ************************** Wednesday, 20 August 2014 11:45:45
+		PasteTBBUInVIFunc(TBBUr); //Edit***************************Sasha2,14:40 12.12.2014
+		CreateProjInvoice(TBBUr); // Edit ************************** Wednesday, 20 August 2014 11:45:45
 	end;
 	if(TBBUr.OKFlag!=TBBU2r.OKFlag)then begin
 		UpdatePRBUOkFlag(TBBUr);// Edit ************************** Friday, 12 September 2014 16:25:19
