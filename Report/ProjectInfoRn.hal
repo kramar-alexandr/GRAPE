@@ -51,7 +51,7 @@ begin
   PRr.Code = RepSpec.f1;
 	ReadFirstMain(PRr,1,true);
 	TBBUr.PRCode = PRr.Code;
-	ReadFirstMain(TBBUr,1,true)
+	ReadFirstMain(TBBUr,1,true);
 	if NonBlank(TBBUr.TotSumVAT) then begin
 		budj = TBBUr.TotSumVAT;
 		budjsum = TBBUr.TotSum;
@@ -96,11 +96,11 @@ begin
 			end;
 			totdeb = totdeb + deb;
 		end;
-	end;
-	ResetLoop(IVr);
+	end; ResetLoop(IVr);
+	
 	real_VIsum = real_VIrashod - real_VIvat;
 	real_dohod = totdeb - real_VIrashod; //Edit***************************Sasha2,14:20 02.12.2014
-	ResetLoop(VIr);
+
 	if Blank(budj) then begin budj = 0; end;
 	if Blank(budjsum) then begin budjsum = 0; end;
 	if Blank(budjVAT) then begin budjVAT = 0; end;

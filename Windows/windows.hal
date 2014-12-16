@@ -389,3 +389,16 @@ Integer i;
 
   EndWindow;
 end;
+
+window ProfitOverPeriodRClass:2
+  wtag("language","RUS"), wtag("product","*"), wtag("device","computer")
+begin
+  real h,h1,h2,v,vm,vs;
+  WindowBegin("Определите отчет по начислениям за период",ProfitOverPeriodRClass,CGRcW,RcType);
+  SetWRect(20,80,400,270);
+  vs = 20; h = 120; h1 = 50; h2 = 200;
+  PeriodField(h,v,"Период");
+  EditField(h,v+=vs,120,"Проект",Normal,f1,false,PRSClass);
+
+  EndWindow;
+end;
