@@ -336,6 +336,16 @@ begin
     PRr.Code = VIr.PRCode;									//Edit by Victor 01.09.14
     if(ReadfirstMain(PRr,1,true))then begin
     	VIr.Comment = PRr.Name;
+    	if (NonBlankDate(PRr.LaunchingDate)) then begin //Edit***************************Sasha2,15:45 16.12.2014 {
+	  		VIr.StartJobDate = PRr.LaunchingDate;
+	  	end else begin
+	  	  	VIr.StartJobDate = PRr.StartDate;
+	  	end;
+  	  	if (NonBlankDate(PRr.FinishedDate)) then begin
+  	  		VIr.EndJobDate = PRr.FinishedDate;
+  	  	end else begin
+  	  		VIr.EndJobDate = PRr.EndDate;
+  	  	end; //Edit***************************Sasha2,15:45 16.12.2014 }
     end;
     
     PutWindowRecord(wn,VIr);

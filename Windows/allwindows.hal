@@ -2060,7 +2060,7 @@ begin
       if (CYb.UseTaxTemplatesforTaxCalc!=0) then begin
         MatCol(t,-35,"Налог. код",0,TaxTemplateCode,false,TaxTemplateSClass);
       end else begin
-        MatCol(t,-35,"Кот НДС",0,VATCode,false,VATCodeSClass);  
+        MatCol(t,-35,"Код НДС",0,VATCode,false,VATCodeSClass);  
       end;
       MatText(t=kInvoiceRowTypePrepayment,24,"№ предопл.",true);  
       MatCol(t,170,"",0,PrepayNr,true,APPay3SClass);  
@@ -2220,13 +2220,14 @@ begin
       TileButton(tilenr,"Адрес выст. счета"); tilenr = tilenr + 1;
     end;
     tilenr = 1;
-    Tile(tilenr,90,false,tilenr,InvDate); tilenr = tilenr + 1;
+    Tile(tilenr,80,false,tilenr,InvDate); tilenr = tilenr + 1;
     if (IsEnterprise) then begin
       vs = 20; h1 = 110; h2 = 290; h3 = 530; h4 = -100;
       EditField(h1,vm=(v=6),82,"Дата сч/ф",Normal,InvDate,false,PasteCurDate);
       EditField(h1,v+=vs,25,"Условия оплаты",Normal,PayDeal,false,PDSClass);//PDSClass
       EditField(h1,v+=vs,82,"Дата операции",Normal,TransDate,false,PasteCurDate);
       EditField(h1,v+=vs,82,"Дата оплаты",Normal,DueDate,false,0);
+      EditField(h1,v+=vs,82,"Дата нач.работы",Normal,StartJobDate,false,0); //Edit***************************Sasha2,15:23 16.12.2014
       if (HasLocalization("POL")) then begin  
         EditField(h1,v+=vs,82,"Дата оказ. услуги",Normal,ServiceDelDate,false,PasteCurDate);  
       end;
@@ -2241,6 +2242,7 @@ begin
       EditField(h2,v+=vs,135,"Подписи",Normal,OKPersons,false,UserSClass);
       EditField(h2,v+=vs,135,"Объекты",Normal,Objects,false,ObjSClass);
       EditField(h2,v+=vs,135,"Назв. проекта",Normal,Comment,false,0);//******** Edit by Victor 1.09
+      EditField(h2+35,v+=vs,100,"Дата завер.работы",Normal,EndJobDate,false,PasteCurDate); //Edit***************************Sasha2,15:24 16.12.2014
     end else begin
       EditField(h2,v=6,22,"Усл. платежа",Normal,PayDeal,false,PDSClass);
       EnterSkip(Math);
@@ -4111,7 +4113,7 @@ begin
   EditField(-110,v=26,70,"Дата начала",Normal ,StartDate,false,PasteCurDate);
   EditField(-110,v+=20,70,"Дата старта проекта",Normal,LaunchingDate,false,PasteCurDate); //Edit***************************Sasha2,10:28 25.11.2014
   EditField(-110,v+=30,70,"Дата окончания",Normal ,EndDate,false,PasteCurDate);
-  EditField(-110,v+=20,70,"Дата завершения проекта",ViewOnly,FinishedDate,false,0);
+  EditField(-110,v+=20,70,"Дата завершения проекта",Normal,FinishedDate,false,PasteCurDate);
   if (HasMultiCurrency) then begin
     EditField(-110,v+=20,70,"Валюта проекта",Normal,CurncyCode,false,CurncyCodeSClass);
   end;

@@ -910,6 +910,8 @@ begin
   RecordField(PaymentCode,M4Code,5,0);
   RecordField(VELegalForm,M4Code,10,0);
   RecordField(pdays,M4Long,0,0);
+  RecordField(StartJobDate,M4Date,0,0); //Edit***************************Sasha2,15:19 16.12.2014
+  RecordField(EndJobDate,M4Date,0,0); //Edit***************************Sasha2,15:19 16.12.2014
   ArrayBegin(Math,-,1);
   ArrayField(stp,M4Int,0,0);
   ArrayField(ovst,M4Int,0,0);

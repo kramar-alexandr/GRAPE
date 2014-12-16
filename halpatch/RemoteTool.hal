@@ -13,6 +13,7 @@ external procedure VIDDefault(Integer,string,var record VIVc); //Edit***********
 
 SetLangMode(LangRussian,"RUS",0);
 
+
 procedure PutOnVIRow(var record VIVc VIr,row ViVc VIrw,var Integer virownr,row TBBUVc TBBUrwp,record TBBUVc TBBUp,string vevatcode,Integer exportflag)
 BEGIN
   string 255 tstr;
@@ -125,6 +126,16 @@ BEGIN
   	  VIr.ToRateB2 = TBBUp.ToRateB2;
   	  VIr.BaseRate1 = TBBUp.BaseRate1;
   	  VIr.BaseRate2 = TBBUp.BaseRate2; 
+  	  if (NonBlankDate(PRr.LaunchingDate)) then begin
+  	  	VIr.StartJobDate = PRr.LaunchingDate;
+  	  end else begin
+  	  	VIr.StartJobDate = PRr.StartDate;
+  	  end;
+  	  if (NonBlankDate(PRr.FinishedDate)) then begin
+  	  	VIr.EndJobDate = PRr.FinishedDate;
+  	  end else begin
+  	  	VIr.EndJobDate = PRr.EndDate;
+  	  end;
 	  
 	  if (VIr.SerNr<=0) then begin goto LPasteTBBUInVIFunc; end;  
 	  if (MatRowCnt(VIr)>0) then begin
