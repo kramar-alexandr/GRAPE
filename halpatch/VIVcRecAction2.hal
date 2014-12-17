@@ -138,7 +138,7 @@ BEGIN
   	rwcnt = MatRowCnt(TBBUr);
   	for (i=0;i<rwcnt;i=i+1) begin
   		MatRowGet(TBBUr,i,TBBUrw);
-  		if (NonBlank(TBBUrw.SubContractor) and TBBUrw.Invoiced!=-1) then begin
+  		if (TBBUrw.SubContractor==VIr.VECode and TBBUrw.Invoiced!=-1) then begin
   			TBBUrw.Invoiced = -1;
   			MatRowPut(TBBUr,i,TBBUrw);
   			updf = true;

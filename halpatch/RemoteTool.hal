@@ -64,7 +64,10 @@ BEGIN
   string 255 subcontrlist,vewarn;
   Integer pos;
   val bal;
+  vector LongInt viserns;
+  Boolean changedf;
   
+  changedf = false;
   if (ReadFirstMain(TBBUp,0,true)) then begin end;  
   PRr.Code = TBBUp.PRCode;
   if (ReadFirstMain(PRr,1,true)==false) then begin goto LPasteTBBUInVIFunc; end;
@@ -81,9 +84,6 @@ BEGIN
 		if (ReadFirstMain(INr,1,true)) then begin
 		  	if (!SetInSet2(subcontrname,subcontrlist)) then begin
 		  		RecordNew(VIr);
-		  		if (VIr.SerNr<=0) then begin
-					VIr.SerNr = NextSerNr("VIVc",VIr.TransDate,-1,false,"");
-				end; 
 		  		VIr.VECode = TBBUrw.SubContractor;
 		  		if (subcontrname!="nosubcontr") then begin
 		  			VIVc_PasteVECode(VIr,0,false,false,vewarn);
@@ -95,11 +95,9 @@ BEGIN
 		  		end else begin
 		  			subcontrlist = subcontrlist & "," & subcontrname;
 		  		end;
-		  		TBBUrw.Invoiced = VIr.SerNr;
-	      		MatRowPut(TBBUp,i,TBBUrw);
 		  	end;
-				VIr = vectVIr[subcontrname];
-				rownr = porownr[subcontrname];
+			VIr = vectVIr[subcontrname];
+			rownr = porownr[subcontrname];
 	      	PutOnVIRow(VIr,VIrw,rownr,TBBUrw,TBBUp,VEr.VEVATCode,VIr.ExportFlag);
 	      	porownr[subcontrname] = rownr;
 	      	vectVIr[subcontrname] = VIr;
@@ -110,8 +108,6 @@ BEGIN
   if (blank(subcontrlist)) then begin
   	goto LPasteTBBUInVIFunc;
   end;
-  
-  RECORDUPDATE(oldTBBUp,TBBUp,false);
   
   pos = 0; 
   ExtractObj(subcontrlist,pos,subcontrname);
@@ -137,12 +133,16 @@ BEGIN
   	  	VIr.EndJobDate = PRr.EndDate;
   	  end;
 	  
-	  if (VIr.SerNr<=0) then begin goto LPasteTBBUInVIFunc; end;  
+	  //if (VIr.SerNr<=0) then begin goto LPasteTBBUInVIFunc; end;  
 	  if (MatRowCnt(VIr)>0) then begin
+	  	if (VIr.SerNr<=0) then begin
+			VIr.SerNr = NextSerNr("VIVc",VIr.TransDate,-1,false,"");
+		end;
 	    VICalcVals(VIr);
 	    VISumup(VIr,bal);
 	    VIr.PayVal = -bal;
 	    if (RecordStore(VIr,false)) then begin
+	      viserns[VIr.VECode] = VIr.SerNr;
 	      CreateRecordLink(PRr,CurrentCompany,VIr,CurrentCompany);  
 	      CreateRecordLink(VIr,CurrentCompany,PRr,CurrentCompany);
 	    end;
@@ -150,7 +150,20 @@ BEGIN
 	
   	ExtractObj(subcontrlist,pos,subcontrname);
   end;
- 
+  
+  for (i=0;i<rwcnt;i=i+1) begin
+  	MatRowGet(TBBUp,i,TBBUrw);
+  	if (NonBlank(TBBUrw.ArtCode) and TBBUrw.stp==1 and NonBlank(TBBUrw.SubContractor) and TBBUrw.Invoiced==-1) then begin
+  		if (viserns[TBBUrw.SubContractor]>-1) then begin
+  			TBBUrw.Invoiced = viserns[TBBUrw.SubContractor];
+	      	MatRowPut(TBBUp,i,TBBUrw);
+	      	changedf = true;
+  		end;
+  	end;
+  end;
+  if (changedf) then begin
+  	RECORDUPDATE(oldTBBUp,TBBUp,false);
+  end;
   
 LPasteTBBUInVIFunc:;
 
