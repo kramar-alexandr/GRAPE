@@ -4,10 +4,10 @@ global
 updating function Integer ClonePRD(String PR, record RcVc RepSpec)
 BEGIN
   Integer err,slen,cnt,num,i,max, j;
-  record PRVc PR2r,PRr, PRp;
+  record PRVc PR2r,PRr, PRp, PR3r;
   record TBBUVc TBBUr, TBBUp, TBBU2r;
   string 255 warntext,tstr,prCode,stmp,tail;
-  string 100 tailCode, cloneCode;
+  string 100 tailCode, cloneCode,newName;
   boolean testf;
   record SysFormatBlock SysFormatRec;
   boolean TrHs;
@@ -76,7 +76,14 @@ BEGIN
 			end;
 			ResetLoop(PR2r);
 			
-			PRr.Code = PRp.MotherCode & "-" & ValToString(max+1,M4Val,SysFormatRec.thousSep,SysFormatRec.decimalPt,1);
+			LnewName:;
+			newName = PRp.MotherCode & "-" & ValToString(max+1,M4Val,SysFormatRec.thousSep,SysFormatRec.decimalPt,1);
+			PR3r.Code = newName;
+			if(ReadFirstMain(PR3r, 1, true))then begin
+				max = max + 1;
+				goto LnewName;
+			end;
+			PRr.Code = newName;
 			
 			if (RecordStore(PRr,false)) then begin end;
 			
