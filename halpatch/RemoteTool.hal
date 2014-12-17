@@ -32,7 +32,7 @@ BEGIN
   VIVc_PastePRCode(VIr,virownr);
   MatRowGet(VIr,virownr,VIrw);
   VIrw.qty = TBBUrwp.Qty;
-  VIrw.Sum = TBBUrwp.Qty * TBBUrwp.Cost;
+  VIrw.Sum = TBBUrwp.SumCost;
   //VIrw.VATCode = TBBUrwp.VATCode;
   /*VIrw.VATCode = vevatcode;
   if (blank(VIrw.VATCode)) then begin

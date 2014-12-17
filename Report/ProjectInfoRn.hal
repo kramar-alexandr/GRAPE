@@ -22,7 +22,7 @@ begin
 	record SAVc SAr;
 	record ADJVIVc ADJVIr;
 	record SAVIVc SAVIr;
-	val bud_rashod,real_VIrashod,real_VIsum,real_VIvat,bud_dohod,real_dohod,budj,budjsum,budjVAT;
+	val bud_rashod,real_VIrashod,real_VIsum,real_VIvat,bud_dohod,real_dohod,budj,budjsum,budjVAT,budGP_percent;
 	val deb,cl,cred,sup;
 	val totdeb,totcl,totcred,totsup;
 	Boolean TrHs,TrHs2,testf,oncef;
@@ -63,12 +63,13 @@ begin
 		budjVAT = 0;
 		bud_dohod = TBBUr.GPTot; //Edit***************************Sasha2,14:20 02.12.2014
 	end;
+	budGP_percent = TBBUr.GPTotPercent;
 	bud_rashod = 0; //Edit***************************Sasha2,11:12 08.12.2014 {
 	mtrw = MatRowCnt(TBBUr);
 	for (i=0;i<mtrw;i=i+1) begin
 		MatRowGet(TBBUr,i,TBBUrw);
 		if (nonblank(TBBUrw.SubContractor)) then begin
-			bud_rashod = bud_rashod + (TBBUrw.Qty * TBBUrw.Cost);
+			bud_rashod = bud_rashod + (TBBUrw.SumCost);
 		end;
 	end; //Edit***************************Sasha2,11:12 08.12.2014 }
 	VIr.PRCode = PRr.Code;
@@ -83,7 +84,7 @@ begin
 				real_VIvat = real_VIvat + VIr.VATVal;
 			end;
 		end;
-	end;
+	end; RESETLOOP(VIr);
 	IVr.PRCode = PRr.Code;
 	TrHs = true;
 	while (loopkey("PRCodePayDate",IVr,1,TrHs)) begin
@@ -123,7 +124,7 @@ begin
 		outstring(pos+=30,0,real_VIsum,false);
 		outstring(pos+=35,0,real_VIvat,false);
 		outstring(pos+=25,0,bud_dohod,false);
-		outstring(pos+=35,0,Round(((bud_dohod+budjVAT)/budj*100),DefaultRoundMode) & " %",false);
+		outstring(pos+=35,0,budGP_percent & " %",false);
 		outstring(pos+=25,0,real_dohod,false); //Edit***************************Sasha2,10:48 08.12.2014
 		outstring(pos+=35,0,Round((real_dohod/totdeb*100),DefaultRoundMode) & " %",false); //Edit***************************Sasha2,10:48 08.12.2014
 	endformat;
