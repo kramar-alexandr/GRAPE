@@ -2241,7 +2241,8 @@ begin
       EditField(h2,v=vm,135,"№ сч/ф постав.",Normal,InvoiceNr,false,0);
       EditField(h2,v+=vs,135,"Подписи",Normal,OKPersons,false,UserSClass);
       EditField(h2,v+=vs,135,"Объекты",Normal,Objects,false,ObjSClass);
-      EditField(h2,v+=vs,135,"Назв. проекта",Normal,Comment,false,0);//******** Edit by Victor 1.09
+      CheckBox(h2-90,v+=vs,0,"Автоматически не пересчитывать",DoNotRecalc);	//Edit by Victor 17.12.14
+      //EditField(h2,v+=vs,135,"Назв. проекта",Normal,Comment,false,0);//******** Edit by Victor 1.09
       EditField(h2+35,v+=vs,100,"Дата завер.работы",Normal,EndJobDate,false,PasteCurDate); //Edit***************************Sasha2,15:24 16.12.2014
     end else begin
       EditField(h2,v=6,22,"Усл. платежа",Normal,PayDeal,false,PDSClass);
@@ -2255,6 +2256,7 @@ begin
       EditField(h3,v+=vs,82,"Скидка",Normal,RebVal,true,0);
       //EditField(h3,v+=vs,82,"Кредит. сч/ф",Normal,CredInv,false,APSClass);
       EditField(h3,v+=vs,82,"Проект",Normal,PRCode,false,PRSClass);// Edit ****** Tuesday, 19 August 2014 10:55:50 *** Edit By Victor 1.09.14
+      EditField(h3,v+=vs,135,"Назв. проекта",Normal,Comment,false,0);//******** Edit by Victor 1.09
     end else begin
       EditField(h3,v=6,90,"Кредит. сч/ф",Normal,CredInv,false,APSClass);
       EditField(h3,v+=vs,90,"Банк. счет",Normal,BankAcc,false,0);
@@ -4403,7 +4405,7 @@ end;
 window CUDClass:14
   wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
 begin
-  real h,h1,h2,h3,h4,h5,l,v,vm,vs;
+  real h,h1,h2,h3,h4,h5,h6,l,v,vm,vs;
   string 255 label;
   record CUVc CUr;
   Integer wn,tilenr;
@@ -4657,6 +4659,14 @@ begin
   RadioButton(h5,v,0,0,"на дату счета",PriceBasedOn);
   RadioButton(h5,v+=16,1,0,"на дату заплан. отгрузки",PriceBasedOn);
   RadioButton(h5,v+=16,2,0,"на дату отправки",PriceBasedOn);
+  StaticText(h6=h5+260,v=20,"Не платежные дни",true); 
+  CheckBox(h6=h5+160,v+=4,0,"Понедельник",Monday);
+  CheckBox(h6,v+=16,0,"Вторник",Tuesday);
+  CheckBox(h6,v+=16,0,"Среда",Wednesday);
+  CheckBox(h6,v+=16,0,"Четверг",Thursday);
+  CheckBox(h6,v+=16,0,"Пятница",Friday);
+  CheckBox(h6,v+=16,0,"Суббота",Saturday);
+  CheckBox(h6,v+=16,0,"Воскресенье",Sunday);  
   Tile(tilenr,180,false,tilenr,Comment); tilenr = tilenr + 1;
   EditField(h,v=6,-20,"Комментарий",Normal,Comment,false,0);
   EditField(h,v+=vs,-20,"Предупр. (кл.)",Normal,WarnText1,false,0);
@@ -5319,6 +5329,102 @@ begin
     MatCol(1,24,"Язык",0,LangCode,false,LangSClass);
     MatCol(1,84,"Текст",0,Text,false,0);
     EndMatrix;
+  end;
+  EndWindow;
+end;
+
+window VILClass:1
+  wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
+begin
+  Integer pos;
+
+  WindowBegin("Счета-фактуры поставщиков",VILClass,CGmlist,-);
+  SetWRect(20,80,840,350);
+  Sizeable(-1,-1,0,0);
+  SpawnClass(VIDClass);
+  UseView(VIVc);
+  RecordList(4,17,-21,-39);
+  RlColKey(4,4,"Но.",SerNr,false,SerNr);
+  RlColKey(79,79,"ОК",OKFlag,false,OKFlag);
+  RlColKey(111,111,"Дата сч/ф",InvDate,false,InvDate);
+  pos = 191;
+  if (HasmodPO) then begin
+    RlColKey(pos,pos,"№ счета поставщика",POSerNr,false,POSerNr);
+    pos = pos + 60;
+    RlColKey(pos,pos,"Код проекта",PRCode,false,PRCodeDueDate); // Edit by Victor 17.12.14 //Номер сч/ф пост. -> Код проекта
+  end else begin
+    RlColKey(pos,pos,"Код проекта",PRCode,false,PRCodeDueDate);	// Edit by Victor 17.12.14 //Номер сч/ф пост. -> Код проекта
+  end;
+  if (HasLocalization("ARG,MEX")) then begin
+    pos = pos + 120;
+  end else begin
+    pos = pos + 120;
+  end;
+  RlColKey(pos,pos,"Поставщик",VECode,false,VECode);
+  pos = pos + 70;
+  RlColKey(pos,pos,"Наим.",VEName,false,VEName);
+  if (HasMultiCurrency) then begin
+    RlColKey(-110,-110,"Итого",PayVal,true,PayVal);
+    RlCol(-39,-39,"",CredMark,true);
+    RlCol(-30,-30,"Вал.",CurncyCode,true);
+  end else begin
+    RlColKey(-90,-90,"Всего",PayVal,true,PayVal);
+    RlCol(-10,-10,"",CredMark,true);
+  end;
+  RlCol(-1,-1,"",Invalid,true);
+  SearchField("Найти");
+  if (HasLimitedAccess) then begin
+    BrowseSubsetButton(-40,-15);
+  end;
+  if (GuiType==kGuiMetro) then begin
+    RowMenuBegin("");
+    RowMenuItem(0,"OK",'G','G',4312,"OKVILsm");
+    RowMenuItem(1,"Статус счета-фактуры",'r','r',4300,"VIInfoVILsm");
+    EndRowMenu;
+  end else begin
+    SpecialMenu("OK",'G',0,"OKVILsm");
+    SpecialMenu("Статус счета-фактуры",'r',1,"VIInfoVILsm");
+  end;
+  EndWindow;
+end;
+
+window IVLClass:8
+  wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
+begin
+  WindowBegin("Счета-фактуры",IVLClass,CGmlist,-);
+  SetWRect(20,80,800,298);
+  Sizeable(-1,-1,0,0);
+  SpawnClass(IVDClass);
+  UseView(IVVc);
+  FormName(PrintIVL);
+  RecordList(4,17,-21,-39);
+  RlColKey(4,4,"Но.",SerNr,false,SerNr);
+  RlColKey(79,79,"ОК",OKFlag,false,OKFlag);
+  RlColKey(111,111,"Дата сч/ф",InvDate,false,InvDate);
+  if (StandardHansa==false) then begin
+    RlColKey(191,191,"Код проекта",PRCode,false,PRCode);	//Edit by Victor 17.12.14
+  end;
+  RlColKey(301,301,"Счет Но.",OrderNr,false,OrderNr);
+  RlColKey(381,381,"Клиент",CustCode,false,CustCode);
+  RlColKey(441,441,"Наим.",Addr0,false,Name);
+  RlColKey(-110,-110,"Итого",Sum4,true,Sum4);
+  RlCol(-39,-39,"",CredMark,true);
+  if (HasMultiCurrency or HasBase2) then begin
+    RlCol(-30,-30,"Вал.",CurncyCode,true);
+  end;
+  RlCol(-1,-1,"",Invalid,true);
+  SearchField("Найти");
+  if (HasLimitedAccess) then begin
+    BrowseSubsetButton(-40,-15);
+  end;
+  SpecialMenu("OK",'G',0,"OKIVLsm");
+  SpecialMenu("Печатать проформу cчета-фактуры",' ',1,"PrintIVLsm");
+  SpecialMenu("Статус сч/ф",'r',2,"IVInfoIVLsm");
+  if (HasLocalization("ARG")) then begin
+    SpecialMenu("Send Argentinian E-Invoices",'e',3,"SendArgEInvIVLsm");
+  end;
+  if (HasLocalization("MEX")) then begin
+    SpecialMenu("Send Mexican E-Invoices",'e',3,"SendMexEInvIVLsm");
   end;
   EndWindow;
 end;

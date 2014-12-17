@@ -912,6 +912,7 @@ begin
   RecordField(pdays,M4Long,0,0);
   RecordField(StartJobDate,M4Date,0,0); //Edit***************************Sasha2,15:19 16.12.2014
   RecordField(EndJobDate,M4Date,0,0); //Edit***************************Sasha2,15:19 16.12.2014
+  RecordField(DoNotRecalc,M4Int,0,0);	//Edit by Victor 17.12.14
   ArrayBegin(Math,-,1);
   ArrayField(stp,M4Int,0,0);
   ArrayField(ovst,M4Int,0,0);
@@ -1832,6 +1833,13 @@ begin
   RecordField(Math2,M4TextField,0,0);
   RecordField(TaxCondition,M4Int,0,0);
   RecordField(PayMode,M4UStr,20,0);// Edit ************************** Friday, 12 September 2014 16:02:55
+  RecordField(Monday,M4Int,0,0);	//Edit by Victor 17.12.14
+  RecordField(Tuesday,M4Int,0,0);//Edit by Victor 17.12.14
+  RecordField(Wednesday,M4Int,0,0);//Edit by Victor 17.12.14
+  RecordField(Thursday,M4Int,0,0);//Edit by Victor 17.12.14
+  RecordField(Friday,M4Int,0,0);//Edit by Victor 17.12.14
+  RecordField(Saturday,M4Int,0,0);//Edit by Victor 17.12.14
+  RecordField(Sunday,M4Int,0,0);//Edit by Victor 17.12.14
   
   MainKeyBegin(Code,1);
   StoreInBaseKey;
