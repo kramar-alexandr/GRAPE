@@ -4312,6 +4312,7 @@ begin
   SpecialMenu("Прикрепить акт выполненной работы с подрядчиком",'',12,"AddADJVItoPRDsm");//*****Edit by Victor 15.09.14
   SpecialMenu("Прикрепить дополнительное соглашение с подрядчиком",'',13,"AddSAVItoPRDsm");//*****Edit by Victor 15.09.14
   SpecialMenu("Создать подпроект",'s',14,"CreateSubPRDsm");//*****Edit by Victor 07.10.14
+  SpecialMenu("Клонировать",'С',15,"ClonePRDsm");//*****Edit by Victor 12.12.14
   if (IsEnterprise) then begin
     SpecialMenu("Создать график проекта",' ',7,"CreatePRScheduleFromPRD");
     SpecialMenu("Открыть график проекта",' ',8,"OpenPRSchedulePRD");

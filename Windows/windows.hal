@@ -402,3 +402,15 @@ begin
 
   EndWindow;
 end;
+
+
+window PRCloneVClass:1
+  wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
+begin
+  real h,h2,v,vs;
+  WindowBegin("Клонировать проект",PRCloneVClass,CGMnt,RcType);
+  SetWRect(20,80,500,180);
+  v = 6; vs = 20; h = 130; h2 = 40;
+  EditField(h,v, 150,"Количество",Normal,frc,false,0);
+  EndWindow;
+end;

@@ -1,0 +1,100 @@
+external function integer findNum(string );	
+
+global
+updating function Integer ClonePRD(String PR, record RcVc RepSpec)
+BEGIN
+  Integer err,slen,cnt,num,i,max, j;
+  record PRVc PR2r,PRr, PRp;
+  record TBBUVc TBBUr, TBBUp, TBBU2r;
+  string 255 warntext,tstr,prCode,stmp,tail;
+  string 100 tailCode, cloneCode;
+  boolean testf;
+  record SysFormatBlock SysFormatRec;
+  boolean TrHs;
+  row PRvc PRrw;
+  integer N,nwn,res,rwcnt;	
+  integer tailLen, MCLen,cloneTail;
+  Date ds, dsp, dEnd, df;
+  
+  PRp.Code = PR;
+  
+  if(ReadFirstMain(PRp, 1, true))then begin
+  				
+		ds = PRp.StartDate;
+		dsp = PRp.LaunchingDate ;
+		dEnd = PRp.EndDate ;
+		df = PRp.FinishedDate;
+  
+		if(nonblank(RepSpec.frc))then begin
+			N = RepSpec.frc;
+		end else begin
+			N = 1;
+		end;
+				
+		BlockLoad(SysFormatRec);	
+	
+		For(i=1;i<=N;i=i+1)begin
+				
+			max = 0; 
+			RecordNew(PRr);
+			
+			recordcopy(PRr,PRp);	
+			
+			ds = AddMonth(PRp.StartDate,i);
+			PRr.StartDate = ds;
+			
+			dsp = AddMonth(PRp.LaunchingDate,i);
+			PRr.LaunchingDate = dsp;
+			
+			dEnd = AddMonth(PRp.EndDate,i);
+			PRr.EndDate = dEnd;
+			
+			df = AddMonth(PRp.FinishedDate,i);
+			PRr.FinishedDate = df;
+			
+			rwcnt = matrowcnt(PRr);
+  		For(j=0;j<rwcnt;j=j+1) begin
+	 			matrowdelete(PRr,0);
+			end; 
+			
+			tstr = PRp.MotherCode;
+			
+			PR2r.MotherCode = PRp.MotherCode;
+			TrHs = true;
+			while (LoopKey("MotherCode",PR2r,1,true)) begin
+				testf = true;
+				if (PR2r.MotherCode!=PRp.MotherCode) then begin testf = false; TrHs = false; end; 
+		 
+				if (testf) then begin
+					stmp = PR2r.Code;
+					tail = Right(stmp,len(stmp) - (len(tstr) + 1));
+					num = findNum(tail);
+					if(max<num)then begin
+						max = num;
+					end;
+				end;
+			end;
+			ResetLoop(PR2r);
+			
+			PRr.Code = PRp.MotherCode & "-" & ValToString(max+1,M4Val,SysFormatRec.thousSep,SysFormatRec.decimalPt,1);
+			
+			if (RecordStore(PRr,false)) then begin end;
+			
+			TBBUp.PRCode = PRp.Code;
+			if (ReadFirstMain(TBBUp,1,true)) then begin 
+				RecordNew(TBBUr);
+				RecordCopy(TBBUr,TBBUp);
+				
+				TBBUr.PRCode = PRr.Code;
+								
+				if (RecordInsert(TBBUr,true)) then begin end;
+			end;				
+		end;
+  end;
+  
+  res = -1;
+ 
+  ClonePRD = res;
+  RETURN;
+END;
+

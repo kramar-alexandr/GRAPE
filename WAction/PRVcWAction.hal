@@ -24,7 +24,13 @@ external function Boolean CheckProjectManager(record PRVc);
 external function Boolean HasContactClassification();
 external function Boolean HasMultiCurrency();
 external function Boolean IsEnterprise();
+remote function Integer ClonePRD(String , record RcVc);	//Edit by Victor 12.12.14
 
+procedure dummy() //##ii
+begin //##ii
+  SetLangMode(LangRussian,"RUS",0); //##ii
+  return; //##ii
+end; //##ii
 
 procedure PastePRInQT(record PRVc PRr)
 BEGIN
@@ -770,6 +776,7 @@ begin
   return;
 end;
 
+global
 function integer findNum(string tail)	// Edit by Victor 09.10.14
 begin
 	integer res,i,tlen,cnt;
@@ -857,7 +864,7 @@ begin
 	if(max==0)then begin
 		tstr = PRp.Code & "-1";
 	end else begin	   
-		tstr = PRp.Code & "-" & ValToString(max+1,M4Val,SysFormatRec.thousSep,SysFormatRec.decimalPt,1);;
+		tstr = PRp.Code & "-" & ValToString(max+1,M4Val,SysFormatRec.thousSep,SysFormatRec.decimalPt,1);
 	end;
   PRr.Code = tstr;
   	
@@ -979,6 +986,101 @@ BEGIN
       otherwise
         MessageBox(err,"");
     end;
+  end;
+  RETURN;
+END;
+
+/*global updating
+procedure ClonePRDsm()		//Edit by Victor 12.12.14
+BEGIN
+  record PRVc PRr,PR2r;
+  Record RcVc RepSpec;
+  Integer wn,err,nwn;
+    
+  wn = CurWindow;
+  GetWindowRecord(wn,PRr);
+  if(nonblank(PRr.MotherCode))then begin
+  	DeselectWindow(wn,false);
+  	if (WindowState(wn)==0) then begin//Rs_normal
+  		nwn = OpenWindow("PRCloneVClass",1,0,"","",RepSpec);
+			PutWindowRecord(nwn,RepSpec);
+			SelectWindow(nwn);
+  		//wn = OpenWindow("PRCloneVClass",1,0,"","",RepSpec);
+  		ClonePRDMn(PRr, RepSpec);
+    end;
+  end else begin
+  	Messagebox(0, "Нельзя клонировать главный проект!");
+  end;
+  RETURN;
+END;*/
+
+global
+updating function Boolean PRCloneVClassOnOKWindow(Integer wn)
+BEGIN
+  record RcVc RepSpec;
+  record PRVc PRr;
+  Integer nwn;
+  Integer r;
+  
+  GetWindowRecord(wn,RepSpec);
+  if (blank(RepSpec.frc)) then begin
+    MessageBox(0,USetStr(10522));
+    WindowFieldGoto(wn,RepSpec,-1,"frc",true);        
+  	goto LPRCloneVClassOnOKWindow;
+    
+  end;
+  
+  r = ClonePRD(RepSpec.f1,RepSpec);
+  if (r!=0) begin
+    if (r>0) then begin
+      MessageBox(r,"");
+    end else begin
+      Beep;
+    end;
+  end;
+  
+  UpdateBrowses("PRVc");    
+  
+  CloseWindow(wn);
+  
+	LPRCloneVClassOnOKWindow:;  
+  PRCloneVClassOnOKWindow = false;
+  RETURN;
+END;
+
+global
+updating procedure ClonePRDExecute(record PRVc PRr)
+BEGIN
+  Integer nwn;
+  record RcVc RepSpec;
+  //record PRVc PRr;
+  Integer r;
+  
+  RepSpec.f1 = PRr.Code;
+   
+	nwn = OpenWindow("PRCloneVClass",1,0,"","",RepSpec);
+	PutWindowRecord(nwn,RepSpec);
+	SelectWindow(nwn);
+    
+  //ClonePRD(PRCode,RepSpec);
+  RETURN;
+END;
+
+global updating
+procedure ClonePRDsm()		//Edit by Victor 12.12.14
+BEGIN
+	Integer wn;
+  record PRVc PRr;
+  wn = CurWindow;
+  if (WindowState(wn)==Rs_normal) then begin
+    GetWindowRecord(wn,PRr);
+    if(nonblank(PRr.MotherCode))then begin
+	    ClonePRDExecute(PRr);
+	  end else begin
+	  	Messagebox(0,"Нельзя клонировать старший проект!");
+	  end;
+  end else begin
+    Beep;
   end;
   RETURN;
 END;
