@@ -1075,12 +1075,12 @@ begin
   KeyBegin(PRCodeDueDate);
   KeySegment(PRCode);
   KeySegment(DueDate);
-	KeySegment(SerNr);
+  KeySegment(SerNr);
 	
-	KeyBegin(DueDatePRCode);
-	KeySegment(DueDate);
+  KeyBegin(DueDatePRCode);
+  KeySegment(DueDate);
   KeySegment(PRCode);
-	KeySegment(SerNr);
+  KeySegment(SerNr);
 	
 	// Edit End ---------------------------------------------- Edit End
   

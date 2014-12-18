@@ -10,6 +10,8 @@ external procedure VIVc_PastePRCode(var record VIVc,Integer); //Edit************
 external procedure VICalcVals(var record VIVc); //Edit***************************Sasha2,18:05 08.12.2014
 external procedure RowCalculateTaxMatrix_VIVc(var record VIVc,Integer,row VIVc,Integer);
 external procedure VIDDefault(Integer,string,var record VIVc); //Edit***************************Sasha2,17:08 12.12.2014
+external procedure VIVc_PastePayDeal(var record VIVc); //Edit***************************Sasha2,10:06 18.12.2014
+external procedure VIGetRate(var record VIVc); //Edit***************************Sasha2,10:09 18.12.2014
 
 SetLangMode(LangRussian,"RUS",0);
 
@@ -117,11 +119,9 @@ BEGIN
 	  VIr.PRCode = TBBUp.PRCode;
 	  VIr.Comment = TBBUp.Comment;
 	  VIr.CurncyCode = TBBUp.CurncyCode;
-  	  VIr.FrRate = TBBUp.FrRate;
-  	  VIr.ToRateB1 = TBBUp.ToRateB1; 
-  	  VIr.ToRateB2 = TBBUp.ToRateB2;
-  	  VIr.BaseRate1 = TBBUp.BaseRate1;
-  	  VIr.BaseRate2 = TBBUp.BaseRate2; 
+  	  VIGetRate(VIr);
+  	  VIr.PayDeal = PRr.PayDeal;
+  	  VIVc_PastePayDeal(VIr);
   	  if (NonBlankDate(PRr.LaunchingDate)) then begin
   	  	VIr.StartJobDate = PRr.LaunchingDate;
   	  end else begin
