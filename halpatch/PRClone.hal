@@ -40,16 +40,24 @@ BEGIN
 			
 			recordcopy(PRr,PRp);	
 			
-			ds = AddMonth(PRp.StartDate,i);
+			ds = AddDay(PRp.StartDate,1);
+			ds = AddMonth(ds,i);
+			ds = AddDay(ds,-1);
 			PRr.StartDate = ds;
 			
-			dsp = AddMonth(PRp.LaunchingDate,i);
+			dsp = AddDay(PRp.LaunchingDate,1);
+			dsp = AddMonth(dsp,i);
+			dsp = AddDay(dsp,-1);
 			PRr.LaunchingDate = dsp;
 			
-			dEnd = AddMonth(PRp.EndDate,i);
+			dEnd = AddDay(PRp.EndDate,1);
+			dEnd = AddMonth(dEnd,i);
+			dEnd = AddDay(dEnd,-1);
 			PRr.EndDate = dEnd;
 			
-			df = AddMonth(PRp.FinishedDate,i);
+			df = AddDay(PRp.FinishedDate,1);
+			df = AddMonth(df,i);
+			df = AddDay(df,-1);
 			PRr.FinishedDate = df;
 			
 			rwcnt = matrowcnt(PRr);
