@@ -2747,6 +2747,7 @@ begin
   if (IsEnterprise) then begin
     Flip(5);
     MatCol(1,200,"Наименование",0,Comment,false,0);
+    MatCol(1,450,"Сотр.",0,EMCode,false,UserSClass); 
     MatCol(t=1,-115,"Маржа",0,GM,false,0);
     MatCol(t,-50,"Cч/ф пост",0,Invoiced,true,0);
 //  MatColTL(1,-50,"Inv. No.",0,-1,0,-1,Invoiced,true,0);

@@ -269,7 +269,7 @@ begin
     BlockLoad(GenOptRec);
     GetWindowRecord(wn,TBBUr);
     if (TBBUVc_PasteQty(TBBUr,rownr)) then begin 
-      TBBUDchrsum(TBBUr,rownr,true,GenOptRec.UseDiscount);
+      //TBBUDchrsum(TBBUr,rownr,true,GenOptRec.UseDiscount); //Edit***************************Sasha2,12:21 19.12.2014
         MatRowGet(TBBUr,rownr,TBBUrw); //Edit***************************Sasha2,10:28 13.10.2014 {
 	    if (TBBUrw.Qty<>0) then begin
 	    	TBBUrw.SumCost = TBBUrw.Qty * TBBUrw.Cost;
@@ -277,18 +277,20 @@ begin
 	    	TBBUrw.SumCost = TBBUrw.Cost;
 	    end;
 	    MatRowPut(TBBUr,rownr,TBBUrw); //Edit***************************Sasha2,10:28 13.10.2014 }
-      TBBUSumup(TBBUr);
+      	TBBUDchrsum(TBBUr,rownr,true,GenOptRec.UseDiscount); //Edit***************************Sasha2,12:21 19.12.2014
+      	TBBUSumup(TBBUr);
       PutWindowRecord(wn,TBBUr);          
     end else begin
       MatRowGet(TBBUr,rownr,TBBUrw);
       if (nonblank(TBBUrw.TimeClass)) then begin
-        TBBUDchrsum(TBBUr,rownr,true,GenOptRec.UseDiscount);
+        //TBBUDchrsum(TBBUr,rownr,true,GenOptRec.UseDiscount); //Edit***************************Sasha2,12:22 19.12.2014
 	    if (TBBUrw.Qty<>0) then begin //Edit***************************Sasha2,10:28 13.10.2014 {
 	    	TBBUrw.SumCost = TBBUrw.Qty * TBBUrw.Cost;
 	    end else  begin
 	    	TBBUrw.SumCost = TBBUrw.Cost;
 	    end;
 	    MatRowPut(TBBUr,rownr,TBBUrw); //Edit***************************Sasha2,10:28 13.10.2014 }
+        TBBUDchrsum(TBBUr,rownr,true,GenOptRec.UseDiscount); //Edit***************************Sasha2,12:22 19.12.2014
         TBBUSumup(TBBUr);
         PutWindowRecord(wn,TBBUr);
       end;
@@ -409,8 +411,10 @@ begin
   record TBBUVc TBBUr;
   row TBBUVc TBBUrw;
   record CUVc CUr;
+  record GeneralOptionBlock GenOptRec;
 	
-  if (changed!=0) then begin  
+  if (changed!=0) then begin
+  	BlockLoad(GenOptRec);  
     //DeselectWindow(wn,false);
     GetWindowRecord(wn,TBBUr);
     MatRowGet(TBBUr,rownr,TBBUrw);
@@ -418,6 +422,8 @@ begin
     if (ReadFirstMain(CUr,1,true)) then begin
     	TBBUrw.Comment3 = CUr.Comment0;
     	MatRowPut(TBBUr,rownr,TBBUrw);
+    	TBBUDchrsum(TBBUr,rownr,true,GenOptRec.UseDiscount); //Edit***************************Sasha2,12:21 19.12.2014
+      	TBBUSumup(TBBUr); //Edit***************************Sasha2,12:24 19.12.2014
 		PutWindowRecord(wn,TBBUr);
     end;
 
@@ -781,21 +787,21 @@ BEGIN
         end;
       end;
     case "Price": //Edit***************************Sasha2,10:03 08.10.2014 {
-    		res = false;
-    		CUr.Code = TBBU2r.CustCode;
-    		if(readfirstmain(CUr,1,true))then begin
-					if (rownr>=0) then begin
-						MatRowGet(TBBU2r,rownr,TBBUrw);
-						PLr.PLCode = CUr.PLCode;
-						PLr.ArtCode = TBBUrw.ArtCode;
-						if(readfirstkey("ArtCode",PLr,2,true)==true)then begin// Edit ************************** Monday, 24 November 2014 17:01:32
-							res = UserCanAction("AllowPRBudgetChangePrice",false);
-						end else begin
-							res = true;
-						end;
-					END else begin
-						res = true;
-					end;
+		res = false;
+		CUr.Code = TBBU2r.CustCode;
+		if(readfirstmain(CUr,1,true))then begin
+			if (rownr>=0) then begin
+				MatRowGet(TBBU2r,rownr,TBBUrw);
+				PLr.PLCode = CUr.PLCode;
+				PLr.ArtCode = TBBUrw.ArtCode;
+				if(readfirstkey("ArtCode",PLr,2,true)==true)then begin// Edit ************************** Monday, 24 November 2014 17:01:32
+					res = UserCanAction("AllowPRBudgetChangePrice",false);
+				end else begin
+					res = true;
+				end;
+			END else begin
+				res = true;
+			end;
         end else begin
         	res = true;
         end;
