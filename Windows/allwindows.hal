@@ -2241,7 +2241,7 @@ begin
       EditField(h2,v=vm,135,"№ сч/ф постав.",Normal,InvoiceNr,false,0);
       EditField(h2,v+=vs,135,"Подписи",Normal,OKPersons,false,UserSClass);
       EditField(h2,v+=vs,135,"Объекты",Normal,Objects,false,ObjSClass);
-      CheckBox(h2-90,v+=vs,0,"Автоматически не пересчитывать",DoNotRecalc);	//Edit by Victor 17.12.14
+      CheckBox(h2-90,v+=vs,0,"Автом-ски не пересчитывать дату оплаты",DoNotRecalc);	//Edit by Victor 17.12.14
       //EditField(h2,v+=vs,135,"Назв. проекта",Normal,Comment,false,0);//******** Edit by Victor 1.09
       EditField(h2+35,v+=vs,100,"Дата завер.работы",Normal,EndJobDate,false,PasteCurDate); //Edit***************************Sasha2,15:24 16.12.2014
     end else begin
