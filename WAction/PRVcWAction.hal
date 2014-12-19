@@ -844,6 +844,12 @@ begin
 	PRr.Leader4Name = "";
 	PRr.Leader5Name = "";
 	
+	if(PRp.StopInvoicing==0)then begin
+		PRr.StopInvoicing = 1;
+	end else begin
+		PRr.StopInvoicing = 0;
+	end;
+	
 	tstr = PRp.Code;
 	PR2r.MotherCode = PRp.Code;
 	TrHs = true;
