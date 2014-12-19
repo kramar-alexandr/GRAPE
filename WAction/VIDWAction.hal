@@ -197,6 +197,21 @@ begin
   return;
 end;
 
+function Boolean VIDClassDueDateEFAfter(Integer wn,Integer changedf)
+begin
+  record VIVc VIr;
+  Boolean res;
+
+  if (changedf!=0) then begin  
+    GetWindowRecord(wn,VIr);
+    VIr.DoNotRecalc = 1; 
+    PutWindowRecord(wn,VIr);
+    res = true;
+  end;
+  VIDClassDueDateEFAfter = res;
+  return;
+end;
+
 function Boolean VIDClassSalesManEFAfter(Integer wn,Integer changedf)
 begin
   record VIVc VIr;
@@ -909,6 +924,8 @@ BEGIN
       case "BaseRate2": res = VIDClassBaseRate2EFAfter(wn,changed!=0);
       case "ToRateB1": res = VIDClassToRateB1EFAfter(wn,changed!=0);
       case "ToRateB2": res = VIDClassToRateB2EFAfter(wn,changed!=0);
+      case "DueDate": res = VIDClassDueDateEFAfter(wn,changed);
+      
     end;
   end else begin
     GetWindowRecord(wn,VIr);

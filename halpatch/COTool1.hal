@@ -164,6 +164,8 @@ begin
   LongInt restdays;
   integer datedif,i,pdays;
   string 20 country;
+  boolean payday, testf;
+  Date curdate;
   
   i = 0;
   BlockLoad(ARAb);
@@ -179,16 +181,51 @@ begin
 			
   pdays = IVp.pdays;
   datedif = CountWorkingDays(IVp.InvDate,AddDay(IVp.InvDate,IVp.pdays),IVp.CustCode,country);
+	payday = true;
+  	curdate = AddDay(IVp.InvDate,pdays);
+  	switch(getDateid(AddDay(IVp.InvDate,pdays)))begin
+  		case 1: if(CUr.Monday!=0) then begin payday = false;end;
+  		case 2: if(CUr.Tuesday!=0) then begin  payday = false;end;
+  		case 3: if(CUr.Wednesday!=0) then begin payday = false;end;
+  		case 4: if(CUr.Thursday!=0) then begin payday = false;end;
+  		case 5: if(CUr.Friday!=0) then begin payday = false;end;
+  		case 6: if(CUr.Saturday!=0) then begin payday = false;end;
+  		case 7: if(CUr.Sunday!=0) then begin payday = false;end;
+  	end;
+  
 	
-	if(datedif>0 and datedif<pdays)then begin
-		while(datedif<pdays)begin
-			i=i+1;
-			datedif = CountWorkingDays(AddDay(IVp.InvDate,1),AddDay(IVp.InvDate,pdays + i),IVp.CustCode,country);
+		if(datedif>0 and datedif<pdays)then begin
+			testf = datedif<pdays;
+			if(!testf)then begin 
+				testf = !payday;
+			end;
+		
+			while(testf)begin
+				i=i+1;
+				if(PDr.DayType==1)then begin
+				datedif = CountWorkingDays(AddDay(IVp.InvDate,1),AddDay(IVp.InvDate,pdays + i),IVp.CustCode,country);
+				end else begin
+					datedif = datediff(AddDay(IVp.InvDate,pdays + i), AddDay(IVp.InvDate,1));
+				end;
+				curdate = AddDay(IVp.InvDate,pdays);
+				payday = true;
+				switch(getDateid(AddDay(IVp.InvDate,pdays + i-1)))begin
+					case 1: if(CUr.Monday!=0) then begin payday = false;end;
+					case 2: if(CUr.Tuesday!=0) then begin  payday = false;end;
+					case 3: if(CUr.Wednesday!=0) then begin payday = false;end;
+					case 4: if(CUr.Thursday!=0) then begin payday = false;end;
+					case 5: if(CUr.Friday!=0) then begin payday = false;end;
+					case 6: if(CUr.Saturday!=0) then begin payday = false;end;
+					case 7: if(CUr.Sunday!=0) then begin payday = false;end;
+				end;
+				testf = datedif<pdays;
+				if(!testf)then begin 
+					testf = !payday;
+				end;
+			end;
+			pdays = pdays + i - 1;
 		end;
-		pdays = pdays + i - 1;
-	end;
-	//IVp.pdays = pdays;
-	
+		
 	if (pdays<0) then begin pdays = 0; end;	//******* Edit by Victor 22.09.14 }
 	    
   if (IVp.pdays!=-1) then begin
