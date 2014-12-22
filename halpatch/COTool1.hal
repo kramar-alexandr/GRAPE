@@ -194,8 +194,8 @@ begin
 	end;
   
 	
-	if(datedif>0 and datedif<pdays)then begin
-		testf = datedif<pdays;
+	if(datedif>0 and (datedif<pdays or !payday))then begin
+			testf = (datedif<pdays or !payday);
 		if(!testf)then begin 
 			testf = !payday;
 		end;

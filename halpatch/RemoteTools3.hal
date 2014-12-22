@@ -706,14 +706,14 @@ BEGIN
   Date curdate;	//Edit by Victor 19.12.14
 	
 	res = 0;
-	
+	curdate = IVp.InvDate;
 	BlockLoad(ARAb);
   BlockLoad(SRRec);
   RecordNew(IVp);
   IVp.InvType = kInvoiceTypeNormal;
   IVp.PRCode = PRp.Code;
   IVp.LangCode = PRp.LangCode;
-  IVp.InvDate = CurrentDate;
+  IVp.InvDate = curdate;
   IVp.TransDate = CurrentDate;
 //Edit***********************Vitalii 17:06 04.09.2014
 	TBBUr.PRCode = PRp.Code;
@@ -756,6 +756,7 @@ BEGIN
  	
   PDr.Code = IVp.PayDeal;
   if (GetPD(PDr)) then begin end;
+  IVp.pdays = PDr.pdays;
   pdays = IVp.pdays;
   
   if (PDr.DayType==1) then begin //Edit***************************Sasha2,13:09 08.12.2014 {
@@ -768,7 +769,7 @@ BEGIN
   	datedif = CountWorkingDays(IVp.InvDate,AddDay(IVp.InvDate,IVp.pdays),IVp.CustCode,country);
 	
 	payday = true;
-  	
+  
 	switch(getDateid(AddDay(IVp.InvDate,pdays)))begin
 		case 1: if(CUr.Monday!=0) then begin payday = false;end;
 		case 2: if(CUr.Tuesday!=0) then begin  payday = false;end;
@@ -1249,6 +1250,7 @@ BEGIN
 						IVr.PayDate = prrw.PlanDate;
 						IVr.PayDeal = lPRr.PayDeal;*/
 						res = 1;
+						IVr.InvDate = prrw.PlanDate;
 						res = ProInvHead(IVr,lPRr);
 						if (res!=0) then begin
 							goto LPRDownPayInvoice;
@@ -1290,7 +1292,8 @@ BEGIN
 						IVr.InvComment = PRp.Name;//Edit by Victor 10.09.14
 						//IVr.PayDate = prrw.PlanDate;
 						IVSumup(IVr,true);
-						IVr.PayDate = prrw.PlanDate;
+						//IVr.InvDate = prrw.PlanDate;//Edit by Victor 22.12.14
+						//IVr.PayDate = prrw.PlanDate; //Comment by Victor 22.12.14
 						if (IVr.Sum4!=0) then begin
 							CUr.Code = PRp.CustCode;
 							if (ReadFirstMain(CUr,1,true)) then begin end;

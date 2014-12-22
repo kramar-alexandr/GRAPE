@@ -1459,12 +1459,12 @@ BEGIN
 		end;
 	
 	
-		if(datedif>0 and datedif<pdays)then begin
-			testf = datedif<pdays;
+		if(datedif>0 and (datedif<pdays or !payday))then begin
+			testf = (datedif<pdays or !payday);
 			if(!testf)then begin 
 				testf = !payday;
 			end;
-	
+
 			while(testf)begin
 				i=i+1;
 				if(PDr.DayType==1)then begin
@@ -1483,6 +1483,7 @@ BEGIN
 					case 6: if(CUr.Saturday!=0) then begin payday = false;end;
 					case 7: if(CUr.Sunday!=0) then begin payday = false;end;
 				end;
+				
 				testf = datedif<pdays;
 				if(!testf)then begin 
 					testf = !payday;
