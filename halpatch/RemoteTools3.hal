@@ -706,6 +706,8 @@ BEGIN
   Date curdate;	//Edit by Victor 19.12.14
 	
 	res = 0;
+	PDr.Code = PRp.PayDeal;
+	if (GetPD(PDr)) then begin end;//Edit by Victor 23.12.14
 	curdate = IVp.InvDate;
 	BlockLoad(ARAb);
   BlockLoad(SRRec);
@@ -713,7 +715,12 @@ BEGIN
   IVp.InvType = kInvoiceTypeNormal;
   IVp.PRCode = PRp.Code;
   IVp.LangCode = PRp.LangCode;
-  IVp.InvDate = curdate;
+
+  if(nonblank(PDr.Installment)) then begin	//Edit by Victor 23.12.14
+   	IVp.InvDate = curdate;	//date from PRp matrix	//Edit by Victor 23.12.14
+  end else begin
+  	IVp.InvDate = PRp.EndDate;	//Edit by Victor 23.12.14
+  end;
   IVp.TransDate = CurrentDate;
 //Edit***********************Vitalii 17:06 04.09.2014
 	TBBUr.PRCode = PRp.Code;
@@ -781,8 +788,8 @@ BEGIN
 	end;
   
 	
-	if(datedif>0 and datedif<pdays)then begin
-		testf = datedif<pdays;
+	if(datedif>0 and (datedif<pdays or !payday))then begin
+			testf = (datedif<pdays or !payday);
 		if(!testf)then begin 
 			testf = !payday;
 		end;

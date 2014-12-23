@@ -15,6 +15,7 @@ external procedure GetSalesGroup(string,var string);
 external updating function Integer SinglePRDownPayInvoice(var record PRVc);// Edit ************************** Wednesday, 20 August 2014 15:29:35
 remote procedure PasteTBBUInVIFunc(record TBBUVc);
 external function LongInt CountWorkingDays(Date,Date,string,string); //Edit***************************Sasha2,11:05 12.12.2014
+external function LongInt DateDiff(Date,Date); //Edit by Victor 23.12.14
 
 // Edit Start ---------------------------------------------- Edit Start
 	//Friday, 12 September 2014 16:24:32
@@ -396,6 +397,7 @@ begin
 	Integer pdays,datedif; //Edit***************************Sasha2,11:06 12.12.2014
 	record CUVc CUr; //Edit***************************Sasha2,11:08 12.12.2014
 	string 20 country; //Edit***************************Sasha2,11:14 12.12.2014
+	boolean payday, testf; //Edit by Victor 23.12.14
 	
 	sumday = 0;
 	//budsum = TBBUr.SumTime + TBBUr.SumMaterial + TBBUr.SumStocked;
@@ -417,17 +419,63 @@ begin
 					country = "UA";
 				end;
 			  	datedif = CountWorkingDays(PRr.EndDate,AddDay(PRr.EndDate,pdays),PRr.CustCode,country);
-				if(datedif>0 and datedif<pdays)then begin
+			  
+			  payday = true;
+  
+				switch(getDateid(AddDay(PRr.EndDate,pdays)))begin
+					case 1: if(CUr.Monday!=0) then begin payday = false;end;
+					case 2: if(CUr.Tuesday!=0) then begin  payday = false;end;
+					case 3: if(CUr.Wednesday!=0) then begin payday = false;end;
+					case 4: if(CUr.Thursday!=0) then begin payday = false;end;
+					case 5: if(CUr.Friday!=0) then begin payday = false;end;
+					case 6: if(CUr.Saturday!=0) then begin payday = false;end;
+					case 7: if(CUr.Sunday!=0) then begin payday = false;end;
+				end;
+		
+				if(datedif>0 and (datedif<pdays or !payday))then begin
+						testf = (datedif<pdays or !payday);
+					if(!testf)then begin 
+						testf = !payday;
+					end;
+	
+					while(testf)begin
+						i=i+1;
+						if(PDr.DayType==1)then begin
+						datedif = CountWorkingDays(AddDay(PRr.EndDate,1),AddDay(PRr.EndDate,pdays + i),PRr.CustCode,country);
+						end else begin
+							datedif = datediff(AddDay(PRr.EndDate,pdays + i), AddDay(PRr.EndDate,1));
+						end;
+						//curdate = AddDay(IVp.InvDate,pdays);
+						payday = true;
+						switch(getDateid(AddDay(PRr.EndDate,pdays + i-1)))begin
+							case 1: if(CUr.Monday!=0) then begin payday = false;end;
+							case 2: if(CUr.Tuesday!=0) then begin  payday = false;end;
+							case 3: if(CUr.Wednesday!=0) then begin payday = false;end;
+							case 4: if(CUr.Thursday!=0) then begin payday = false;end;
+							case 5: if(CUr.Friday!=0) then begin payday = false;end;
+							case 6: if(CUr.Saturday!=0) then begin payday = false;end;
+							case 7: if(CUr.Sunday!=0) then begin payday = false;end;
+						end;
+						testf = datedif<pdays;
+						if(!testf)then begin 
+							testf = !payday;
+						end;
+					end;
+					pdays = pdays + i - 1;
+				end;
+			  invday[0] = pdays;
+			end else begin //Edit***************************Sasha2,13:09 08.12.2014 }
+				invday[0] = PDr.pdays;
+			end;
+			
+			/*if(datedif>0 and datedif<pdays)then begin
 					while(datedif<pdays) begin
 						i=i+1;
 						datedif = CountWorkingDays(AddDay(PRr.EndDate,1),AddDay(PRr.EndDate,pdays + i),PRr.CustCode,country);
 					end;
 					pdays = pdays + i - 1;
-				end;
-				invday[0] = pdays;
-			end else begin //Edit***************************Sasha2,13:09 08.12.2014 }
-				invday[0] = PDr.pdays;
-			end;
+				end;*/
+			
 			if(nonblank(PDr.Installment))then begin
 				Installmentr.Code = PDr.Installment;
 				if(readfirstmain(Installmentr,1,true))then begin
@@ -454,7 +502,11 @@ begin
 	  	PRrw.Comment = TBBUr.Comment & " " & invprc[i];
 	  	PRrw.ValStr = invprc[i];
 	  	if(nonblank(PRr.EndDate))then begin
-				PRrw.PlanDate = addday(PRr.EndDate,-sumday + invday[i] + prevday);
+	  		if(nonblank(PDr.Installment))then begin	//Edit by Victor 23.12.14
+					PRrw.PlanDate = addday(PRr.EndDate,-sumday + invday[i] + prevday);
+				end else begin
+					PRrw.PlanDate = PRr.EndDate;	//Edit by Victor 23.12.14
+				end;
 				prevday = prevday + invday[i];
 	  	end else begin
 	  		PRrw.PlanDate = addday(PRr.StartDate,invday[invcnt]);
