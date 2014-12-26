@@ -509,12 +509,25 @@ BEGIN
   if (TBBUr.OKFlag==0) then begin //Edit***************************Sasha2,13:49 16.09.2014 {
   	res = false;
 	  if (UserCanAction("AllowPutOKFlagAllBudget",false)) then begin
-	    res = true;
+	    PRr.Code = TBBUr.PRCode;
+			if(ReadfirstMain(PRr, 1, true))then begin
+				if(nonblank(PRr.FinishedDate))then begin
+					res = true;
+				end else begin
+					res = false;
+					messagebox(0,"Не известна дата завершения проекта!");
+				end;
+			end;
 	  end else begin
 	  	PRr.Code = TBBUr.PRCode;
 	  	ReadFirstMain(PRr,1,true);
 	  	if (UserCanAction("AllowPutOKFlagOnlyProjectBudget",false) and PRr.Leader==CurrentUser) then begin
-	  		res = true;
+	  		if(nonblank(PRr.FinishedDate))then begin
+					res = true;
+				end else begin
+					res = false;
+					messagebox(0,"Не известна дата завершения проекта!");
+				end;
 	  	end;
 	  end;
   end; //Edit***************************Sasha2,13:49 16.09.2014 }
@@ -563,12 +576,25 @@ BEGIN
   	res = false;
   	  if (TBBUr.OKFlag!=0) then begin
 	  	  if (UserCanAction("AllowPutApproveFlagAllBudget",false)) then begin
-		    res = true;
+					PRr.Code = TBBUr.PRCode;
+					if(ReadfirstMain(PRr, 1, true))then begin
+						if(nonblank(PRr.FinishedDate))then begin
+							res = true;
+						end else begin
+							res = false;
+							messagebox(0,"Не известна дата завершения проекта!");
+						end;
+					end;
 		  end else begin
 		  	PRr.Code = TBBUr.PRCode;
 		  	ReadFirstMain(PRr,1,true);
 		  	if (UserCanAction("AllowPutApproveFlagOnlyProjectBudget",false) and PRr.Leader==CurrentUser) then begin
-		  		res = true;
+		  		if(nonblank(PRr.FinishedDate))then begin
+						res = true;
+					end else begin
+						res = false;
+						messagebox(0,"Не известна дата завершения проекта!");
+					end;
 		  	end;
 		  end;
   	  end;  

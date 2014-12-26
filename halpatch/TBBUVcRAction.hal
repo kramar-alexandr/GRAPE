@@ -61,6 +61,7 @@ begin
   if (testf) then begin  
     switch (TBBUr.AcceptanceStatus) begin
       case kAcceptanceStatePending:
+      case kAcceptanceStateNotStarted:	//Edit by Victor 26.12.14 //Can we do it?
       case kAcceptanceStateApproved:
       case kAcceptanceStateRejected:
       otherwise

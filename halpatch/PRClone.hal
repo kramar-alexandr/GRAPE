@@ -60,6 +60,9 @@ BEGIN
 			df = AddDay(df,-1);
 			PRr.FinishedDate = df;
 			
+			PRr.BUOKFlag = 0;
+			PRr.BUApproveFlag = 0;
+			
 			rwcnt = matrowcnt(PRr);
   		For(j=0;j<rwcnt;j=j+1) begin
 	 			matrowdelete(PRr,0);
@@ -101,8 +104,12 @@ BEGIN
 				RecordCopy(TBBUr,TBBUp);
 				
 				TBBUr.PRCode = PRr.Code;
-								
+				TBBUr.OKFlag = 0;
+				TBBUr.ApproveFlag = 0;
+				TBBUr.AcceptanceStatus = kAcceptanceStateNotStarted;	//need to set in 
+				
 				if (RecordInsert(TBBUr,true)) then begin end;
+				
 			end;				
 		end;
   end;
