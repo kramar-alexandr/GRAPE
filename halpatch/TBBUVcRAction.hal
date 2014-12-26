@@ -495,25 +495,25 @@ begin
 		end;
 		k = mtrw;
 		prevday = 0;
-		//RecordCopy(PRr,oldPRr);
+		//RecordCopy(PRr,oldPRr); 
 		For(i=0;i<invcnt;i=i+1) begin
 	  	clearrow(PRr,PRrw,1);
 	  	PRrw.RowType = 0;
 	  	PRrw.Comment = TBBUr.Comment & " " & invprc[i];
 	  	PRrw.ValStr = invprc[i];
-	  	if(nonblank(PRr.EndDate))then begin
+	  	if(nonblank(PRr.FinishedDate))then begin
 	  		if(nonblank(PDr.Installment))then begin	//Edit by Victor 23.12.14
-					PRrw.PlanDate = addday(PRr.EndDate,-sumday + invday[i] + prevday);
-				end else begin
-					PRrw.PlanDate = PRr.EndDate;	//Edit by Victor 23.12.14
-				end;
-				prevday = prevday + invday[i];
+				PRrw.PlanDate = addday(PRr.FinishedDate,-sumday + invday[i] + prevday); //Edit***************************Sasha2,14:29 26.12.2014
+			end else begin
+				PRrw.PlanDate = PRr.FinishedDate;	//Edit by Victor 23.12.14
+			end;
+			prevday = prevday + invday[i];
 	  	end else begin
-	  		PRrw.PlanDate = addday(PRr.StartDate,invday[invcnt]);
+	  		PRrw.PlanDate = addday(PRr.LaunchingDate,invday[invcnt]); //Edit***************************Sasha2,14:29 26.12.2014
 	  	end;
 	  	matrowinsert(PRr,k,PRrw);
 	  	k=k+1;
-		end; 
+		end;
 		RecordStore(PRr,true);
 		SinglePRDownPayInvoice(PRr);
 		

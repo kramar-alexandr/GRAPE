@@ -711,15 +711,16 @@ BEGIN
 	curdate = IVp.InvDate;
 	BlockLoad(ARAb);
   BlockLoad(SRRec);
-  RecordNew(IVp);
+  //RecordNew(IVp); //Edit***************************Sasha2,14:57 26.12.2014
   IVp.InvType = kInvoiceTypeNormal;
   IVp.PRCode = PRp.Code;
   IVp.LangCode = PRp.LangCode;
 
+  
   if(nonblank(PDr.Installment)) then begin	//Edit by Victor 23.12.14
    	IVp.InvDate = curdate;	//date from PRp matrix	//Edit by Victor 23.12.14
   end else begin
-  	IVp.InvDate = PRp.EndDate;	//Edit by Victor 23.12.14
+  	IVp.InvDate = PRp.FinishedDate;	//Edit by Victor 23.12.14
   end;
   IVp.TransDate = CurrentDate;
 //Edit***********************Vitalii 17:06 04.09.2014
@@ -1081,6 +1082,7 @@ BEGIN
     tot = tot - lPRr.DownPaySent;
     if (tot>0) then begin
       res = 1;
+      RecordNew(IVr);
       res = ProInvHead(IVr,lPRr);
       if (res!=0) then begin
         goto LPRDownPayInvoice;
@@ -1248,101 +1250,117 @@ BEGIN
             end;
             comment = prrw.Comment;
        
-					if (tot>0) then begin
-						RecordNew(IVr);
-						/*IVr.SerNr = nextsernr("IVVc",CurrentDate,-1,false,"");
-						IVr.CustCode = lPRr.CustCode;
-						IVr.InvDate = CurrentDate;
-						IVr.TransDate = CurrentDate;
-						IVr.PayDate = prrw.PlanDate;
-						IVr.PayDeal = lPRr.PayDeal;*/
-						res = 1;
-						IVr.InvDate = prrw.PlanDate;
-						res = ProInvHead(IVr,lPRr);
-						if (res!=0) then begin
-							goto LPRDownPayInvoice;
-						end;
-						IVr.InvType = kInvoiceTypeDownpayment;
-						rwcnt = MatRowCnt(IVr);
-						ClearRow(IVr,IVrw,1);
-						IVrw.Spec = " ";
-						MatRowPut(IVr,rwcnt,IVrw);
-						ClearRow(IVr,IVrw,5);
-						IVrw.Sum = tot;      
-						GetItemSalesAcc(PRRec.Item,IVr.ExportFlag,tstr);
-						IVrw.SalesAcc = tstr;
-						GetItemVATCode(PRRec.Item,IVr.ExportFlag,tstr,true);
-						IVrw.VATCode = tstr;
-						if (nonblank(IVr.CustVATCode)) then begin
-							IVrw.VATCode = IVr.CustVATCode;
-						end;
-						IVrw.Spec = comment;
-						MatRowPut(IVr,rwcnt+1,IVrw);
-						rwcnt = rwcnt + 1;
-						if (rettot>0) then begin
-							ClearRow(IVr,IVrw,12);
-							if (rettot>tot) then begin
-								rettot = tot;
-							end;
-							IVrw.Sum = rettot;
-							GetItemSalesAcc(PRRec.RetentionItem,IVr.ExportFlag,tstr);
-							IVrw.SalesAcc = tstr;
-							GetItemVATCode(PRRec.RetentionItem,IVr.ExportFlag,tstr,true);
-							IVrw.VATCode = tstr;
-							if (nonblank(IVr.CustVATCode)) then begin
-								IVrw.VATCode = IVr.CustVATCode;
-							end;
-							IVrw.Spec = comment;
-							MatRowPut(IVr,rwcnt+1,IVrw);
-							rwcnt = rwcnt + 1;
-						end;
-						IVr.InvComment = PRp.Name;//Edit by Victor 10.09.14
-						//IVr.PayDate = prrw.PlanDate;
-						IVSumup(IVr,true);
-						//IVr.InvDate = prrw.PlanDate;//Edit by Victor 22.12.14
-						//IVr.PayDate = prrw.PlanDate; //Comment by Victor 22.12.14
-						if (IVr.Sum4!=0) then begin
-							CUr.Code = PRp.CustCode;
-							if (ReadFirstMain(CUr,1,true)) then begin end;
-			//        IVr.OfficialSerNr = FindNextLegalSerNr(IVr,CUr.Classification);// POSN
-							if (RecordStore(IVr,false)) then begin end;
-							testf = true;
-							CreateRecordLink(IVr,CurrentCompany,lPRr,CurrentCompany);  
-      						CreateRecordLink(lPRr,CurrentCompany,IVr,CurrentCompany);
-							if (testf) then begin
-								prrw.InvNr = IVr.SerNr;
-								if (blank(prrw.Person)) then begin
-									prrw.Person = CurrentUser;
-								end;
-								MatRowPut(lPRr,i,prrw);
-							end;
-							UpdatePRRetRow(lPRr,IVr.SerNr,rettot,false);
-						end;
+			if (tot>0) then begin
+				RecordNew(IVr);
+				/*IVr.SerNr = nextsernr("IVVc",CurrentDate,-1,false,"");
+				IVr.CustCode = lPRr.CustCode;
+				IVr.InvDate = CurrentDate;
+				IVr.TransDate = CurrentDate;
+				IVr.PayDate = prrw.PlanDate;
+				IVr.PayDeal = lPRr.PayDeal;*/
+				res = 1;
+				IVr.InvDate = prrw.PlanDate;
+				res = ProInvHead(IVr,lPRr);
+				if (res!=0) then begin
+					goto LPRDownPayInvoice;
+				end;
+				IVr.InvType = kInvoiceTypeDownpayment;
+				rwcnt = MatRowCnt(IVr);
+				ClearRow(IVr,IVrw,1);
+				IVrw.Spec = " ";
+				MatRowPut(IVr,rwcnt,IVrw);
+				ClearRow(IVr,IVrw,5);
+				IVrw.Sum = tot;      
+				GetItemSalesAcc(PRRec.Item,IVr.ExportFlag,tstr);
+				IVrw.SalesAcc = tstr;
+				GetItemVATCode(PRRec.Item,IVr.ExportFlag,tstr,true);
+				IVrw.VATCode = tstr;
+				if (nonblank(IVr.CustVATCode)) then begin
+					IVrw.VATCode = IVr.CustVATCode;
+				end;
+				IVrw.Spec = comment;
+				MatRowPut(IVr,rwcnt+1,IVrw);
+				rwcnt = rwcnt + 1; 
+				if (rettot>0) then begin
+					ClearRow(IVr,IVrw,12);
+					if (rettot>tot) then begin
+						rettot = tot;
 					end;
-					if (RecordUpdate(oldPRr,lPRr,false)==0) then begin
+					IVrw.Sum = rettot;
+					GetItemSalesAcc(PRRec.RetentionItem,IVr.ExportFlag,tstr);
+					IVrw.SalesAcc = tstr;
+					GetItemVATCode(PRRec.RetentionItem,IVr.ExportFlag,tstr,true);
+					IVrw.VATCode = tstr;
+					if (nonblank(IVr.CustVATCode)) then begin
+						IVrw.VATCode = IVr.CustVATCode;
 					end;
-
-					testf = false;
-					if (nonblank(CUr.InvoiceToCode)) then begin
-						CUr.Code = CUr.InvoiceToCode;
-						if (ReadFirstMain(CUr,1,true)) then begin
-						end;
-					end;
-					if (PRp.CurncyCode!=CUr.CurncyCode) then begin
-						testf = true;
-					end;
+					IVrw.Spec = comment;
+					MatRowPut(IVr,rwcnt+1,IVrw);
+					rwcnt = rwcnt + 1;
+				end;
+				IVr.InvComment = PRp.Name;//Edit by Victor 10.09.14
+				//IVr.PayDate = prrw.PlanDate;
+				IVSumup(IVr,true);
+				//IVr.InvDate = prrw.PlanDate;//Edit by Victor 22.12.14
+				//IVr.PayDate = prrw.PlanDate; //Comment by Victor 22.12.14
+				if (IVr.Sum4!=0) then begin
+					CUr.Code = PRp.CustCode;
+					if (ReadFirstMain(CUr,1,true)) then begin end; 
+	//        IVr.OfficialSerNr = FindNextLegalSerNr(IVr,CUr.Classification);// POSN
+					if (RecordStore(IVr,false)) then begin end;
+					testf = true;
+					CreateRecordLink(IVr,CurrentCompany,lPRr,CurrentCompany);  
+					CreateRecordLink(lPRr,CurrentCompany,IVr,CurrentCompany);
 					if (testf) then begin
-						j = TypeOfCurncy(CUr.CurncyCode,oldstyle);
-						if ((j==0) or (j==2)) then begin
-							IVr.CurncyCode = CUr.CurncyCode;
-							RecalcProjectInvoice(IVr,PRp.CurncyCode);
+						prrw.InvNr = IVr.SerNr;
+						if (blank(prrw.Person)) then begin
+							prrw.Person = CurrentUser;
 						end;
+						MatRowPut(lPRr,i,prrw);
 					end;
+					UpdatePRRetRow(lPRr,IVr.SerNr,rettot,false);
+				end;
+			end;
+			if (RecordUpdate(oldPRr,lPRr,false)==0) then begin
+			end;
 
-					UpdatePRFromIV(IVr,true,fakeIVr,false);
+			testf = false;
+			if (nonblank(CUr.InvoiceToCode)) then begin
+				CUr.Code = CUr.InvoiceToCode;
+				if (ReadFirstMain(CUr,1,true)) then begin
+				end;
+			end;
+			if (PRp.CurncyCode!=CUr.CurncyCode) then begin
+				testf = true;
+			end;
+			if (testf) then begin
+				j = TypeOfCurncy(CUr.CurncyCode,oldstyle);
+				if ((j==0) or (j==2)) then begin
+					IVr.CurncyCode = CUr.CurncyCode;
+					RecalcProjectInvoice(IVr,PRp.CurncyCode);
+				end;
+			end;
+
+			UpdatePRFromIV(IVr,true,fakeIVr,false);
 			 end;
       end;
-    end;    
+    end;
+    lPRr.Code = PRp.Code; //Edit***************************Sasha2,15:25 26.12.2014 {
+  	if (ReadFirstMain(lPRr,1,true)) then begin
+  		RecordCopy(oldPRr,lPRr);
+  		testf = false;
+  		prrwcnt = MatRowCnt(lPRr);
+  		for (i=prrwcnt-1;i>=0;i=i-1) begin 
+		  MatRowGet(lPRr,i,prrw);
+		  if (prrw.InvNr==-1) then begin
+		    MatRowDelete(lPRr,i);
+		    testf = true;
+		  end;
+		end;
+		if (testf) then begin
+			RecordUpdate(oldPRr,lPRr,false);
+		end;
+  	end;  //Edit***************************Sasha2,15:25 26.12.2014 }
   end;
 LPRDownPayInvoice:;  
   SinglePRDownPayInvoice = res;
