@@ -739,7 +739,7 @@ BEGIN
     			res = false;
     	end;
   end; //Edit***************************Sasha2,13:45 08.10.2014 }
-  
+
   if (WindowState(wn)==updatemode) then begin
     GetPrevWindowRecord(wn,TBBUr);
     if(TBBUr.OKFlag!=0) then begin 
@@ -747,7 +747,7 @@ BEGIN
   		goto LTBBUDClassActiveEditField;
   	end;
   end;
-  
+
   if (TBBUAcceptanceStarted(TBBUr) and UserCanChangePendingRecord(rownr)==false) then begin res = false; end;
   switch (fieldname) begin
     case "Cost": 

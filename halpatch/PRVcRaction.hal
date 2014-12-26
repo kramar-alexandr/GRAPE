@@ -227,6 +227,22 @@ BEGIN
     res = 0;
     goto LPRVcRecordRemoveTest;
   end;
+  IVr.PRCode = PRr.Code; 
+  if (ReadFirstKey("PRCodePayDate",IVr,1,true)) then begin
+    if (long3>0) then begin
+      MessageBox(1560,". " & USetStr(31031));
+    end;
+    res = 0;
+    goto LPRVcRecordRemoveTest;
+  end;
+  VIr.PRCode = PRr.Code; 
+  if (ReadFirstKey("PRCodeDueDate",VIr,1,true)) then begin
+    if (long3>0) then begin
+      MessageBox(1560,". " & USetStr(31032));
+    end;
+    res = 0;
+    goto LPRVcRecordRemoveTest;
+  end;
   ADJr.PRCode = PRr.Code; 
   if (ReadFirstKey("PRCode",ADJr,1,true)) then begin
     if (long3>0) then begin
@@ -1103,3 +1119,25 @@ begin
   PRVcRecordProtectFields = res;
   RETURN;
 END;
+
+
+global //Edit***************************Sasha2,16:28 26.12.2014 {
+updating function LongInt PRVcRecordRemoveAfter(var record PRVc PRr,record PRVc PR2r,LongInt stat,LongInt long4)
+begin
+  LongInt res;
+  record ActVc Actr;
+  boolean TrHs;
+
+  	TrHs = true;
+  	Actr.PRCode = PRr.Code;
+  	while (LoopKey("PRCode",Actr,1,TrHs)) begin 
+	  	if (Actr.PRCode!=PRr.Code) then begin TrHs = false; end;
+	  	if (TrHs) then begin
+	  		RECORDREMOVE(Actr);
+	  		StepBack(Actr);
+	  	end;
+  	end;
+  	
+  PRVcRecordRemoveAfter = res;
+  return;
+end; //Edit***************************Sasha2,16:28 26.12.2014 }
