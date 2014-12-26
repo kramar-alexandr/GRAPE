@@ -656,10 +656,18 @@ begin
   record PRVc PRr;
   
   res = true;
+  GetWindowRecord(wn,PRr); //Edit***************************Sasha2,10:48 26.12.2014 {
+  if (PRr.Terminated==1 and UserCanAction("AllowTakeOffProjTerminated",false)==false) then begin
+  	res = false;
+  	goto LPRDClassUpdateTest;
+  end; //Edit***************************Sasha2,10:48 26.12.2014 }
   if (UserCanAction("DisallowPojectChangefornonPRMan",false)) then begin
-    GetWindowRecord(wn,PRr);
+    //GetWindowRecord(wn,PRr); //Edit***************************Sasha2,10:48 26.12.2014
     res = CheckProjectManager(PRr);
   end;
+  
+LPRDClassUpdateTest:; //Edit***************************Sasha2,10:48 26.12.2014
+  
   PRDClassUpdateTest = res;
   return;
 end;

@@ -5,15 +5,13 @@ begin
   Integer err;
   string 255 warntext;
 
-  ADJVIr.PRCode = PRr.Code;
-  if (ReadFirstMain(ADJVIr,1,true)==false) then begin
     RecordNew(ADJVIr);
     ADJVIr.TransDate = CurrentDate;
     ADJVIr.PRCode = PRr.Code;
     ADJVIr.PRName = PRr.Name;  
     //ADJVIr.CustCode = PRr.CustCode;
     err = 0;
-  end;
+
   return;
 end;
 

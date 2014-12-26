@@ -558,7 +558,15 @@ begin
   TBBUr.PRCode = PRr.Code;
   if (ReadFirstMain(TBBUr,1,true)==false) then begin
     RecordNew(TBBUr);
-    TBBUr.TransDate = CurrentDate;
+    if (NonBlankDate(PRr.LaunchingDate)) then begin
+    	TBBUr.TransDate = PRr.LaunchingDate;
+    end else begin
+    	if (NonBlankDate(PRr.StartDate)) then begin
+    		TBBUr.TransDate = PRr.StartDate;
+    	end else begin
+    		TBBUr.TransDate = CurrentDate;
+    	end;
+    end;
     TBBUr.PRCode = PRr.Code;
     TBBUr.PRName = PRr.Name;  
     TBBUr.CustCode = PRr.CustCode;

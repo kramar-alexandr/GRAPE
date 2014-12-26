@@ -5,15 +5,13 @@ begin
   Integer err;
   string 255 warntext;
 
-  SAVIr.PRCode = PRr.Code;
-  if (ReadFirstMain(SAVIr,1,true)==false) then begin
     RecordNew(SAVIr);
     SAVIr.TransDate = CurrentDate;
     SAVIr.PRCode = PRr.Code;
     SAVIr.PRName = PRr.Name;  
     //SAVIr.CustCode = PRr.CustCode;
     err = 0;
-  end;
+
   return;
 end;
 

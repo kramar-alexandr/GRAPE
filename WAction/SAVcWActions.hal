@@ -5,15 +5,13 @@ begin
   Integer err;
   string 255 warntext;
 
-  SAr.PRCode = PRr.Code;
-  if (ReadFirstMain(SAr,1,true)==false) then begin
     RecordNew(SAr);
     SAr.TransDate = CurrentDate;
     SAr.PRCode = PRr.Code;
     SAr.PRName = PRr.Name;  
     SAr.CustCode = PRr.CustCode;
     err = 0;
-  end;
+
   return;
 end;
 

@@ -4103,20 +4103,29 @@ begin
   RadioButton(h,v,0,0,"Активный",Terminated);
   RadioButton(h,v+=16,2,0,"Не рег-ть записи операций",Terminated);
   RadioButton(h,v+=16,1,0,"Завершен",Terminated);
-  ButtonFrame(h=280,v=vm,150,3,"Вид проекта");
-  RadioButton(h,v,0,0,"Фактурируемый",Type);
-  RadioButton(h,v+=16,1,255,"Внутренний",Type);
-  RadioButton(h,v+=16,2,255,"Тендерный",Type); //Edit***************************Sasha2,11:44 21.10.2014
   if (IsEnterprise) then begin
-    ButtonFrame(h=460,v=vm+20+30,220,3,"Использов. товаров в бюдж. проекта");//Edit***************************Sasha2,10:27 25.11.2014
+    ButtonFrame(h,v=vm+20+50,220,3,"Использов. товаров в бюдж. проекта");//Edit***************************Sasha2,10:27 25.11.2014
     RadioButton(h,v,0,0,"Не предупреждать",TBIVItemsUsage);
     RadioButton(h,v+=16,1,255,"Предупреждать",TBIVItemsUsage);
     RadioButton(h,v+=16,2,255,"Не разрешать",TBIVItemsUsage);
   end;
-  EditField(-110,v=26,70,"Дата начала",Normal ,StartDate,false,PasteCurDate);
-  EditField(-110,v+=20,70,"Дата старта проекта",Normal,LaunchingDate,false,PasteCurDate); //Edit***************************Sasha2,10:28 25.11.2014
-  EditField(-110,v+=30,70,"Дата окончания",Normal ,EndDate,false,PasteCurDate);
+  ButtonFrame(h=280,v=vm,150,3,"Вид проекта");
+  RadioButton(h,v,0,0,"Фактурируемый",Type);
+  RadioButton(h,v+=16,1,255,"Внутренний",Type);
+  RadioButton(h,v+=16,2,255,"Тендерный",Type); //Edit***************************Sasha2,11:44 21.10.2014
+  /*if (IsEnterprise) then begin
+    ButtonFrame(h=460,v=vm+20+50,220,3,"Использов. товаров в бюдж. проекта");//Edit***************************Sasha2,10:27 25.11.2014
+    RadioButton(h,v,0,0,"Не предупреждать",TBIVItemsUsage);
+    RadioButton(h,v+=16,1,255,"Предупреждать",TBIVItemsUsage);
+    RadioButton(h,v+=16,2,255,"Не разрешать",TBIVItemsUsage);
+  end;*/
+  ButtonFrame(-200,v=40,150,0,"Финанс.даты"); //Edit***************************Sasha2,16:16 25.12.2014
+  EditField(-110,v+=2,70,"Дата начала",Normal ,StartDate,false,PasteCurDate);
+  EditField(-110,v+=20,70,"Дата окончания",Normal ,EndDate,false,PasteCurDate); //Edit***************************Sasha2,10:28 25.11.2014
+  ButtonFrame(-200,v+=60,150,0,"Бухгалт.даты"); //Edit***************************Sasha2,16:16 25.12.2014
+  EditField(-110,v+=2,70,"Дата старта проекта",Normal,LaunchingDate,false,PasteCurDate); //Edit***************************Sasha2,16:30 25.12.2014
   EditField(-110,v+=20,70,"Дата завершения проекта",Normal,FinishedDate,false,PasteCurDate);
+  v = v + 40; //Edit***************************Sasha2,16:32 25.12.2014
   if (HasMultiCurrency) then begin
     EditField(-110,v+=20,70,"Валюта проекта",Normal,CurncyCode,false,CurncyCodeSClass);
   end;
@@ -4310,7 +4319,7 @@ begin
   end;
   SpecialMenu("Создать бюджет проекта",'b',5,"DoTBBUFromPRD");
   SpecialMenu("Показать бюджет проекта",'B',6,"OpenTBBUPRD");
-  SpecialMenu("Прикрепить акт выполненной работы",'',10,"AddADJtoPRDsm");//*****Edit by Victor 12.09.14
+  SpecialMenu("Прикрепить акт выполненной работы с клиентом",'',10,"AddADJtoPRDsm");//*****Edit by Victor 12.09.14
   SpecialMenu("Прикрепить дополнительное соглашение с клиентом",'',11,"AddSAtoPRDsm");//*****Edit by Victor 12.09.14
   SpecialMenu("Прикрепить акт выполненной работы с подрядчиком",'',12,"AddADJVItoPRDsm");//*****Edit by Victor 15.09.14
   SpecialMenu("Прикрепить дополнительное соглашение с подрядчиком",'',13,"AddSAVItoPRDsm");//*****Edit by Victor 15.09.14

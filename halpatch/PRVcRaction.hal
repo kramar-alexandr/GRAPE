@@ -194,6 +194,13 @@ BEGIN
   LongInt res;
   record TBIVVc TBIVr;
   record PRVc daughterPRr;
+  record VIVc VIr; //Edit***************************Sasha2,16:39 25.12.2014
+  record IVVc IVr; //Edit***************************Sasha2,16:39 25.12.2014
+  record ADJVc ADJr; //Edit***************************Sasha2,16:40 25.12.2014
+  record SAVc SAr; //Edit***************************Sasha2,16:41 25.12.2014
+  record ADJVIVc ADJVIr; //Edit***************************Sasha2,16:41 25.12.2014
+  record SAVIVc SAVIr; //Edit***************************Sasha2,16:41 25.12.2014
+  record TBBUVc TBBUr; //Edit***************************Sasha2,9:22 26.12.2014
 
   res = 1;
   TBIVr.PRCode = PRr.Code;
@@ -202,14 +209,59 @@ BEGIN
       MessageBox(1560,"");
     end;
     res = 0;
+    goto LPRVcRecordRemoveTest;
   end;
   daughterPRr.MotherCode = PRr.Code;
   if (ReadFirstKey("MotherCode",daughterPRr,1,true)) then begin
-    if (long3>0) then begin
-      MessageBox(1560," " & USetStr(22086));
+    if (long3>0) then begin 
+      MessageBox(1560,". " & USetStr(22086));
     end;
     res = 0;
+    goto LPRVcRecordRemoveTest;
   end;
+  TBBUr.PRCode = PRr.Code; //Edit***************************Sasha2,17:03 25.12.2014 {
+  if (ReadFirstMain(TBBUr,1,true)) then begin
+    if (long3>0) then begin
+      MessageBox(1560,". " & USetStr(31029));
+    end;
+    res = 0;
+    goto LPRVcRecordRemoveTest;
+  end;
+  ADJr.PRCode = PRr.Code; 
+  if (ReadFirstKey("PRCode",ADJr,1,true)) then begin
+    if (long3>0) then begin
+      MessageBox(1560,". " & USetStr(31025));
+    end;
+    res = 0;
+    goto LPRVcRecordRemoveTest;
+  end;
+  SAr.PRCode = PRr.Code;
+  if (ReadFirstKey("PRCode",SAr,1,true)) then begin
+    if (long3>0) then begin
+      MessageBox(1560,". " & USetStr(31026));
+    end;
+    res = 0;
+    goto LPRVcRecordRemoveTest;
+  end;
+  ADJVIr.PRCode = PRr.Code;
+  if (ReadFirstKey("PRCode",ADJVIr,1,true)) then begin
+    if (long3>0) then begin
+      MessageBox(1560,". " & USetStr(31027));
+    end;
+    res = 0;
+    goto LPRVcRecordRemoveTest;
+  end;
+  SAVIr.PRCode = PRr.Code;
+  if (ReadFirstKey("PRCode",SAVIr,1,true)) then begin
+    if (long3>0) then begin
+      MessageBox(1560,". " & USetStr(31028));
+    end;
+    res = 0;
+    goto LPRVcRecordRemoveTest;
+  end;
+
+LPRVcRecordRemoveTest:; //Edit***************************Sasha2,17:03 25.12.2014 }
+  
   PRVcRecordRemoveTest = res;
   RETURN;
 END;
@@ -749,6 +801,7 @@ BEGIN
   record UserVc Userr;
 
   res = 0;
+  
   switch (ProgramType) begin
     case typTimeLog: smalldevicesf = true;
   end;
@@ -940,6 +993,11 @@ BEGIN
     end;
   end;
   if (stat==Rs_update) then begin
+  	if ((PRr.Terminated==1 and PR2r.Terminated==1) or (PRr.Terminated!=1 and PR2r.Terminated==1 and UserCanAction("AllowTakeOffProjTerminated",true)==false)) then begin //Edit***************************Sasha2,10:30 26.12.2014 {
+  		RecordCheckError(31030,"",-1,"Terminated");      
+    	res = -1;
+    	goto LPRVcRecordCheck;
+  	end; //Edit***************************Sasha2,10:30 26.12.2014 }
     if (PRr.CustCode!=PR2r.CustCode) then begin
       if (IsCustCodeChangeAllowed(PR2r)==false) then begin
         RecordCheckError(1250," " & PR2r.CustCode,-1,"CustCode");      
