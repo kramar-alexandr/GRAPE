@@ -5438,3 +5438,27 @@ begin
   end;
   EndWindow;
 end;
+
+window TBBULClass:1
+  wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
+begin
+  WindowBegin("Бюджеты проектов",TBBULClass,CGmlist,-);
+  SpawnClass(TBBUDClass);
+  SetWRect(64,80,760,298);
+  Sizeable(-1,-1,0,0);
+  UseView(TBBUVc);
+  RecordList(4,17,-21,-39);
+  RlColKey(4,4,    "Проект",PRCode,false,MainKey);
+  RlColKey(81,81,"Дата",TransDate,false,TransDate);
+  RlColKey(155,155,"Продавец",SalesMan,false,SalesMan);
+  RlColKey(220,220,"Наименование",PRName,false,PRName);
+  RlColKey(-300,-300,"Клиент",CustCode,false,CustCode);
+  RlColKey(-240,-240,"Наим. клиента",CustName,false,CustName);
+  RlCol(-140,-120,"Итого с НДС",TotSumVAT,true);	// Edit -----------------Dima  26.12.2014
+  RlCol(-70,-60,"Итого",TotSum,true);
+  SearchField("Найти");
+  if (HasLimitedAccess) then begin
+    BrowseSubsetButton(-40,-15);
+  end;
+  EndWindow;
+end;
