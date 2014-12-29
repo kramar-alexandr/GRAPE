@@ -14,6 +14,7 @@ external function Integer CountObjects(string);
 external procedure ExtractElemFromSet(string,integer,var string);
 external procedure FindClTypeforPRClass(string,var string);
 external procedure FindOTforPRClass(string,var string);
+forward updating procedure PRCreateNewAct(record PRVc);
 
 global
 function LongInt PRVcRecordInIndex(record PRVc PRr,string indexname)
@@ -341,6 +342,11 @@ BEGIN
   if(blank(PRr.MotherCode))then begin// Edit ************************** Tuesday, 21 October 2014 10:51:11
 		SRRec.LastPRCode = PRr.Code;
   end;
+
+  if (nonblank(PRr.FinishedDate)) then begin		//Edit----------------------------Dima 26.12.2014
+	PRCreateNewAct(PRr);
+  end;
+
   BlockStore(SRRec);
   PRVcRecordSaveAfter = res; 
   RETURN;
@@ -398,6 +404,11 @@ begin
   if (PRr.Members!=PR2r.Members) or (PRr.PrSalesMan!=PR2r.PrSalesMan) or (PRr.SalesGroup!=PR2r.SalesGroup) then begin
     PRUpdatePRSchedule(PRr);
   end;
+
+  if (nonblank(PRr.FinishedDate)) then begin		//Edit----------------------------Dima 26.12.2014
+	PRCreateNewAct(PRr);
+  end;
+
   PRVcRecordUpdateAfter = res; 
   return;
 end;
@@ -1141,3 +1152,59 @@ begin
   PRVcRecordRemoveAfter = res;
   return;
 end; //Edit***************************Sasha2,16:28 26.12.2014 }
+
+
+
+
+
+global		//Edit----------------Dima 29.12.2014
+updating procedure PRCreateNewAct(record PRVc PRr)
+begin
+record ActVc Actr,oldActr;
+boolean TrHs,found;
+
+	TrHs = true;
+	found = false;
+
+	while(LoopKey("ActType",Actr,4,TrHs)) begin
+		if ((Actr.PRCode==PRr.Code) and (Actr.ActType == "MES")) then begin
+			RecordCopy(oldActr,Actr);
+			Actr.TransDate = AddDay(PRr.FinishedDate,-5);
+			Actr.EndDate = PRr.FinishedDate;
+			Actr.MainPersons = PRr.Leader;
+			Actr.CCPersons = PRr.Leader;
+			Actr.Comment = USetStr(31033) &" "& PRr.Code & " (" & PRr.Name & ")" ;
+			RecordUpdate(oldActr,Actr,true);
+			TrHs = false;
+			found = true;
+		end;
+	
+	end;
+	
+	
+	if (found==false) then begin
+		RecordNew(Actr);
+		Actr.SerNr = -1;
+		Actr.SerNr = NextSerNr("ActVc",Actr.TransDate,-1,false,""); 
+		Actr.PrioLevel = -1;		
+		Actr.TodoFlag = 1; 		//Plan
+		Actr.MainPersons = PRr.Leader;
+		//Actr.Supervisor = PRr.Leader;
+		Actr.CCPersons = PRr.Leader;
+		Actr.TransDate = AddDay(PRr.FinishedDate,-5);
+		Actr.StartTime = "10:00:00";
+		Actr.EndDate = PRr.FinishedDate;
+		Actr.Comment = USetStr(31033) &" "& PRr.Code & " (" & PRr.Name & ")" ;
+		Actr.ActType = "MES";
+		Actr.PRCode = PRr.Code;
+		Actr.CUCode = PRr.CustCode;
+		Actr.Contact = PRr.Contact;
+		Actr.CUName = PRr.CustName;
+		Actr.CalTimeFlag = 1; 	//Calendar->Time
+		Actr.AlarmType = 1; 	//Alarm->Message
+		if(RecordStore(Actr,true)) then begin end;
+	
+	end;
+
+return;
+end;			//End----------------------------Edit
