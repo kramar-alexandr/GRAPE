@@ -95,6 +95,8 @@ external updating procedure AddToTheCustomerAccount(string,date,string,LongInt,v
 external procedure InvVat(Integer,Integer,Integer,Integer,string,val,var val,var val,var val,var val,var val);
 external function Boolean EInvoiceWithPDFFileTest(string,string,var record EInvCUVc);
 external updating procedure RoyaltyIVRemoved(record IVVc);
+external function LongInt CountWorkingDays(Date,Date,string,string);
+external function Boolean GetPD(var record PDVc);
 
 procedure SetIVAcceptanceFlag(var record IVVc IVr,record IVVc prevIVr,LongInt stat)
 begin
@@ -309,6 +311,69 @@ begin
   RETURN;
 END;
 
+function Boolean GetBankHoliday(string countrycode,var record BHollVc BHr)
+begin
+  record CYBlock CompYear;
+  string 20 country;
+  Boolean res;
+  
+  BlockLoad(CompYear);
+  country = countrycode;
+  if (blank(country)) then begin
+    country = CompYear.CountryCode;
+  end;
+  BHr.CountryCode = country;
+  res = ReadFirstMain(BHr,1,true);
+  if ((res==false) and (country<>CompYear.CountryCode)) then begin
+    BHr.CountryCode = CompYear.CountryCode;
+    res = ReadFirstMain(BHr,1,true);
+  end;
+  GetBankHoliday = res;
+  return;
+end;
+
+function Boolean IsHolliday(Date tdp,record BHollVc BHp,Boolean ignoreweekdays)
+begin
+  row BHollVc BHrw;
+  Integer i,rwcnt;
+  Boolean res;
+  
+  res = false;
+  i = GetDateId(tdp);
+  res = false;
+  if (ignoreweekdays==false) then begin
+    switch(i) begin
+      case 1:
+        if (BHp.Monday<>0) then begin res = true; end;
+      case 2:
+        if (BHp.Tuesday<>0) then begin res = true; end;
+      case 3:
+        if (BHp.Wednesday<>0) then begin res = true; end;
+      case 4:
+        if (BHp.Thursday<>0) then begin res = true; end;
+      case 5:
+        if (BHp.Friday<>0) then begin res = true; end;
+      case 6:
+        if (BHp.Saturday<>0) then begin res = true; end;
+      case 7:
+        if (BHp.Sunday<>0) then begin res = true; end;
+    end;
+  end;
+  if (res==false) then begin
+    rwcnt = MatRowCnt(BHp);
+    for (i=0;i<rwcnt;i=i+1) begin
+      MatRowGet(BHp,i,BHrw);
+      if (tdp==BHrw.FreeDay) then begin
+        res = true;
+        goto LIsHolliday;
+      end;
+    end;
+  end;
+LIsHolliday:;
+  IsHolliday = res;
+  return;
+end;
+
 //Edit***************************Sasha2,18:04 17.12.2014 {
 updating procedure UpdateVIPayDate(string projcode,date payd)
 begin
@@ -317,7 +382,13 @@ begin
   boolean TrHs,testf;
   date foundD;
   array LongInt visernrs;
-  Integer arcnt,i;
+  Integer arcnt,i,datedif,pdays;	//Edit by Victor 30.12.14 {
+  record CUVc CUr;
+  string 20 country,custCode;
+  record PRVc PRr;
+  record PDVc PDr;
+  record BHollVc BHr;
+  boolean testf2, isHoll;	//Edit by Victor 30.12.14 }
   
   	arcnt = 0;
   	foundD = payd;
@@ -328,10 +399,59 @@ begin
 		if (IVr.PRCode!=projcode) then begin TrHs = false; end;
 		if (TrHs and IVr.PayDate>foundD) then begin
 			foundD = IVr.PayDate;
+			custCode = IVr.CustCode;	//Edit by Victor 30.12.14
 		end;
 	end;
 	
-	foundD = AddDay(foundD,2);
+	CUr.Code = custCode;	//Edit by Victor 30.12.14 {
+
+	if(readfirstmain(CUr,1,true))then begin
+		country = CUr.CountryCode;
+	end else begin
+		country = "UA";
+	end;
+		
+	pdays = 2;	//Can change this to PDr.pdays //Edit by Victor 30.12.14
+		
+	PRr.Code = projcode;
+	if(readfirstmain(PRr, 1, true)) then begin
+		PDr.Code = PRr.PayDeal;
+  	if (GetPD(PDr)) then begin end;
+			if(PDr.DayType==1)then begin
+				datedif = CountWorkingDays(foundD,AddDay(foundD,pdays),custCode,country);				
+			end else begin
+				foundD = AddDay(foundD,pdays);	//Calendar day
+				goto LDateFound;
+			end;		
+	end;
+	
+	if (GetBankHoliday(country,BHr)) then begin end;	//Edit by Victor 30.12.14
+	isHoll =	IsHolliday(AddDay(foundD,pdays),BHr,false);	//Edit by Victor 30.12.14
+	
+	if(datedif>0 and (datedif<pdays or isHoll))then begin
+			testf2 = (datedif<pdays or isHoll);
+			if(!testf2)then begin 
+				testf2 = IsHolliday(AddDay(foundD,pdays),BHr,false);
+			end;
+	
+			while(testf2) begin
+				i=i+1;
+				datedif = CountWorkingDays(AddDay(foundD,1),AddDay(foundD,pdays + i),custCode,country);
+				
+				testf2 = datedif<pdays;
+				
+				if(!testf2)then begin 
+					isHoll =	IsHolliday(AddDay(foundD,pdays + i),BHr,false);
+					testf2 = isHoll;
+				end;
+			end;
+			pdays = pdays + i - 1;
+		end; 	//Edit by Victor 30.12.14 }
+	
+	foundD = AddDay(foundD,pdays);
+	
+	LDateFound:;
+	
 	VIr.PRCode = projcode;
   	TrHs = true;
 	while (loopkey("PRCodeDueDate",VIr,1,TrHs)) begin
