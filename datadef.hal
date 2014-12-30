@@ -407,6 +407,7 @@ begin
   RecordField(IntrastatTransCode,M4Code,20,0);
   RecordField(GlobalTransportNr,M4UStr,30,0);
   RecordField(GlobalTransportDate,M4Date,0,0);
+  RecordField(DoNotRecalcDate,M4Int,0,0); //Edit***************************Sasha2,10:28 30.12.2014
   return;
 end; 
 

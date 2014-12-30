@@ -448,7 +448,7 @@ begin
 						end;
 						//curdate = AddDay(IVp.InvDate,pdays);
 						payday = true;
-						switch(getDateid(AddDay(PRr.EndDate,pdays + i-1)))begin
+						switch(getDateid(AddDay(PRr.EndDate,pdays + i-1))) begin
 							case 1: if(CUr.Monday!=0) then begin payday = false;end;
 							case 2: if(CUr.Tuesday!=0) then begin  payday = false;end;
 							case 3: if(CUr.Wednesday!=0) then begin payday = false;end;

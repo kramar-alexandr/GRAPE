@@ -51,6 +51,23 @@ external function Integer ArgEInvLock(record IVVc,integer);
 external function Integer GetArgIVType(integer,string,string,string);
 external function Boolean UserCanChangePendingRecord(Integer);
 
+global //Edit***************************Sasha2,10:38 30.12.2014 {
+function Boolean IVDClassDoNotRecalcDateButtonAction(Integer wn,Integer value)
+BEGIN
+  Boolean res;
+  record IVVc IVr;
+
+  GetWindowRecord(wn,IVr);
+  if (IVr.OKFlag==1) then begin
+  	res = false;
+  end else begin
+  	res = true;
+  end;
+  
+  IVDClassDoNotRecalcDateButtonAction = res;
+  RETURN;
+END; //Edit***************************Sasha2,10:38 30.12.2014 }
+
 global
 function Boolean IVDClassNoInterestFlagButtonAction(Integer wn,Integer value)
 BEGIN

@@ -2928,11 +2928,12 @@ if (HasTouchScreenLook==false) then begin
   EditField(h1,v+=vs,82,"Дата оплаты",Normal,PayDate,false,PasteCurDate);
   EditField(h1,v+=vs,82,"Дата операции",Normal,TransDate,false,PasteCurDate);
   EditField(h1,v+=vs,82,"Дата оказ. услуги",Normal,ServiceDelDate,false,PasteCurDate);  
-  EditField(h2,v=vm,135,"Ответственный",Normal,OurContact,false,0);
+  CheckBox(h2-90,v=vm,0,"Автом-ски не пересчитывать дату сч/ф",DoNotRecalcDate); //Edit***************************Sasha2,10:31 30.12.2014
+  EditField(h2,v+=vs,135,"Ответственный",Normal,OurContact,false,0); //Edit***************************Sasha2,10:33 30.12.2014
   EditField(h2,v+=vs,135,"Внимание",Normal,ClientContact,false,ContactSClass);
   EditField(h2,v+=vs,135,"Объекты",Normal,Objects,false,ObjSClass);
   EditField(h2,v+=vs,135,"Ответственный",Normal,RefStr,false,0);
-  EditField(h2,v+=vs,135,"№ счета клиенту",Normal,CustOrdNr,false,0);
+  //EditField(h2,v+=vs,135,"№ счета клиенту",Normal,CustOrdNr,false,0); //Edit***************************Sasha2,10:31 30.12.2014
   EditField(h3,v=vm,80,"Продавец",Normal,SalesMan,false,UserSClass);
   if (StandardHansa) then begin
     EditField(h3,v+=vs,80,"Склад",Normal,Location,false,LocationSClass);
@@ -2956,6 +2957,7 @@ if (HasTouchScreenLook==false) then begin
     EditField(h3,v+=vs,-20,"К пл/рсч док-ту",Normal,ReceiptInfo,false,0);
   end;
   EditField(h3,v+=vs,-20,"Назв. проекта",Normal,InvComment,false,0);// Edit by Victor 01.09
+  EditField(h3,v+=vs,-20,"№ счета клиенту",Normal,CustOrdNr,false,0); //Edit***************************Sasha2,10:31 30.12.2014
   CheckBox(h4,v=6,0,"Спорные",DisputedFlag);
   if (StandardHansa) then begin
     CheckBox(h4,v+=16,0,"Обновить склад",UpdStockFlag);
