@@ -4098,7 +4098,7 @@ begin
   if (HasContactClassification) then begin
     EditField(h,v+=20,300,"Классификация",Normal ,PRClassification,false,PRClSClass);
   end;
-  EditField(h,v+=20,300,"Текст",Normal ,Desc0,false,0);
+  EditField(h,v+=20,300,"Описание работ",Normal ,Desc0,false,0);
   EditField(h,v+=20,300,"",Normal ,Desc1,false,0);
   EditField(h,v+=20,300,"",Normal ,Desc2,false,0);
   ButtonFrame(h,vm=(v+=45),150,3,"Status");

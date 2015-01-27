@@ -889,6 +889,12 @@ BEGIN
     goto LPRVcRecordCheck;
   end;
   						//*********** Edit end
+  if (blank(PRr.Desc0)) then begin
+    RecordCheckError(1058,PRr.Desc0,-1,"Desc0");      
+    res = -1;
+    goto LPRVcRecordCheck;
+  end;						
+  						
   BlockLoad(PRRec);
   if (blank(PRr.Code)) then begin
     GetNextProjectNr(tstr);
