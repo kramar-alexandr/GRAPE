@@ -1179,6 +1179,8 @@ begin
   ArrayField(SumCost,M4Val,0,0); //Edit***************************Sasha2,17:10 10.10.2014
   ArrayField(ToUserBud,M4Set,999,0);// Edit ************************** Tuesday, 21 October 2014 10:10:27
   ArrayField(Comment3,M4Str,255,0); //Edit***************************Sasha2,12:56 10.10.2014
+  ArrayField(PRCode,M4Str,20,0);	//Edit by Victor 28.01.15
+  ArrayField(PRName,M4Str,60,0);	//Edit by Victor 28.01.15
   EndArray;
   MainKeyBegin(MainKey,1);
   StoreInBaseKey;

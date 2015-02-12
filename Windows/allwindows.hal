@@ -2665,8 +2665,10 @@ begin
   MatText(t=17,30,"Заголовок",true);
   MatCol(t,100,"",0,Spec,false,0);
   MatText(t=18,30,"Проект",true);// Edit ************************** Monday, 15 September 2014 14:28:53
-  MatCol(t,100,"",0,Spec,false,0);// Edit ************************** Monday, 15 September 2014 14:29:15
-  MatCol(t,300,"",0,TypeName,false,0); // Edit by Victor 23.09.14
+  MatCol(t,80,"",0,PRCode,false,0);	//Edit by Victor 28.01.15
+  MatCol(t,120,"",0,Spec,false,0);// Edit ************************** Monday, 15 September 2014 14:29:15
+  MatCol(t,300,"",0,PRName,false,0); //Edit by Victor 28.01.15
+  MatCol(t,450,"",0,TypeName,false,0); // Edit by Victor 23.09.14
   MatCol(t,-20,"",0,IdentQuant,false,0);	// Edit by Victor 24.09.14
   MatText(t=21,30,"Начало группы задач",true); //Edit***************************Sasha2,14:48 07.10.2014 { 
   MatCol(t,155,"",0,Spec,false,0);

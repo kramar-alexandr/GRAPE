@@ -27,12 +27,19 @@ END;
 
 global procedure ExpBudgetRn(record RcVc RepSpec)//Edit by Victor 16.09.14
 begin
-	record TBBUVc TBBUr;
+	record TBBUVc TBBUr, TBBU2r;
 	row TBBUVc TBBUrw;
 	integer mtrw,i,stp18,stp9,stp17,max,flag1;
-	string 255 prname;
+	string 255 prname, jobSpec;
 	val tot,totvat;
 	boolean changed;
+	record PRVc PRr;
+	record INVc INr;
+	record ITVc ITr;
+	record PLVc PLr;
+	record CUVc CUr;
+	record UserVc Userr;
+	boolean TrHs;
 	
 	stp18 = 0;
 	stp17 = 0;
@@ -52,19 +59,41 @@ begin
 	
 	startformat(15);
 		outstring(0,0,"",false);
-		outstring(10,0,"Клиент",false);
+		outstring(10,0,"Клиент / Бренд",false);
 		outstring(50,0,TBBUr.CustName,false);
 	endformat;
 	startformat(15);
 		outstring(0,0,"",false);
-		outstring(10,0,"Проект",false);
+		outstring(10,0,"Название проекта",false);
 		outstring(50,0,TBBUr.PRName,false);
+	endformat;
+	
+	startformat(15);
+		outstring(0,0,"",false);
+		outstring(10,0,"Подготовил(а)",false);
+		Userr.Code = TBBUr.PRLeader;
+		if(ReadFirstMain(Userr,1,true))then begin
+			outstring(50,0,Userr.Name,false);		
+		end;
+
 	endformat;
 	startformat(15);
 		outstring(0,0,"",false);
 		outstring(10,0,"Дата",false);
 		outstring(50,0,TBBUr.TransDate,false);
 		outstring(0,0,"",false);
+	endformat;
+	
+	startformat(15);
+		outstring(0,0,"",false);
+		outstring(10,0,"Описание работ",false);
+		PRr.Code = TBBUr.PRCode;
+		if(ReadFirstMain(PRr,1,true))then begin
+			jobSpec = PRr.Desc0 & " " & PRr.Desc1 & " " & PRr.Desc2;
+			outstring(50,0,jobSpec,false);
+		end;
+
+		//outstring(0,0,"",false);
 	endformat;
 	
 	startformat(15);
@@ -99,8 +128,32 @@ begin
 					outstring(10,0,TBBUrw.Spec,false);
 					outstring(100,0,TBBUrw.TypeName,false);
 					outstring(150,0,TBBUrw.IdentQuant,false);
-					outstring(210,0,"",false);
+					//outstring(210,0,"",false);						
 				endformat;
+				
+				startformat(15);
+					outstring(0,0,"555",false);
+					outstring(10,0,TBBUrw.PRName,false);
+				endformat;
+				
+				startformat(15);
+				PRr.Code = TBBUrw.PRCode;
+					if(ReadFirstMain(PRr,1,true))then begin
+						outstring(0,0,"666",false);
+						jobSpec = PRr.Desc0 & " " & PRr.Desc1 & " " & PRr.Desc2;
+						outstring(10,0,jobSpec,false);
+					end;
+				endformat;
+				
+				startformat(15);
+				TBBU2r.PRCode = TBBUrw.PRCode;
+					if(ReadFirstMain(TBBU2r,1,true))then begin
+						outstring(0,0,"888",false);
+						outstring(10,0,TBBU2r.TotRebate,false);
+					end;
+					
+				endformat;
+						
 			end else begin
 				if(TBBUrw.stp == 17)then begin
 					stp17 = stp17 + 1;
@@ -116,9 +169,10 @@ begin
 						startformat(15);
 							outstring(0,0,TBBUrw.stp,false);
 							outstring(10,0,TBBUrw.Comment,false);
+							outstring(70,0,TBBUrw.Comment2,false);
 							outstring(100,0,TBBUrw.Price,false);
 							outstring(150,0,TBBUrw.Qty,false);
-							outstring(210,0,TBBUrw.Sum,false);
+							outstring(210,0,TBBUrw.Sum,false);						
 						endformat;
 					end else begin
 						if(TBBUrw.stp == 23)then begin
@@ -127,7 +181,7 @@ begin
 									outstring(10,0,"Скидка/Агентская комиссия:",false);
 									outstring(50,0,TBBUrw.Spec,false);
 									outstring(150,0,"Размер:",false);
-									outstring(210,0,TBBUrw.Sum,false);
+									outstring(210,0,TBBUrw.TypeName,false);
 								endformat;
 						end else begin
 							if(TBBUrw.stp == 9)then begin
@@ -136,34 +190,63 @@ begin
 									outstring(10,0,"",false);
 									outstring(50,0,"",false);
 									outstring(150,0,"ИТОГО Проект:",false);
-									outstring(210,0,TBBUrw.Cost,false);
+									outstring(210,0,TBBUrw.Sum,false);
 								endformat;
-								tot = tot + TBBUrw.Cost;
+								tot = tot + TBBUrw.Sum;
 												
-								startformat(15);
+								/*startformat(15);
 									outstring(0,0,TBBUrw.stp,false);
 									outstring(0,0,"",false);
 									outstring(50,0,"",false);
-									outstring(150,0,"ИТОГО, с НДС:",false);
+									outstring(150,0,"ИТОГО:",false);
 									outstring(210,0,TBBUrw.Sum,false);
 								endformat;
-								totvat = totvat + TBBUrw.Sum;
+								totvat = totvat + TBBUrw.Sum;*/
 												
 								if(stp17==flag1)then begin
+									
 									startformat(15);
 										outstring(0,0,"19",false);
 										outstring(10,0,"",false);
 										outstring(50,0,"",false);
-										outstring(150,0,"ИТОГО по проектам:",false);
+										outstring(150,0,"ИТОГО:",false);
+										outstring(210,0,TBBU2r.TotSum,false);
+									endformat;
+									startformat(15);
+										outstring(0,0,"19",false);
+										outstring(10,0,"",false);
+										outstring(50,0,"",false);
+										outstring(150,0,"НДС (20%):",false);
+										outstring(210,0,TBBU2r.Sum3,false);
+									endformat;
+									startformat(15);
+										outstring(0,0,"19",false);
+										outstring(10,0,"",false);
+										outstring(50,0,"",false);
+										outstring(150,0,"ИТОГО с НДС:",false);
+										outstring(210,0,TBBU2r.TotSumVAT,false);
+									endformat;
+									/*startformat(15);
+										outstring(0,0,"19",false);
+										outstring(10,0,"",false);
+										outstring(50,0,"",false);
+										outstring(150,0,"ИТОГО:",false);
 										outstring(210,0,tot,false);
 									endformat;
 									startformat(15);
 										outstring(0,0,"19",false);
 										outstring(10,0,"",false);
 										outstring(50,0,"",false);
-										outstring(150,0,"ИТОГО по проектам с НДС:",false);
-										outstring(210,0,totvat,false);
+										outstring(150,0,"НДС (20%):",false);
+										outstring(210,0,tot/100*20,false);
 									endformat;
+									startformat(15);
+										outstring(0,0,"19",false);
+										outstring(10,0,"",false);
+										outstring(50,0,"",false);
+										outstring(150,0,"ВСЕГО с НДС:",false);
+										outstring(210,0,tot+tot/100*20,false);
+									endformat;*/
 								end;
 							end;
 						end;	
@@ -197,6 +280,32 @@ begin
 		outstring(150,0,"Всего:",false);
 		outstring(210,0,TBBUr.TotSumVAT,false);
 	endformat;
+	
+	startformat(15); 
+		outstring(0,0,"",false);
+	endformat;
+	
+//Rate Card
+	CUr.Code = TBBUr.CustCode;
+	if(ReadFirstMain(CUr, 1, true))then begin
+		INr.Group = "";
+		while (LoopKey("Group",INr,1,true)) begin
+			PLr.PLCode = CUr.PLCode;
+			PLr.ArtCode = INr.Code;
+			if(ReadFirstMain(PLr, 2, true))then begin
+				ITr.Code = INr.Group;
+				if(ReadFirstMain(ITr, 1, true))then begin
+					startformat(15); 
+						outstring(0,0,"777",false);
+						outstring(1,0,ITr.Comment,false);
+						outstring(2,0,INr.AlternativeCode,false);
+						outstring(3,0,INr.Name,false);
+						outstring(4,0,PLr.ExVatPrice,false);
+					endformat;
+				end;
+			end;
+		end;		
+	end;
 	endjob;
 return;
 end;

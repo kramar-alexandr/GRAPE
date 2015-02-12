@@ -229,6 +229,8 @@ begin
 								TBBUrw.Spec = TBBU2r.PRName;
 								TBBUrw.TypeName = name;
 								TBBUrw.IdentQuant = 1;
+								TBBUrw.PRCode = TBBU2r.PRCode;	//Edit by Victor 28.01.15
+								TBBUrw.PRName = TBBU2r.CustName;	//Edit by Victor 28.01.15
 								MatRowPut(TBBUr,rwnum,TBBUrw);
 								rwnum = rwnum + 1;
 								for (i=0;i<rwcnt;i=i+1) begin
@@ -289,6 +291,8 @@ begin
 									TBBU3rw.Spec = TBBU2r.PRName;
 									TBBU3rw.TypeName = name;
 									TBBU3rw.IdentQuant = 1;
+									TBBU3rw.PRCode = TBBU2r.PRCode;	//Edit by Victor 28.01.15
+									TBBU3rw.PRName = TBBU2r.CustName;	//Edit by Victor 28.01.15
 									matrowput(TBBUr,rwnum,TBBU3rw);
 									rwnum = rwnum + 1;
 									For(i=0;i<rwcnt2;i=i+1) begin
