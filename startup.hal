@@ -341,7 +341,7 @@ begin
 	EndStrSet;
 	
 	SetBegin(999);
-		SetText(0,"Клиет.");
+		SetText(0,"Клиен.");
 		SetText(1,"Внутр.");
   EndSet;
 	
