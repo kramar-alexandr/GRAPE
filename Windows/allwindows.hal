@@ -4123,10 +4123,10 @@ begin
     RadioButton(h,v+=16,1,255,"Предупреждать",TBIVItemsUsage);
     RadioButton(h,v+=16,2,255,"Не разрешать",TBIVItemsUsage);
   end;*/
-  ButtonFrame(-200,v=40,150,0,"Финанс.даты"); //Edit***************************Sasha2,16:16 25.12.2014
+  ButtonFrame(-200,v=40,150,0,"Период оказания услуг"); //Edit***************************Sasha2,16:16 25.12.2014
   EditField(-110,v+=2,70,"Дата начала",Normal ,StartDate,false,PasteCurDate);
   EditField(-110,v+=20,70,"Дата окончания",Normal ,EndDate,false,PasteCurDate); //Edit***************************Sasha2,10:28 25.11.2014
-  ButtonFrame(-200,v+=60,150,0,"Бухгалт.даты"); //Edit***************************Sasha2,16:16 25.12.2014
+  ButtonFrame(-200,v+=60,150,0,"Даты по документам"); //Edit***************************Sasha2,16:16 25.12.2014
   EditField(-110,v+=2,70,"Дата старта проекта",Normal,LaunchingDate,false,PasteCurDate); //Edit***************************Sasha2,16:30 25.12.2014
   EditField(-110,v+=20,70,"Дата завершения проекта",Normal,FinishedDate,false,PasteCurDate);
   v = v + 40; //Edit***************************Sasha2,16:32 25.12.2014

@@ -223,7 +223,7 @@ begin
 										outstring(0,0,"19",false);
 										outstring(10,0,"",false);
 										outstring(50,0,"",false);
-										outstring(150,0,"’ƒ ρ „‘:",false);
+										outstring(150,0,"‚‘…ƒ ρ „‘:",false);
 										outstring(210,0,TBBU2r.TotSumVAT,false);
 									endformat;
 									/*startformat(15);
@@ -263,21 +263,21 @@ begin
 		outstring(0,0,"20",false);
 		outstring(1,0,"",false);
 		outstring(2,0,"",false);
-		outstring(150,0,"TOTAL:",false);
+		outstring(150,0,"’ƒ",false);
 		outstring(210,0,TBBUr.TotSum,false);
 	endformat;
 	startformat(15);
 		outstring(0,0,"20",false);
 		outstring(1,0,"",false);
 		outstring(2,0,"",false);
-		outstring(150,0,"„‘:",false);
+		outstring(150,0,"„‘ (20%)",false);
 		outstring(210,0,TBBUr.Sum3,false);
 	endformat;
 	startformat(15);
 		outstring(0,0,"20",false);
 		outstring(1,0,"",false);
 		outstring(2,0,"",false);
-		outstring(150,0,"‚ρεγξ:",false);
+		outstring(150,0,"’ƒ ρ „‘:",false);
 		outstring(210,0,TBBUr.TotSumVAT,false);
 	endformat;
 	
