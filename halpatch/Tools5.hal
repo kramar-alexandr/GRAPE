@@ -250,6 +250,7 @@ BEGIN
       if (TBBUrw.stp>=17) then begin //Edit***************************Sasha2,15:12 07.10.2014 {
       	if (TBBUrw.stp==23) then begin
       		totrebate = totrebate + TBBUrw.Sum;
+      		subtotv = subtotv - TBBUrw.Sum;
       		vatrebate = vatrebate + TBBUrw.SumCost; //Sasha2: rebate VAT value
       	end;
       	if (TBBUrw.stp==21) then begin
