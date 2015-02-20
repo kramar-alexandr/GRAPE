@@ -504,11 +504,11 @@ begin
 	  	PRrw.ValStr = invprc[i];
 	  	if(nonblank(PRr.FinishedDate))then begin
 	  		if(nonblank(PDr.Installment))then begin	//Edit by Victor 23.12.14
-				PRrw.PlanDate = addday(PRr.FinishedDate,-sumday + invday[i] + prevday); //Edit***************************Sasha2,14:29 26.12.2014
-			end else begin
-				PRrw.PlanDate = PRr.FinishedDate;	//Edit by Victor 23.12.14
-			end;
-			prevday = prevday + invday[i];
+  				PRrw.PlanDate = addday(PRr.FinishedDate,-sumday + invday[i] + prevday); //Edit***************************Sasha2,14:29 26.12.2014
+  			end else begin
+  				PRrw.PlanDate = PRr.FinishedDate;	//Edit by Victor 23.12.14
+  			end;
+			  prevday = prevday + invday[i];
 	  	end else begin
 	  		PRrw.PlanDate = addday(PRr.LaunchingDate,invday[invcnt]); //Edit***************************Sasha2,14:29 26.12.2014
 	  	end;

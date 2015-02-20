@@ -375,6 +375,7 @@ LIsHolliday:;
 end;
 
 //Edit***************************Sasha2,18:04 17.12.2014 {
+global
 updating procedure UpdateVIPayDate(string projcode,date payd)
 begin
   record IVVc IVr;
@@ -390,10 +391,10 @@ begin
   record BHollVc BHr;
   boolean testf2, isHoll;	//Edit by Victor 30.12.14 }
   
-  	arcnt = 0;
-  	foundD = payd;
-  	IVr.PRCode = projcode;
-  	IVr.PayDate = payd;
+	arcnt = 0;
+	foundD = payd;
+	IVr.PRCode = projcode;
+	IVr.PayDate = payd;
 	TrHs = true;
 	while (loopkey("PRCodePayDate",IVr,2,TrHs)) begin
 		if (IVr.PRCode!=projcode) then begin TrHs = false; end;
