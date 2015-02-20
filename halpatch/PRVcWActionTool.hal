@@ -505,6 +505,16 @@ begin
 	  				TBBUrw.Comment =INr.Name;
 	  			end;
 	  		end;	// }
+	  		
+	  		if(nonblank(TempTBBUrw.Note))then begin	//Edit by Victor 19.09.14 {
+	  			TBBUrw.Comment2 = TempTBBUrw.Note;	
+	  		end else begin
+	  			INr.Code = TBBUrw.ArtCode;
+	  			if(readFirstMain(INr,1,true))then begin
+	  				TBBUrw.Comment2 =INr.Notification;
+	  			end;
+	  		end;
+	  		
   			MatRowPut(TBBUr,i,TBBUrw);
   			if (TBBUVc_PasteArtCode(TBBUr,i,inmsg)) then begin
 		      TBBUDchrsum(TBBUr,i,true,GOb.UseDiscount);
