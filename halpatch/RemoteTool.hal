@@ -69,6 +69,7 @@ BEGIN
   val bal;
   vector LongInt viserns;
   Boolean changedf;
+  date vipaydate;
   
   changedf = false;
   if (ReadFirstMain(TBBUp,0,true)) then begin end;  
@@ -146,6 +147,12 @@ BEGIN
 	    VIr.PayVal = -bal;
 	    if (RecordStore(VIr,false)) then begin
 	      viserns[VIr.VECode] = VIr.SerNr;
+	      if (BlankDate(vipaydate)) then begin
+	       vipaydate = VIr.DueDate;
+	      end;
+	      if (VIr.DueDate<vipaydate) then begin
+	       vipaydate = VIr.DueDate;
+	      end;
 	      CreateRecordLink(PRr,CurrentCompany,VIr,CurrentCompany);  
 	      CreateRecordLink(VIr,CurrentCompany,PRr,CurrentCompany);
 	    end;
@@ -166,7 +173,7 @@ BEGIN
   end;
   if (changedf) then begin
   	RECORDUPDATE(oldTBBUp,TBBUp,false);
-  	UpdateVIPayDate(PRr.Code,StringToDate("01/01/2000")); //Edit***************************Sasha2,13:59 20.02.2015
+  	UpdateVIPayDate(PRr.Code,vipaydate); //Edit***************************Sasha2,13:59 20.02.2015
   end;
   
 LPasteTBBUInVIFunc:;
