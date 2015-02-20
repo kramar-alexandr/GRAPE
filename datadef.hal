@@ -2380,6 +2380,18 @@ begin
   KeySegment(pdComment);
   KeySegment(Code);
   EndRecord;
+  
+  BlockBegin(PRClassBlock,-,"prclass");
+  RecordField(Math,M4Matrix,0,0);
+  ArrayBegin(Math,-,1);
+  ArrayField(Code,M4Code,5,0);
+  ArrayField(Comment,M4Str,60,0);
+  ArrayField(DefObject,M4Code,20,ObjVc);
+  ArrayField(PRClType,M4UStr,100,PRClTypeVc);
+  ArrayField(OTType,M4UStr,100,OTVc);
+  ArrayField(Comment2,M4Str,60,0);	//Edit by Victor 19.02.15
+  EndArray;
+  EndBlock;
     
 return;
 end;
