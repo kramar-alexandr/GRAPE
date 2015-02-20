@@ -1183,7 +1183,10 @@ BEGIN
   if ((rownr==-1) or (rownr>rwcnt)) then begin
     rownr = rwcnt;
   end;
+
   DeselectWindow(wn,false);
+  GetWindowRecord(wn,TBBUr);
+  rwcnt = MatRowCnt(TBBUr);
   for (i=(rownr-1);i>=0;i=i-1) begin
     MatRowGet(TBBUr,i,TBBUrw);
     if (TBBUrw.stp!=kInvoiceRowTypeSubtotal and TBBUrw.stp!=21 and TBBUrw.stp!=22) then begin //Edit***************************Sasha2,11:32 10.10.2014
@@ -1196,7 +1199,8 @@ BEGIN
       end;      
     end;
   end;
-LBREAK:;  
+
+LBREAK:; 
   ClearRow(TBBUr,TBBUrw,9);
   TBBUrw.Sum = pt;
   TBBUrw.Cost = pt2;
@@ -1215,7 +1219,8 @@ LBREAK:;
       end;
     end;
   end;
-LSubtotalTBBUDsm:;  
+
+LSubtotalTBBUDsm:; 
   PutWindowRecord(wn,TBBUr);
   RETURN;
 END;
