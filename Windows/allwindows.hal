@@ -5486,7 +5486,7 @@ begin
   flipnr = 1;
   Flip(flipnr); flipnr = flipnr + 1;
   MatCol(1,131,"Комментарий",0,Comment,false,0);
-  MatCol(1,281,"Комментарий",0,Comment2,false,0);
+  MatCol(1,281,"Комментарий (RUS)",0,Comment2,false,0);
   if (IsEnterprise) then begin
     Flip(flipnr); flipnr = flipnr + 1;
     MatCol(1,131,"Тип классификации",0,PRClType,false,PRClTypeSClass);
