@@ -8,6 +8,7 @@ external function val DivRateToBase1(string,val,val,val,val,val,val,roundmode);
 external function val MulRateToBase1(var string,val,val,val,val,val,val,roundmode);
 external function Boolean CheckProjectManager(record PRVc);
 remote procedure TBBUVc_PasteCurncyCode(var record TBBUVc,string,Boolean);
+remote procedure TBBUVc_PasteCurncyCode2(var record TBBUVc,string,Boolean);
 remote function Boolean TBBUVc_PasteQty(var record TBBUVc,Integer);
 remote procedure TBBUVc_PasteEMCode(var record TBBUVc,Integer);
 remote function Boolean TBBUVc_PasteArtCode(var record TBBUVc,Integer,var string);
@@ -78,6 +79,21 @@ begin
     end;
   end;
   TBBUDClassCurncyCodeEFAfter = true;
+  return;
+end;
+
+function Boolean TBBUDClassClientCurncyCodeEFAfter(Integer wn,Boolean changedf)
+begin  
+  record TBBUVc TBBUr;
+
+  if (changedf) then begin
+    GetWindowRecord(wn,TBBUr);
+    if (nonblank(TBBUr.ClientCurncyCode)) then begin
+      TBBUVc_PasteCurncyCode2(TBBUr,"",true);
+      PutWindowRecord(wn,TBBUr);
+    end;
+  end;
+  TBBUDClassClientCurncyCodeEFAfter = true;
   return;
 end;
  
@@ -456,6 +472,7 @@ BEGIN
     case "VATCode": res = TBBUDClassVATCodeEFAfter(wn,fn,rownr,changed); //Edit by Victor 09.09.14
     case "TypeName": res = TBBUDClassTypeNameEFAfter(wn,rownr,changed); //Edit***************************Sasha2,11:03 10.10.2014
     case "SubContractor": res = TBBUDClassSubContractorEFAfter(wn,rownr,changed); //Edit***************************Sasha2,17:29 28.11.2014
+    case "ClientCurncyCode": res = TBBUDClassClientCurncyCodeEFAfter(wn,changed!=0);
     
   end;
   TBBUDClassAfterEditField = res;

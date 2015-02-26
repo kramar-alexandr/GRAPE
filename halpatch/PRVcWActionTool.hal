@@ -587,6 +587,7 @@ begin
     TBBUr.LangCode = PRr.LangCode;
     TBBUr.Members = PRr.Members;
     TBBUr.CurncyCode = PRr.CurncyCode;
+    TBBUr.ClientCurncyCode = PRr.CurncyCode;	//Edit by Victor 26.02.15
     if (nonblank(TBBUr.CurncyCode)) then begin
       TBBUVc_PasteCurncyCode(TBBUr,"",true);
     end;

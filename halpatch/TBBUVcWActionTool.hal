@@ -480,6 +480,25 @@ begin
   TBBUSumup(TBBUr);
   return;
 end;
+    
+global
+procedure TBBUGetRate2(var record TBBUVc TBBUp)	//Edit by Victor 26.02.15
+begin
+  val from,to1,to2,base1,base2;
+  string 5 crncy;
+  Date td;
+ 
+  crncy = TBBUp.ClientCurncyCode;
+  td = TBBUp.TransDate;
+  if (blankdate(td)) then begin td = CurrentDate; end;
+  GetFullCurncyRate(crncy,td,from,to1,to2,base1,base2);
+  TBBUp.ClientCurncyCode = crncy;
+  TBBUp.ClientFrRate = from;
+  TBBUp.ClientToRateB1 = to1;
+  TBBUp.ClientToRateB2 = to2;
+  
+  return;
+end;
             
 global
 procedure TBBUVc_PasteCurncyCode(var record TBBUVc TBBUp,string oldcurncy,Boolean newratef)
@@ -499,6 +518,31 @@ begin
       if ((OtherExchangeRate(TBBUp.FrRate,TBBUp.ToRateB1,TBBUp.ToRateB2,TBBUp.BaseRate1,TBBUp.BaseRate2,fr,to1,to2,br1,br2)) and (ISr.UpdCurPrWithDate!=0)) then begin 
         TBBUDUpdatePrices(TBBUp,false);
       end;
+    end;
+  end;
+  return;
+end;
+
+            
+global
+procedure TBBUVc_PasteCurncyCode2(var record TBBUVc TBBUp,string oldcurncy,Boolean newratef)	//Edit by Victor 26.02.15
+begin
+  val fr,to1,to2,br1,br2;
+  row TBBUVc TBBUrw;
+  string 10 crncy;
+  record ItemSettingBlock ISr;
+  Boolean testf;
+  
+  testf = true;
+  if (testf) then begin
+    if (TBBUp.ClientCurncyCode!=oldcurncy) or (newratef) then begin
+      BlockLoad(ISr);
+      //SaveExchangeRate(TBBUp.FrRate,TBBUp.ToRateB1,TBBUp.ToRateB2,TBBUp.BaseRate1,TBBUp.BaseRate2,fr,to1,to2,br1,br2);
+      TBBUGetRate2(TBBUp);
+      //add here update prices and new fields
+      //if ((OtherExchangeRate(TBBUp.FrRate,TBBUp.ToRateB1,TBBUp.ToRateB2,TBBUp.BaseRate1,TBBUp.BaseRate2,fr,to1,to2,br1,br2)) and (ISr.UpdCurPrWithDate!=0)) then begin 
+      //  TBBUDUpdatePrices(TBBUp,false);
+      //end;
     end;
   end;
   return;

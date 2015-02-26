@@ -1142,6 +1142,14 @@ begin
   RecordField(InclVAT,M4Int,0,0);//Edit by Victor, 10.09.2014
   RecordField(ApproveFlag,M4Mark,0,0); //Edit***************************Sasha2,11:48 16.09.2014
   RecordField(TotRebate,M423Val,0,0); //Edit***************************Sasha2,15:11 07.10.2014
+  RecordField(ClientCurncyCode,M4Code,5,CurncyCodeVc);	//Edit by Victor 25.02.15
+  RecordField(ClientFrRate,M4Rate,0,0); 								//Edit by Victor 25.02.15
+  RecordField(ClientToRateB1,M4Rate,0,0);								//Edit by Victor 25.02.15
+  RecordField(ClientToRateB2,M4Rate,0,0); 							//Edit by Victor 25.02.15
+  RecordField(ClientSum3,M4Val,0,0); 										//Edit by Victor 25.02.15
+  RecordField(ClientTotSumVAT,M4Val,0,0); 							//Edit by Victor 25.02.15
+  RecordField(ClientTotSum,M4Val,0,0); 									//Edit by Victor 25.02.15
+    
   ArrayBegin(Math,-,1);
   ArrayField(ArtCode,M4Code,20,INVc);
   ArrayField(Spec,M4Str,100,0);
@@ -1181,6 +1189,8 @@ begin
   ArrayField(Comment3,M4Str,255,0); //Edit***************************Sasha2,12:56 10.10.2014
   ArrayField(PRCode,M4Str,20,0);	//Edit by Victor 28.01.15
   ArrayField(PRName,M4Str,60,0);	//Edit by Victor 28.01.15
+  ArrayField(ClientSum,M4Val,0,0);//Edit by Victor 25.02.15
+  ArrayField(ClientPrice,M423Val,0,0);	//Edit by Victor 25.02.15
   EndArray;
   MainKeyBegin(MainKey,1);
   StoreInBaseKey;

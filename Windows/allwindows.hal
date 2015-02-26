@@ -2625,6 +2625,7 @@ begin
   end;
   TileButton(tnr,"Текст"); tnr = tnr + 1;
   TileButton(tnr,"Члены"); tnr = tnr + 1;
+  TileButton(tnr,"Валюта клиента"); tnr = tnr + 1;	//Edit by Victor 25.02.15
   tnr = 1;
   Tile(tnr,65,false,tnr,Math); tnr = tnr + 1;
   if (IsEnterprise) then begin
@@ -2764,6 +2765,16 @@ begin
   MatCol(t,-110,"Сумма",0,Sum,true,0);
   MatCol(t,-30,"НДС",0,VATCode,false,VATCodeSClass);
   
+  Flip(7);//Add by Victor 26.02.15
+  MatCol(1,200,"Наименование",0,Comment,false,0);
+  MatCol(t=1,-210,"Цена в валюте",0,ClientPrice,true,0);
+  MatCol(t,-110,"Сумма в валюте",0,ClientSum,true,0);
+	MatText(t=9,30,"Итого",true);	//change stp for export to excel
+  MatCol(t,100,"",0,Spec,false,0);
+  MatText(t,-150,"Сумма в вал.",false); //Edit***************************Sasha2,17:08 08.10.2014
+  MatCol(t,-60,"Сумма в вал",0,ClientSum,true,0); 
+
+
   DeleteRowTest;
   EndMatrix;
   vs = 22;
@@ -2780,6 +2791,7 @@ begin
     EditField(450,-17,80, "Покупки",Normal,SumOther,true,0);
   end;
   v=v+ vs; VTab(-35,v,-16,v+vs,ToolFlip,6,"F");
+  v=v+ vs; VTab(-35,v,-16,v+vs,ToolFlip,7,"G");
   EditField(88,-55,60, "Скидка/Аг.ком",ViewOnly,TotRebate,true,0); //Edit***************************Sasha2,15:16 07.10.2014
   EditField(260,-55,80, "Доходность",Normal,GPTot,true,0);//Edit***************************Sasha2,10:32 10.09.2014
   EditField(450,-55,80, "Доходность в %",Normal,GPTotPercent,true,0);//Edit***************************Sasha2,10:32 10.09.2014
@@ -2854,6 +2866,20 @@ begin
     RadioButton(h3,v+=16,kAcceptanceStateApproved,0,"утверждено",AcceptanceStatus);
     RadioButton(h3,v+=16,kAcceptanceStateRejected,0,"отклонено",AcceptanceStatus);
   end;
+  
+  //Edit by Victor 25.02.15 {
+  Tile(tnr,210,false,"Валюта клиента",ClientCurncyCode); tnr = tnr + 1;
+  vs=20; h=100; h2=290; h1=125;
+  EditField(h1,v=6,50,"Валюта клиента",Normal,ClientCurncyCode,false,CurncyCodeSClass);
+  EditField(h2,v,50,"Курс",Normal,ClientFrRate,true,0); 
+  EditField(410,v,50,"Вал. кл. 1",Normal,ClientToRateB1,true,0);
+  EditField(410,v+vs,50,"Вал. кл. 2",Normal,ClientToRateB2,true,0)
+  v=v+vs+vs;
+  EditField(h1,v,80, "Итого сумма (клиент)",Normal,ClientTotSum,true,0); 
+  EditField(h2,v,80, "НДС(вал.)",Normal,ClientSum3,true,0);
+  EditField(h3-60,v,80, "Итого с НДС(клиент)",Normal,ClientTotSumVAT,true,0);
+
+  //Edit by Victor 25.02.15 }
   
   SpecialMenu("Загрузить дочерние бюджеты",' ',0,"RecalculateTBBUDsm");// Edit ************************** Friday, 5 September 2014 13:40:13
   SpecialMenu("Добавить строку заголовка",' ',0,"HeaderLineTBBUDsm");
