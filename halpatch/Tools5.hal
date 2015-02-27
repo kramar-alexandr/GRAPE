@@ -188,7 +188,7 @@ BEGIN
 END;
 
 //Edit***************************Sasha2,17:40 27.02.2015 {
-function val CalcClientVAT(record TBBUVc TBBUr, val vatv)
+function val CalcCurrencyClientVAT(record TBBUVc TBBUr, val vatv)
 begin
   Record BaseCurBlock bascur; 
   val from,to1,to2,base1,base2;
@@ -208,7 +208,7 @@ begin
           td = TBBUr.TransDate;
           if (blankdate(td)) then begin td = CurrentDate; end;
            GetFullCurncyRate(TBBUr.CurncyCode,td,from,to1,to2,base1,base2);
-           if (from==0 or to1==0) then begin goto LCalcClientVAT; end;
+           if (from==0 or to1==0) then begin goto LCalcCurrencyClientVAT; end;
            res = (vatv/from)*to1;
         end else begin
           res = vatv;
@@ -218,9 +218,9 @@ begin
       end;
     end; 
     
- LCalcClientVAT:;
+ LCalcCurrencyClientVAT:;
  
-  CalcClientVAT = res;
+  CalcCurrencyClientVAT = res;
  
  return;
 end; //Edit***************************Sasha2,17:40 27.02.2015 }
@@ -277,7 +277,7 @@ BEGIN
       t = FindVAT(TBBUrw.VATCode,TBBUrw.Sum,TBBUp.InclVAT,TBBUp.NoTAXonVAT);//Edit by Victor 10.09.14
       s3 = t + s3;//Edit by Victor 10.09.14
       if (t!=0) then begin //Edit***************************Sasha2,17:47 27.02.2015
-        t1 = CalcClientVAT(TBBUp,t);
+        t1 = CalcCurrencyClientVAT(TBBUp,t);
         s3_cur = t1 + s3_cur;
       end;
       subtotv = subtotv + TBBUrw.Sum;
