@@ -8,6 +8,7 @@ external procedure RoundRowSum(string,string,string,var val);
 external procedure CalcVATBaseVAT(record SMVc,Integer,Integer,Integer,var val,var val);
 external procedure SetupVATBase(var record SMVc,var Integer);
 external function val FindVAT(string,val,Integer,Integer);
+external procedure GetFullCurncyRate (var string,Date,var val,var val,var val,var val,var val); //Edit***************************Sasha2,14:25 27.02.2015
 
 global
 procedure SMSumup(var record SMVc SMp)
@@ -186,6 +187,44 @@ BEGIN
   RETURN;
 END;
 
+//Edit***************************Sasha2,17:40 27.02.2015 {
+function val CalcClientVAT(record TBBUVc TBBUr, val vatv)
+begin
+  Record BaseCurBlock bascur; 
+  val from,to1,to2,base1,base2;
+  Date td; 
+  Boolean countf;
+  val res;
+
+    res = blankval;
+    if (NonBlank(TBBUr.ClientCurncyCode) and vatv!=0) then begin countf = true; end;
+    if (TBBUr.ClientFrRate==0 or TBBUr.ClientToRateB1==0) then begin countf = false; end;
+    if (countf) then begin 
+      if (TBBUr.ClientCurncyCode==TBBUr.CurncyCode) then begin
+        res = vatv;
+      end else begin
+        BlockLoad(bascur);
+        if (TBBUr.CurncyCode!=bascur.BaseCur1) then begin
+          td = TBBUr.TransDate;
+          if (blankdate(td)) then begin td = CurrentDate; end;
+           GetFullCurncyRate(TBBUr.CurncyCode,td,from,to1,to2,base1,base2);
+           if (from==0 or to1==0) then begin goto LCalcClientVAT; end;
+           res = (vatv/from)*to1;
+        end else begin
+          res = vatv;
+        end; 
+        res = (res*TBBUr.ClientFrRate)/TBBUr.ClientToRateB1; 
+        RoundRowSum(TBBUr.ClientCurncyCode,"","TBBUVc",res); 
+      end;
+    end; 
+    
+ LCalcClientVAT:;
+ 
+  CalcClientVAT = res;
+ 
+ return;
+end; //Edit***************************Sasha2,17:40 27.02.2015 }
+
 global
 procedure TBBUSumup(var record TBBUVc TBBUp)
 BEGIN
@@ -199,7 +238,7 @@ BEGIN
   array val blqty,blsum; //Edit***************************Sasha2,16:10 08.10.2014
   integer blockcnt; //Edit***************************Sasha2,10:37 09.10.2014
   array Integer blnums; //Edit***************************Sasha2,11:05 09.10.2014
-    
+  val tt_cur,s3_cur,subtotv_cur,totrebate_cur,vatrebate_cur,t1; //Edit***************************Sasha2,17:32 27.02.2015
   
   blockcnt = -1; //Edit***************************Sasha2,11:05 09.10.2014 
   rwcnt = MatRowCnt(TBBUp);
@@ -216,23 +255,33 @@ BEGIN
         end;
         if (itemtyp==0) then begin
           ot = ot + TBBUrw.Sum;
+          tt_cur = tt_cur + TBBUrw.ClientSum; //Edit***************************Sasha2,17:50 27.02.2015
         end;
         if (itemtyp==1) then begin
           st = st + TBBUrw.Sum;
+          tt_cur = tt_cur + TBBUrw.ClientSum; //Edit***************************Sasha2,17:50 27.02.2015
         end;
         if (itemtyp==2) then begin //structured
           st = st + TBBUrw.Sum;
+          tt_cur = tt_cur + TBBUrw.ClientSum; //Edit***************************Sasha2,17:50 27.02.2015
         end;
         if (itemtyp==3) then begin
           tt = tt + TBBUrw.Sum;
+          tt_cur = tt_cur + TBBUrw.ClientSum; //Edit***************************Sasha2,17:50 27.02.2015
         end;
         if (itemtyp==5) then begin
           mt = mt + TBBUrw.Sum;
+          tt_cur = tt_cur + TBBUrw.ClientSum; //Edit***************************Sasha2,17:50 27.02.2015
         end;
       end;
       t = FindVAT(TBBUrw.VATCode,TBBUrw.Sum,TBBUp.InclVAT,TBBUp.NoTAXonVAT);//Edit by Victor 10.09.14
       s3 = t + s3;//Edit by Victor 10.09.14
+      if (t!=0) then begin //Edit***************************Sasha2,17:47 27.02.2015
+        t1 = CalcClientVAT(TBBUp,t);
+        s3_cur = t1 + s3_cur;
+      end;
       subtotv = subtotv + TBBUrw.Sum;
+      subtotv_cur = subtotv_cur + TBBUrw.ClientSum; //Edit***************************Sasha2,17:48 27.02.2015
       costv = costv + TBBUrw.Qty*TBBUrw.Cost;
       gptot = gptot + TBBUrw.GP; //Edit***************************Sasha2,10:27 08.09.2014
       if (NonBlank(TBBUrw.SubContractor)) then begin
@@ -250,8 +299,11 @@ BEGIN
       if (TBBUrw.stp>=17) then begin //Edit***************************Sasha2,15:12 07.10.2014 {
       	if (TBBUrw.stp==23) then begin
       		totrebate = totrebate + TBBUrw.Sum;
+      		totrebate_cur = totrebate_cur + TBBUrw.ClientSum; //Edit***************************Sasha2,17:55 27.02.2015
       		subtotv = subtotv - TBBUrw.Sum;
+      		subtotv_cur = subtotv_cur - TBBUrw.ClientSum; //Edit***************************Sasha2,17:48 27.02.2015
       		vatrebate = vatrebate + TBBUrw.SumCost; //Sasha2: rebate VAT value
+      		vatrebate_cur = vatrebate_cur + TBBUrw.ClientPrice; //Sasha2: rebate currency VAT value
       	end;
       	if (TBBUrw.stp==21) then begin
       		blockcnt = blockcnt + 1;
@@ -275,10 +327,12 @@ BEGIN
       end else begin //Edit***************************Sasha2,15:12 07.10.2014 }
       	  if (TBBUrw.Sum!=subtotv) or (TBBUrw.Cost!=costv) then begin
 	        TBBUrw.Sum = subtotv;
+	        TBBUrw.ClientSum = subtotv_cur; //Edit***************************Sasha2,17:49 27.02.2015
 	        TBBUrw.Cost = costv;
 	        MatRowPut(TBBUp,i,TBBUrw);
 	      end;
 	      subtotv = blankval;
+	      subtotv_cur = blankval; //Edit***************************Sasha2,17:49 27.02.2015
 	      costv = blankval;
       end; 
     end;
@@ -293,9 +347,15 @@ BEGIN
   if (vatrebate<>0) then begin //Edit***************************Sasha2,17:29 20.10.2014 {
   	s3 = s3 + vatrebate;
   end; //Edit***************************Sasha2,17:29 20.10.2014 }
+  if (vatrebate_cur<>0) then begin //Edit***************************Sasha2,17:29 20.10.2014 {
+  	s3_cur = s3_cur + vatrebate_cur;
+  end; //Edit***************************Sasha2,17:29 20.10.2014 }
   TBBUp.Sum3 = s3;//Edit by Victor 10.09.14
   TBBUp.TotSum = tt + totrebate;//Edit***************************Sasha2,16:54 07.10.2014
   TBBUp.TotSumVAT = tt + s3 + totrebate; //Edit***************************Sasha2,16:07 07.10.2014
+  TBBUp.ClientSum3 = s3_cur; //Edit***************************Sasha2,17:35 27.02.2015
+  TBBUp.ClientTotSum = tt_cur + totrebate_cur; //Edit***************************Sasha2,17:35 27.02.2015
+  TBBUp.ClientTotSumVAT = tt_cur + s3_cur + totrebate_cur; //Edit***************************Sasha2,17:35 27.02.2015
   //TBBUp.GPTot = gptot + totrebate; //Edit***************************Sasha2,10:29 08.09.2014
   //TBBUp.GPTotPercent = ((gptot+s3)/(tt+s3))*100; //Edit***************************Sasha2,10:29 08.09.2014
   //TBBUp.GPTotPercent = Round(TBBUp.GPTotPercent,DefaultRoundMode); //Edit***************************Sasha2,11:00 08.09.2014

@@ -38,6 +38,7 @@ external procedure POSumup(var record POVc);
 external function Boolean SetInSet2(string,string); //Edit***************************Sasha2,10:55 14.10.2014
 external function Boolean POVc_PasteVECode(var record POVc,Boolean); //Edit***************************Sasha2,13:33 14.10.2014
 external function val FindVAT(string,val,Integer,Integer); //Edit***************************Sasha2,10:10 21.10.2014
+external procedure CalcTBBUVcCurrencyPriceAndSum(record TBBUVc,var row TBBUVc,val,val,val,Boolean); //Edit***************************Sasha2,17:16 27.02.2015
 
 function Boolean CheckPOPRITHandle(record INVc INp,Integer ItemType,record PRITHandleBlock PRITRecp)
 BEGIN
@@ -484,18 +485,35 @@ end;
 global
 procedure TBBUGetRate2(var record TBBUVc TBBUp)	//Edit by Victor 26.02.15
 begin
+  row TBBUVc TBBUrw; //Edit***************************Sasha2,15:09 27.02.2015
+  Integer rwcnt,i; //Edit***************************Sasha2,15:09 27.02.2015
   val from,to1,to2,base1,base2;
   string 5 crncy;
   Date td;
  
-  crncy = TBBUp.ClientCurncyCode;
-  td = TBBUp.TransDate;
-  if (blankdate(td)) then begin td = CurrentDate; end;
-  GetFullCurncyRate(crncy,td,from,to1,to2,base1,base2);
-  TBBUp.ClientCurncyCode = crncy;
-  TBBUp.ClientFrRate = from;
-  TBBUp.ClientToRateB1 = to1;
-  TBBUp.ClientToRateB2 = to2;
+  if (NonBlank(TBBUp.ClientCurncyCode)) then begin
+    crncy = TBBUp.ClientCurncyCode;
+    td = TBBUp.TransDate;
+    if (blankdate(td)) then begin td = CurrentDate; end;
+    GetFullCurncyRate(crncy,td,from,to1,to2,base1,base2);
+    TBBUp.ClientCurncyCode = crncy;
+    TBBUp.ClientFrRate = from;
+    TBBUp.ClientToRateB1 = to1;
+    TBBUp.ClientToRateB2 = to2;
+  end else begin //Edit***************************Sasha2,15:08 27.02.2015 {
+    TBBUp.ClientFrRate = blankval;
+    TBBUp.ClientToRateB1 = blankval;
+    TBBUp.ClientToRateB2 = blankval;
+    rwcnt = MatRowCnt(TBBUp);
+    for (i=0;i<rwcnt;i=i+1) begin
+      MatRowGet(TBBUp,i,TBBUrw);
+      if (TBBUrw.stp==1) then begin
+        TBBUrw.ClientPrice = blankval;
+        TBBUrw.ClientSum = blankval;
+        MatRowPut(TBBUp,i,TBBUrw);
+      end;
+    end;
+  end; //Edit***************************Sasha2,15:08 27.02.2015 }
   
   return;
 end;
@@ -747,25 +765,25 @@ BEGIN
     	
 	    if (testf) then begin
 	    	rwcnt = MatRowCnt(TBBUr);
-			for (i=(rownr-1);i>=0;i=i-1) begin
-				MatRowGet(TBBUr,i,TBBU2rw);
-				if (TBBU2rw.stp!=9 and (TBBU2rw.stp<17 or TBBU2rw.stp>23)) then begin
-					rebval = rebval + TBBU2rw.Sum;
-					vat = vat + FindVAT(TBBU2rw.VATCode,TBBU2rw.Sum,TBBUr.InclVAT,TBBUr.NoTAXonVAT);
-				end;
-				if (TBBU2rw.stp==18) then begin
-					i = -1;
-				end;
-			end;
-			for (i=(rownr+1);i<rwcnt;i=i+1) begin
-		  		MatRowGet(TBBUr,i,TBBU2rw);
-				if (TBBU2rw.stp!=9 and (TBBU2rw.stp<17 or TBBU2rw.stp>23)) then begin
-					rebval = rebval + TBBU2rw.Sum;
-					vat = vat + FindVAT(TBBU2rw.VATCode,TBBU2rw.Sum,TBBUr.InclVAT,TBBUr.NoTAXonVAT);
-				end;
-				if (TBBU2rw.stp==18) then begin
-					i = rwcnt;
-				end;
+  			for (i=(rownr-1);i>=0;i=i-1) begin
+  				MatRowGet(TBBUr,i,TBBU2rw);
+  				if (TBBU2rw.stp!=9 and (TBBU2rw.stp<17 or TBBU2rw.stp>23)) then begin
+  					rebval = rebval + TBBU2rw.Sum;
+  					vat = vat + FindVAT(TBBU2rw.VATCode,TBBU2rw.Sum,TBBUr.InclVAT,TBBUr.NoTAXonVAT);
+  				end;
+  				if (TBBU2rw.stp==18) then begin
+  					i = -1;
+  				end;
+  			end;
+  			for (i=(rownr+1);i<rwcnt;i=i+1) begin
+  		  		MatRowGet(TBBUr,i,TBBU2rw);
+  				if (TBBU2rw.stp!=9 and (TBBU2rw.stp<17 or TBBU2rw.stp>23)) then begin
+  					rebval = rebval + TBBU2rw.Sum;
+  					vat = vat + FindVAT(TBBU2rw.VATCode,TBBU2rw.Sum,TBBUr.InclVAT,TBBUr.NoTAXonVAT);
+  				end;
+  				if (TBBU2rw.stp==18) then begin
+  					i = rwcnt;
+  				end;
 	    	end;
 	    	rebval = rebval*(rebsize/100);
 	    	TBBUrw.SumCost = vat*(rebsize/100); //Sasha2: rebate VAT value
@@ -792,6 +810,7 @@ BEGIN
 	end;
 
 	TBBUrw.Sum = rebval;
+	CalcTBBUVcCurrencyPriceAndSum(TBBUr,TBBUrw,TBBUrw.SumCost,TBBUrw.Sum,TBBUrw.Sum,(TBBUrw.Sum!=0)); //Edit***************************Sasha2,17:19 27.02.2015
 
   RETURN;
 END; 

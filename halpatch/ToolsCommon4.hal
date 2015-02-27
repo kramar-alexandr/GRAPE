@@ -9,6 +9,8 @@ external function Integer GetVATLaw();
 forward function Boolean FindLocationAccRow(string,row LocationAccBlock);
 external function Boolean GetAccName(string,var string,Integer);
 external procedure GetUserIDCode(string,var string);
+external procedure CurValToOtherCur(Date,string,val,string,var val,roundmode); //Edit***************************Sasha2,11:23 27.02.2015
+external procedure GetFullCurncyRate (var string,Date,var val,var val,var val,var val,var val); //Edit***************************Sasha2,14:25 27.02.2015
 
 global
 function roundmode DefaultRoundMode()
@@ -1047,11 +1049,54 @@ begin
   return;
 end;
 
+//Edit***************************Sasha2,14:29 27.02.2015 {
+global
+procedure CalcTBBUVcCurrencyPriceAndSum(record TBBUVc TBBUr,var row TBBUVc TBBUrw,val price,val roundedsum,val notroundedsum,boolean zerovalf)
+begin
+  Record BaseCurBlock bascur; 
+  val from,to1,to2,base1,base2;
+  Date td; 
+  Boolean countf;
+
+    TBBUrw.ClientPrice = blankval;
+    TBBUrw.ClientSum = blankval;
+    if (NonBlank(TBBUr.ClientCurncyCode) and zerovalf) then begin countf = true; end;
+    if (TBBUr.ClientFrRate==0 or TBBUr.ClientToRateB1==0) then begin countf = false; end;
+    if (countf) then begin 
+      if (TBBUr.ClientCurncyCode==TBBUr.CurncyCode) then begin
+        TBBUrw.ClientPrice = price;
+        TBBUrw.ClientSum = roundedsum;
+      end else begin
+        BlockLoad(bascur);
+        if (TBBUr.CurncyCode!=bascur.BaseCur1) then begin
+          td = TBBUr.TransDate;
+          if (blankdate(td)) then begin td = CurrentDate; end;
+           GetFullCurncyRate(TBBUr.CurncyCode,td,from,to1,to2,base1,base2);
+           if (from==0 or to1==0) then begin goto LCalcTBBUVcCurrencyPriceAndSum; end;
+           TBBUrw.ClientPrice = (price/from)*to1;
+           TBBUrw.ClientSum = (notroundedsum/from)*to1;
+        end else begin
+          TBBUrw.ClientPrice = price;
+          TBBUrw.ClientSum = notroundedsum;
+        end; 
+        TBBUrw.ClientPrice = (TBBUrw.ClientPrice*TBBUr.ClientFrRate)/TBBUr.ClientToRateB1; 
+        TBBUrw.ClientSum = (TBBUrw.ClientSum*TBBUr.ClientFrRate)/TBBUr.ClientToRateB1;
+        RoundRowSum(TBBUr.ClientCurncyCode,"","TBBUVc",TBBUrw.ClientPrice); 
+        RoundRowSum(TBBUr.ClientCurncyCode,"","TBBUVc",TBBUrw.ClientSum); 
+      end;
+    end; 
+    
+ LCalcTBBUVcCurrencyPriceAndSum:;
+    
+  return;
+end; //Edit***************************Sasha2,14:29 27.02.2015 }
+
 global
 procedure TBBUDchrsum(var record TBBUVc TBBUr,Integer rownr,Boolean pritemf,Integer UseDiscount)
 BEGIN
   val t,v,totrowcost,pritcost,s;
   row TBBUVc TBBUrw;
+  val t1; //Edit***************************Sasha2,16:30 27.02.2015
 
   MatRowGet(TBBUr,rownr,TBBUrw);
   t = TBBUrw.Cost;
@@ -1068,6 +1113,7 @@ BEGIN
     CalcExtra(t,TBBUrw.Markup,v);
     TBBUrw.Sum = t + v;
     RoundRowSum(TBBUr.CurncyCode,"","TBBUVc",TBBUrw.Sum);
+    CalcTBBUVcCurrencyPriceAndSum(TBBUr,TBBUrw,TBBUrw.Price,TBBUrw.Sum,t + v,(TBBUrw.Price!=0)); //Edit***************************Sasha2,14:44 27.02.2015
 /*    
   if (QTrw.PriceFactor<>0) then begin
     t = t / QTrw.PriceFactor;
@@ -1079,10 +1125,13 @@ BEGIN
       TBBUrw.Price = v + TBBUrw.Cost;
       TBBUrw.Price  = DivRateToBase1(TBBUr.CurncyCode,TBBUrw.Price,TBBUr.FrRate,TBBUr.ToRateB1,TBBUr.ToRateB2,TBBUr.BaseRate1,TBBUr.BaseRate2,DefaultCurRoundOff);
       CalcSum(TBBUrw.Qty,TBBUrw.Price,0,TBBUrw.Discount,t,UseDiscount);
+      t1 = t; //Edit***************************Sasha2,16:31 27.02.2015
       RoundRowSum(TBBUr.CurncyCode,"","TBBUVc",t);
       TBBUrw.Sum = t;
+      CalcTBBUVcCurrencyPriceAndSum(TBBUr,TBBUrw,TBBUrw.Price,t,t1,(TBBUrw.Price!=0)); //Edit***************************Sasha2,14:44 27.02.2015
     end else begin
       TBBUrw.Sum = 0;
+      CalcTBBUVcCurrencyPriceAndSum(TBBUr,TBBUrw,TBBUrw.Price,0,0,(TBBUrw.Price!=0)); //Edit***************************Sasha2,14:44 27.02.2015
     end;
   end;
   s  = MulRateToBase1(TBBUr.CurncyCode,TBBUrw.Sum,TBBUr.FrRate,TBBUr.ToRateB1,TBBUr.ToRateB2,TBBUr.BaseRate1,TBBUr.BaseRate2,DefaultCurRoundOff);

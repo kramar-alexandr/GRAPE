@@ -2768,7 +2768,8 @@ begin
   Flip(7);//Add by Victor 26.02.15
   MatCol(1,200,"Наименование",0,Comment,false,0);
   MatCol(t=1,-210,"Цена в валюте",0,ClientPrice,true,0);
-  MatCol(t,-110,"Сумма в валюте",0,ClientSum,true,0);
+  //MatCol(t,-110,"Сумма в валюте",0,ClientSum,true,0);
+  MatColTL(t,-110,"Сумма в валюте",0,-1,ViewOnly,-1,ClientSum,true,0); //Edit***************************Sasha2,11:11 27.02.2015
 	MatText(t=9,30,"Итого",true);	//change stp for export to excel
   MatCol(t,100,"",0,Spec,false,0);
   MatText(t,-150,"Сумма в вал.",false); //Edit***************************Sasha2,17:08 08.10.2014

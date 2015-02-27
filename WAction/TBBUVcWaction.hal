@@ -88,10 +88,10 @@ begin
 
   if (changedf) then begin
     GetWindowRecord(wn,TBBUr);
-    if (nonblank(TBBUr.ClientCurncyCode)) then begin
+    //if (nonblank(TBBUr.ClientCurncyCode)) then begin //Edit***************************Sasha2,15:07 27.02.2015
       TBBUVc_PasteCurncyCode2(TBBUr,"",true);
       PutWindowRecord(wn,TBBUr);
-    end;
+    //end;
   end;
   TBBUDClassClientCurncyCodeEFAfter = true;
   return;
@@ -414,7 +414,7 @@ begin
     	TBBUVc_PasteTypeName_Rebate(TBBUr,rownr,TBBUrw);
 		MatRowPut(TBBUr,rownr,TBBUrw);
 		TBBUSumup(TBBUr);
-	    PutWindowRecord(wn,TBBUr);
+	  PutWindowRecord(wn,TBBUr);
     end;
   end;
   TBBUDClassTypeNameEFAfter = true;
