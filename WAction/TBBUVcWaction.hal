@@ -368,6 +368,7 @@ begin
   return;
 end;
 
+
 function Boolean TBBUDClassSumEFAfter(Integer wn,Integer rownr,Boolean changedf)
 begin  
   record INVc INr;
