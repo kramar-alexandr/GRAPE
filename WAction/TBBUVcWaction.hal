@@ -89,13 +89,41 @@ begin
   if (changedf) then begin
     GetWindowRecord(wn,TBBUr);
     //if (nonblank(TBBUr.ClientCurncyCode)) then begin //Edit***************************Sasha2,15:07 27.02.2015
-      TBBUVc_PasteCurncyCode2(TBBUr,"",true);
+      TBBUVc_PasteCurncyCode2(TBBUr,"!",false);
       PutWindowRecord(wn,TBBUr);
     //end;
   end;
   TBBUDClassClientCurncyCodeEFAfter = true;
   return;
 end;
+
+//Edit***************************Sasha2,16:30 02.03.2015 {
+function Boolean TBBUDClassClientFrRateEFAfter(Integer wn,Boolean changedf)
+begin  
+  record TBBUVc TBBUr;
+
+  if (changedf) then begin
+    GetWindowRecord(wn,TBBUr);
+    TBBUVc_PasteCurncyCode2(TBBUr,"",true);
+    PutWindowRecord(wn,TBBUr);
+  end;
+  TBBUDClassClientFrRateEFAfter = true;
+  return;
+end; //Edit***************************Sasha2,16:30 02.03.2015 }
+
+//Edit***************************Sasha2,16:30 02.03.2015 {
+function Boolean TBBUDClassClientToRateB1EFAfter(Integer wn,Boolean changedf)
+begin  
+  record TBBUVc TBBUr;
+
+  if (changedf) then begin
+    GetWindowRecord(wn,TBBUr);
+    TBBUVc_PasteCurncyCode2(TBBUr,"",true);
+    PutWindowRecord(wn,TBBUr);
+  end;
+  TBBUDClassClientToRateB1EFAfter = true;
+  return;
+end; //Edit***************************Sasha2,16:30 02.03.2015 }
  
 function Boolean TBBUDClassMarkupEFAfter(Integer wn,Integer fn,Integer rownr,Integer changedf)
 begin  
@@ -473,6 +501,8 @@ BEGIN
     case "TypeName": res = TBBUDClassTypeNameEFAfter(wn,rownr,changed); //Edit***************************Sasha2,11:03 10.10.2014
     case "SubContractor": res = TBBUDClassSubContractorEFAfter(wn,rownr,changed); //Edit***************************Sasha2,17:29 28.11.2014
     case "ClientCurncyCode": res = TBBUDClassClientCurncyCodeEFAfter(wn,changed!=0);
+    case "ClientFrRate": res = TBBUDClassClientFrRateEFAfter(wn,changed!=0); //Edit***************************Sasha2,16:39 02.03.2015
+    case "ClientToRateB1": res = TBBUDClassClientToRateB1EFAfter(wn,changed!=0); //Edit***************************Sasha2,16:39 02.03.2015
     
   end;
   TBBUDClassAfterEditField = res;

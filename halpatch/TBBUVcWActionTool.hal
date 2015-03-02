@@ -483,7 +483,7 @@ begin
 end;
     
 global
-procedure TBBUGetRate2(var record TBBUVc TBBUp)	//Edit by Victor 26.02.15
+procedure TBBUGetRate2(var record TBBUVc TBBUp,Boolean newratef)	//Edit by Victor 26.02.15
 begin
   row TBBUVc TBBUrw; //Edit***************************Sasha2,15:09 27.02.2015
   Integer rwcnt,i; //Edit***************************Sasha2,15:09 27.02.2015
@@ -497,12 +497,14 @@ begin
   if (NonBlank(TBBUp.ClientCurncyCode)) then begin
     crncy = TBBUp.ClientCurncyCode;
     td = TBBUp.TransDate;
-    if (blankdate(td)) then begin td = CurrentDate; end;
-    GetFullCurncyRate(crncy,td,from,to1,to2,base1,base2);
-    TBBUp.ClientCurncyCode = crncy;
-    TBBUp.ClientFrRate = from;
-    TBBUp.ClientToRateB1 = to1;
-    TBBUp.ClientToRateB2 = to2;
+    if (blankdate(td)) then begin td = CurrentDate; end; 
+    if (newratef==false) then begin 
+      GetFullCurncyRate(crncy,td,from,to1,to2,base1,base2);
+      TBBUp.ClientFrRate = from; 
+      TBBUp.ClientToRateB1 = to1;
+      TBBUp.ClientToRateB2 = to2;
+    end;
+     
     for (i=0;i<rwcnt;i=i+1) begin
       MatRowGet(TBBUp,i,TBBUrw);
       if (TBBUrw.stp==1) then begin
@@ -564,7 +566,7 @@ begin
     if (TBBUp.ClientCurncyCode!=oldcurncy) or (newratef) then begin
       BlockLoad(ISr);
       //SaveExchangeRate(TBBUp.FrRate,TBBUp.ToRateB1,TBBUp.ToRateB2,TBBUp.BaseRate1,TBBUp.BaseRate2,fr,to1,to2,br1,br2);
-      TBBUGetRate2(TBBUp);
+      TBBUGetRate2(TBBUp,newratef);
       //add here update prices and new fields
       //if ((OtherExchangeRate(TBBUp.FrRate,TBBUp.ToRateB1,TBBUp.ToRateB2,TBBUp.BaseRate1,TBBUp.BaseRate2,fr,to1,to2,br1,br2)) and (ISr.UpdCurPrWithDate!=0)) then begin 
       //  TBBUDUpdatePrices(TBBUp,false);
