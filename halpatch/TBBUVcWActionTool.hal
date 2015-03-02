@@ -490,7 +490,10 @@ begin
   val from,to1,to2,base1,base2;
   string 5 crncy;
   Date td;
+  record GeneralOptionBlock GenOptRec; //Edit***************************Sasha2,13:19 02.03.2015
  
+  BlockLoad(GenOptRec);
+  rwcnt = MatRowCnt(TBBUp);
   if (NonBlank(TBBUp.ClientCurncyCode)) then begin
     crncy = TBBUp.ClientCurncyCode;
     td = TBBUp.TransDate;
@@ -500,11 +503,16 @@ begin
     TBBUp.ClientFrRate = from;
     TBBUp.ClientToRateB1 = to1;
     TBBUp.ClientToRateB2 = to2;
+    for (i=0;i<rwcnt;i=i+1) begin
+      MatRowGet(TBBUp,i,TBBUrw);
+      if (TBBUrw.stp==1) then begin
+        TBBUDchrsum(TBBUp,i,true,GenOptRec.UseDiscount);
+      end;
+    end;
   end else begin //Edit***************************Sasha2,15:08 27.02.2015 {
     TBBUp.ClientFrRate = blankval;
     TBBUp.ClientToRateB1 = blankval;
     TBBUp.ClientToRateB2 = blankval;
-    rwcnt = MatRowCnt(TBBUp);
     for (i=0;i<rwcnt;i=i+1) begin
       MatRowGet(TBBUp,i,TBBUrw);
       if (TBBUrw.stp==1) then begin
@@ -514,7 +522,7 @@ begin
       end;
     end;
   end; //Edit***************************Sasha2,15:08 27.02.2015 }
-  
+  TBBUSumup(TBBUp); //Edit***************************Sasha2,13:39 02.03.2015
   return;
 end;
             
