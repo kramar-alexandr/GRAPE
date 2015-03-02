@@ -2875,7 +2875,7 @@ begin
   EditField(h1,v=6,50,"Валюта клиента",Normal,ClientCurncyCode,false,CurncyCodeSClass);
   EditField(h2,v,50,"Курс",Normal,ClientFrRate,true,0); 
   EditField(410,v,50,"Вал. кл. 1",Normal,ClientToRateB1,true,0);
-  EditField(410,v+vs,50,"Вал. кл. 2",Normal,ClientToRateB2,true,0)
+  //EditField(410,v+vs,50,"Вал. кл. 2",Normal,ClientToRateB2,true,0) //Edit***************************Sasha2,17:39 02.03.2015
   v=v+vs+vs;
   EditField(h1,v,80, "Итого сумма (клиент)",Normal,ClientTotSum,true,0); 
   EditField(h2,v,80, "НДС(вал.)",Normal,ClientSum3,true,0);
