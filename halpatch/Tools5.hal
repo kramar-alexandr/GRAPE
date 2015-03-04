@@ -300,8 +300,8 @@ BEGIN
       	if (TBBUrw.stp==23) then begin
       		totrebate = totrebate + TBBUrw.Sum;
       		totrebate_cur = totrebate_cur + TBBUrw.ClientSum; //Edit***************************Sasha2,17:55 27.02.2015
-      		subtotv = subtotv - TBBUrw.Sum;
-      		subtotv_cur = subtotv_cur - TBBUrw.ClientSum; //Edit***************************Sasha2,17:48 27.02.2015
+      		subtotv = subtotv + TBBUrw.Sum;
+      		subtotv_cur = subtotv_cur + TBBUrw.ClientSum; //Edit***************************Sasha2,17:48 27.02.2015
       		vatrebate = vatrebate + TBBUrw.SumCost; //Sasha2: rebate VAT value
       		vatrebate_cur = vatrebate_cur + TBBUrw.ClientPrice; //Sasha2: rebate currency VAT value
       	end;
