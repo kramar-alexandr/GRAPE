@@ -247,7 +247,9 @@ begin
 								for (i=0;i<rwcnt;i=i+1) begin
 									MatRowGet(TBBU2r,i,TBBU2rw);
 									MatRowPut(TBBUr,rwnum,TBBU2rw);	
-									TBBUDchrsum(TBBUr,rwnum,true,GenOptRec.UseDiscount);
+									//if(TBBUrw.stp<17 or TBBUrw.stp>23)then begin
+										//TBBUDchrsum(TBBUr,rwnum,true,GenOptRec.UseDiscount);
+									//end;
 									rwnum = rwnum + 1;
 								end;
 							end;
@@ -280,7 +282,9 @@ begin
 	  									matrowget(TBBUr,j+i+1,TBBU3rw);	 
 	  									TBBU3rw.Qty = TBBU3rw.Qty + TBBU2rw.Qty;
 	  									matrowput(TBBUr,j+i+1,TBBU3rw);
-	  									TBBUDchrsum(TBBUr,j+i+1,true,GenOptRec.UseDiscount);
+	  									//if((TBBUrw.stp<17 or TBBUrw.stp>23))then begin
+		  									//TBBUDchrsum(TBBUr,j+i+1,true,GenOptRec.UseDiscount);	
+		  								//end;
 										end; 
 										goto Ldone;
 	  							end;
@@ -309,7 +313,9 @@ begin
 									For(i=0;i<rwcnt2;i=i+1) begin
 	  								matrowget(TBBU2r,i,TBBU2rw);
 	  								MatRowPut(TBBUr,rwnum,TBBU2rw);	
-	  								TBBUDchrsum(TBBUr,rwnum,true,GenOptRec.UseDiscount);
+	  								//if((TBBUrw.stp<17 or TBBUrw.stp>23))then begin
+		  								//TBBUDchrsum(TBBUr,rwnum,true,GenOptRec.UseDiscount);
+		  							//end;
 	  								rwnum = rwnum + 1;
 									end; 
 								end;

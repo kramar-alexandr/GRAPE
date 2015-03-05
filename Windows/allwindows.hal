@@ -2771,10 +2771,10 @@ begin
   MatColTL(t,-210,"–ена в валюте",0,-1,ViewOnly,-1,ClientPrice,true,0); //Edit***************************Sasha2,11:11 27.02.2015
   //MatCol(t,-110,"‘умма в валюте",0,ClientSum,true,0);
   MatColTL(t,-110,"‘умма в валюте",0,-1,ViewOnly,-1,ClientSum,true,0); //Edit***************************Sasha2,11:11 27.02.2015
-	MatText(t=9,30,"€того",true);	//change stp for export to excel
-  MatCol(t,100,"",0,Spec,false,0);
-  MatText(t,-150,"‘умма в вал.",false); //Edit***************************Sasha2,17:08 08.10.2014
-  MatCol(t,-60,"‘умма в вал",0,ClientSum,true,0); 
+	//MatText(t=9,30,"€того",true);	//change stp for export to excel
+  MatCol(t=9,100,"",0,Spec,false,0);
+  //MatText(t,-330,"‘умма в вал.",false); //Edit***************************Sasha2,17:08 08.10.2014
+  MatCol(t,-270,"‘умма в вал",0,ClientSum,true,0); 
 
 
   DeleteRowTest;
