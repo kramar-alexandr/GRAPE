@@ -325,7 +325,7 @@ BEGIN
       		blsum[TBBUrw.IdentQuant] = BlankVal;
       	end;
       end else begin //Edit***************************Sasha2,15:12 07.10.2014 }
-      	  if (TBBUrw.Sum!=subtotv) or (TBBUrw.Cost!=costv) then begin
+      	if (TBBUrw.Sum!=subtotv) or (TBBUrw.Cost!=costv) then begin
 	        TBBUrw.Sum = subtotv;
 	        TBBUrw.ClientSum = subtotv_cur; //Edit***************************Sasha2,17:49 27.02.2015
 	        TBBUrw.Cost = costv;

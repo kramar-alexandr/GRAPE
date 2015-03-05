@@ -518,7 +518,7 @@ begin
   			MatRowPut(TBBUr,i,TBBUrw);
   			if (TBBUVc_PasteArtCode(TBBUr,i,inmsg)) then begin
 		      TBBUDchrsum(TBBUr,i,true,GOb.UseDiscount);
-		      TBBUSumup(TBBUr);
+		      //TBBUSumup(TBBUr); //Edit***************************Sasha2,17:03 05.03.2015
 		    end;
   			if (TempTBBUrw.Qty!=0) then begin
   				MatRowGet(TBBUr,i,TBBUrw);
@@ -526,14 +526,24 @@ begin
   				MatRowPut(TBBUr,i,TBBUrw);
   				if (TBBUVc_PasteQty(TBBUr,i)) then begin      
 			      TBBUDchrsum(TBBUr,i,true,GOb.UseDiscount);
-			      TBBUSumup(TBBUr);         
+			      //TBBUSumup(TBBUr); //Edit***************************Sasha2,17:03 05.03.2015    
 			    end else begin
 			      MatRowGet(TBBUr,i,TBBUrw);
 			      if (nonblank(TBBUrw.TimeClass)) then begin
 			        TBBUDchrsum(TBBUr,i,true,GOb.UseDiscount);
-			        TBBUSumup(TBBUr);
+			        //TBBUSumup(TBBUr); //Edit***************************Sasha2,17:03 05.03.2015
 			      end;
 			    end;
+  			end;
+  			if (TBBUrw.Cost!=0) then begin
+  			  MatRowGet(TBBUr,i,TBBUrw); //Edit***************************Sasha2,10:21 13.10.2014 {
+          if (TBBUrw.Qty!=0) then begin
+          	TBBUrw.SumCost = TBBUrw.Qty * TBBUrw.Cost;
+          end else begin
+          	TBBUrw.SumCost = TBBUrw.Cost;
+          end;
+          MatRowPut(TBBUr,i,TBBUrw); //Edit***************************Sasha2,10:21 13.10.2014 }
+          TBBUDchrsum(TBBUr,i,false,GOb.UseDiscount);
   			end;
   		case 9: //Итого
   			SubtotalTBBUCustom(i,TBBUr,TempTBBUrw.Spec);
@@ -549,11 +559,12 @@ begin
   			ClearRow(TBBUr,TBBUrw,22);
   			TBBUrw.Spec = TempTBBUrw.Spec;
   			MatRowPut(TBBUr,i,TBBUrw);
-  			TBBUSumup(TBBUr);	
+  			//TBBUSumup(TBBUr);	 //Edit***************************Sasha2,17:03 05.03.2015
   		otherwise
   			//ClearRow(TBBUr,TBBUrw,1);
   		end;
   	end;
+  	TBBUSumup(TBBUr);
   end;
 
   return;
