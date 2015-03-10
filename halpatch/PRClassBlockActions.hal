@@ -26,6 +26,16 @@ BEGIN
       res = -1;
       goto LPRClassBlockCheck;        
     end;
+    for (j=0;j<i;j=j+1) begin	//10.03.15
+      MatRowGet(PRCr,j,PRC2rw);
+			if (nonblank(PRCrw.Code)) then begin
+				if (PRCrw.Code==PRC2rw.Code) then begin
+					RecordCheckError(1547,"",i,"Code");      
+					res = -1; 
+					goto LPRClassBlockCheck;
+				end;
+			end;
+		end;
   end;  
 LPRClassBlockCheck:;  
   PRClassBlockCheck = res;
