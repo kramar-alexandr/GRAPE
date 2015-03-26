@@ -353,7 +353,11 @@ BEGIN
   TBBUp.Sum3 = s3;//Edit by Victor 10.09.14
   TBBUp.TotSum = tt + totrebate;//Edit***************************Sasha2,16:54 07.10.2014
   TBBUp.TotSumVAT = tt + s3 + totrebate; //Edit***************************Sasha2,16:07 07.10.2014
-  TBBUp.ClientSum3 = s3_cur; //Edit***************************Sasha2,17:35 27.02.2015
+  if (TBBUp.ClientFrRate==0 or TBBUp.ClientToRateB1==0) then begin
+    s3_cur = TBBUp.ClientSum3; //Edit***************************Sasha2,12:12 26.03.2015
+  end else begin
+    TBBUp.ClientSum3 = s3_cur; //Edit***************************Sasha2,17:35 27.02.2015
+  end;
   TBBUp.ClientTotSum = tt_cur + totrebate_cur; //Edit***************************Sasha2,17:35 27.02.2015
   TBBUp.ClientTotSumVAT = tt_cur + s3_cur + totrebate_cur; //Edit***************************Sasha2,17:35 27.02.2015
   //TBBUp.GPTot = gptot + totrebate; //Edit***************************Sasha2,10:29 08.09.2014

@@ -1058,8 +1058,8 @@ begin
   Date td; 
   Boolean countf;
 
-    TBBUrw.ClientPrice = blankval;
-    TBBUrw.ClientSum = blankval;
+    //TBBUrw.ClientPrice = blankval; Uncomment to make "ClientPrice" and "ClientSum" blank after client rates have been modified in TBBUVc
+    //TBBUrw.ClientSum = blankval;   and leave only "TBBUp.ClientSum3 = s3_cur" in the "TBBUSumup" function
     if (NonBlank(TBBUr.ClientCurncyCode) and zerovalf) then begin countf = true; end;
     if (TBBUr.ClientFrRate==0 or TBBUr.ClientToRateB1==0) then begin countf = false; end;
     if (countf) then begin 
