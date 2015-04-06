@@ -25,6 +25,7 @@ BEGIN
   record TaxMatrixVc TMr;
   
   ClearRow(VIr,VIrw,1);
+  VIrw.AccNumber = VIr.BankAcc; //Edit***************************Sasha2,11:40 06.04.2015
   VIrw.Item = TBBUrwp.ArtCode;
   //MatRowPut(VIr,virownr,VIrw);
   //MatRowGet(VIr,virownr,VIrw);
@@ -92,6 +93,15 @@ BEGIN
 		  		if (subcontrname!="nosubcontr") then begin
 		  			VIVc_PasteVECode(VIr,0,false,false,vewarn);
 		  		end;
+		  		VEr.Code = VIr.VECode;
+      	  ReadFirstMain(VEr,1,true);
+      	  if (NonBlank(VEr.VEPayDeal)) then begin
+      	    VIr.PayDeal = VEr.VEPayDeal;
+      	  end else begin
+      	    VIr.PayDeal = PRr.PayDeal;
+      	  end; 
+      	  VIVc_PastePayDeal(VIr);
+      	  VIr.BankAcc = VEr.AccCost;
 		  		vectVIr[subcontrname] = VIr;
 		  		porownr[subcontrname] = 0;
 		  		if (blank(subcontrlist)) then begin
@@ -124,8 +134,7 @@ BEGIN
 	  VIr.Comment = TBBUp.Comment;
 	  VIr.CurncyCode = TBBUp.CurncyCode;
 	  VIGetRate(VIr);
-	  VIr.PayDeal = PRr.PayDeal;
-	  VIVc_PastePayDeal(VIr);
+	  VIr.BankAcc = "";
 	  if (NonBlankDate(PRr.LaunchingDate)) then begin
 	  	VIr.StartJobDate = PRr.LaunchingDate;
 	  end else begin
