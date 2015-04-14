@@ -1333,6 +1333,7 @@ begin
   RecordField(BUApproveFlag,M4Mark,0,0) //Edit***************************Sasha2,14:44 16.09.2014
   RecordField(MotherProjectName,M4Str,60,0); //Edit***************************Sasha2,11:07 21.10.2014
   RecordField(LaunchingDate,M4Date,0,0); //Edit***************************Sasha2,10:22 25.11.2014
+  RecordField(ORCONr,M4Long,0,0); //Edit***************************Sasha2,16:04 14.04.2015
   ArrayBegin(Math,-,1);
   ArrayField(PlanDate,M4Date,0,0);
   ArrayField(InvNr,M4Long,0,IVVc);
@@ -2403,6 +2404,57 @@ begin
   ArrayField(Comment2,M4Str,60,0);	//Edit by Victor 19.02.15
   EndArray;
   EndBlock;
+  
+  RecordBegin(ORCOVc,-,"");
+  RecordField(SerNr,M4Long,0,0);
+  RecordField(CODate,M4Date,0,0);
+  RecordField(CustCode,M4Code,20,CUVc);
+  RecordField(CustName,M4Str,100,0);
+  RecordField(PayDeal,M4Code,2,0);
+  RecordField(OKFlag,M4Mark,0,0);
+  RecordField(Closed,M4Mark,0,0);
+  RecordField(Type,M4Str,200,0);
+  RecordField(EndDate,M4Date,0,0); //Edit***************************Sasha2,15:59 14.04.2015
+  MainKeyBegin(SerNr,0);
+  KeySegment(SerNr);
+  KeyBegin(CustCode);
+  KeySegment(CustCode);
+  KeySegment(SerNr);
+  KeyBegin(CustName);
+  KeySegment(CustName);
+  KeySegment(SerNr);
+  KeyBegin(CODate);
+  KeySegment(CODate);
+  KeySegment(SerNr);
+  KeyBegin(OKFlag);
+  KeySegment(OKFlag);
+  KeySegment(SerNr);
+
+  SubSetKeyBegin2(ActSerNr);
+  AppendFieldToKeyName(CustCode);
+  KeySegment(SerNr);
+  KeySegment(Closed);
+  SubSetKeyBegin2(ActCustCode);
+  AppendFieldToKeyName(CustCode);
+  KeySegment(CustCode);
+  KeySegment(SerNr);
+  KeySegment(Closed);
+  SubSetKeyBegin2(ActCustName);
+  AppendFieldToKeyName(CustCode);
+  KeySegment(CustName);
+  KeySegment(SerNr);
+  KeySegment(Closed);
+  SubSetKeyBegin2(ActCODate);
+  AppendFieldToKeyName(CustCode);
+  KeySegment(CODate);
+  KeySegment(SerNr);
+  KeySegment(Closed);
+  SubSetKeyBegin2(ActOKFlag);
+  AppendFieldToKeyName(CustCode);
+  KeySegment(OKFlag);
+  KeySegment(SerNr);
+  KeySegment(Closed);
+  EndRecord;
     
 return;
 end;

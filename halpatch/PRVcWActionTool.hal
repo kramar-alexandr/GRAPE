@@ -115,6 +115,8 @@ global
 procedure PRVc_PasteCustCode(var record PRVc PRp,var string warning)
 BEGIN
   record CUVc CUr;
+  record ORCOVc ORCOr; //Edit***************************Sasha2,16:10 14.04.2015
+  Boolean TrHs,testf; //Edit***************************Sasha2,17:14 14.04.2015
   
   PRp.CustName = "";
   CUr.Code = PRp.CustCode;
@@ -132,6 +134,14 @@ BEGIN
     if (nonblank(CUr.PayDeal)) then begin
       PRp.PayDeal = CUr.PayDeal;
     end;
+    ORCOr.CustCode = CUr.Code; //Edit***************************Sasha2,16:17 14.04.2015 {
+    TrHs = true;
+    while (LoopKey("CustCode",ORCOr,1,TrHs)) begin
+      if (ORCOr.CustCode==CUr.Code and ORCOr.OKFlag==1 or ORCOr.Closed==0) then begin TrHs = false; testf = true; end;
+    end; 
+    if (testf) then begin
+      PRp.ORCONr = ORCOr.SerNr;
+    end;//Edit***************************Sasha2,16:18 14.04.2015 }
   end;
   RETURN;
 END;
