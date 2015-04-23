@@ -4166,12 +4166,12 @@ begin
     RadioButton(h,v+=16,1,255,"Предупреждать",TBIVItemsUsage);
     RadioButton(h,v+=16,2,255,"Не разрешать",TBIVItemsUsage);
   end;*/
-  ButtonFrame(-200,v=40,150,0,"Период оказания услуг"); //Edit***************************Sasha2,16:16 25.12.2014
+  ButtonFrame(-240,v=40,220,0,"Период фактического оказания услуг"); //Edit***************************Sasha2,16:16 25.12.2014	//Edit by Victor 23.04.15
   EditField(-110,v+=2,70,"Дата начала",Normal ,StartDate,false,PasteCurDate);
   EditField(-110,v+=20,70,"Дата окончания",Normal ,EndDate,false,PasteCurDate); //Edit***************************Sasha2,10:28 25.11.2014
   ButtonFrame(-200,v+=60,150,0,"Даты по документам"); //Edit***************************Sasha2,16:16 25.12.2014
-  EditField(-110,v+=2,70,"Дата старта проекта",Normal,LaunchingDate,false,PasteCurDate); //Edit***************************Sasha2,16:30 25.12.2014
-  EditField(-110,v+=20,70,"Дата завершения проекта",Normal,FinishedDate,false,PasteCurDate);
+  EditField(-110,v+=2,70,"Дата старта",Normal,LaunchingDate,false,PasteCurDate); //Edit***************************Sasha2,16:30 25.12.2014
+  EditField(-110,v+=20,70,"Дата завершения",Normal,FinishedDate,false,PasteCurDate);	//Edit by Victor 23.04.15
   v = v + 40; //Edit***************************Sasha2,16:32 25.12.2014
   if (HasMultiCurrency) then begin
     EditField(-110,v+=20,70,"Валюта проекта",Normal,CurncyCode,false,CurncyCodeSClass);
@@ -4423,7 +4423,7 @@ begin
   string 255 label;
   Integer tilenr;
   WindowBegin("Проекты",PRLClass,CGmlist,-);
-  SetWRect(20,80,750,298);
+  SetWRect(20,80,800,298);
   SpawnClass(PRDClass);
   Sizeable(-1,-1,0,0);
   UseView(PRVc);
@@ -4435,16 +4435,19 @@ begin
 		if (blank(label)) then begin label = "Менеджер проекта";end;// Edit ************************** Friday, 12 September 2014 14:01:20
   RlCol(75,75,label,Leader,false);
   end;
-  RlColKey(131,131,"Статус",StatMark,false,StatMark);
-  RlColKey(171,171,"Вид деятел.",PRClass,false,PRClass); //Edit***************************Sasha2,10:06 17.09.2014
+  RlColKey(151,151,"Клиент",CustCode,false,CustCode);
+  RlColKey(231,231,"Вид деятел.",PRClass,false,PRClass); //Edit***************************Sasha2,10:06 17.09.2014
   if (IsEnterprise) then begin
   //RlColKey(211,211,"Этап",PRStage,false,PRStage);// Edit ************************** Friday, 12 September 2014 16:17:25
   end;
-  RlColKey(261,261,"Клиент",CustCode,false,CustCode);
-  RlCol(380,380,"Бюдж.утв.",BUOKFlag,false);
-  RlCol(460,460,"Бюдж.подтв.кл.",BUApproveFlag,false); //Edit***************************Sasha2,14:45 16.09.2014
+  RlColKey(310,310,"Описание",Name,false,Name);
+  
   //RlColKey(341,341,"Наименование",CustName,false,CustName);// Edit ************************** Friday, 12 September 2014 16:17:19
-  RlColKey(562,562,"Описание",Name,false,Name);
+	RlCol(-280,-280,"Дата нач.",StartDate,false);
+	RlCol(-220,-220,"Дата оконч.",EndDate,false);
+  RlColKey(-155,-155,"Статус",StatMark,false,StatMark);
+  RlCol(-115,-115,"Бюдж.утв.",BUOKFlag,false);
+  RlCol(-60,-60,"Б.подт.кл.",BUApproveFlag,false);
   SearchField("Найти");
   if (HasLimitedAccess) then begin
 //  if (HasLimitedAccess and HasTouchScreenDevice==false) then begin
