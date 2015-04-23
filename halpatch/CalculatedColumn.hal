@@ -1,0 +1,1 @@
+globalfunction string 255 GetPRClassForTBList(var record TBBUVc TBBUr)begin  record PRVc PRr;    PRr.Code = TBBUr.PRCode;  ReadFirstMain(PRr,1,true);    GetPRClassForTBList = PRr.PRClass;  return;end;

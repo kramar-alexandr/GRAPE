@@ -5492,20 +5492,23 @@ end;
 window TBBULClass:1
   wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
 begin
+  integer pos;
   WindowBegin("Бюджеты проектов",TBBULClass,CGmlist,-);
   SpawnClass(TBBUDClass);
   SetWRect(64,80,760,298);
   Sizeable(-1,-1,0,0);
   UseView(TBBUVc);
   RecordList(4,17,-21,-39);
-  RlColKey(4,4,    "Проект",PRCode,false,MainKey);
-  RlColKey(81,81,"Дата",TransDate,false,TransDate);
-  RlColKey(155,155,"Продавец",SalesMan,false,SalesMan);
-  RlColKey(220,220,"Наименование",PRName,false,PRName);
-  RlColKey(-300,-300,"Клиент",CustCode,false,CustCode);
-  RlColKey(-240,-240,"Наим. клиента",CustName,false,CustName);
-  RlCol(-140,-120,"Итого с НДС",TotSumVAT,true);	// Edit -----------------Dima  26.12.2014
-  RlCol(-70,-60,"Итого",TotSum,true);
+  RlColKey(pos=4,pos=4,"Проект",PRCode,false,MainKey);
+  RlCol(pos+=66,pos+=66,"Аккаунт",PRLeader,false); //Edit***************************Sasha2,10:11 23.04.2015
+  RlColKey(pos+=30,pos+=30,"Клиент",CustCode,false,CustCode); //Edit***************************Sasha2,10:11 23.04.2015
+  CalculatedColumn(pos+=40,pos+=40,"Вид деят.","GetPRClassForTBList",false); //Edit***************************Sasha2,10:11 23.04.2015
+  RlColKey(pos+=30,pos+=30,"Описание",PRName,false,PRName);
+  pos = -230; //Edit***************************Sasha2,10:11 23.04.2015
+  RlColKey(pos,pos=,"Дата",TransDate,false,TransDate); //Edit***************************Sasha2,10:11 23.04.2015
+  RlCol(pos+=40,pos+=40,"Итого с НДС",TotSumVAT,false);	// Edit -----------------Dima  26.12.2014 //Edit***************************Sasha2,10:11 23.04.2015
+  RlCol(pos+=40,pos+=40,"Итого без НДС",TotSum,false); //Edit***************************Sasha2,10:11 23.04.2015
+
   SearchField("Найти");
   if (HasLimitedAccess) then begin
     BrowseSubsetButton(-40,-15);
@@ -5563,7 +5566,7 @@ begin
   UseView(ORCOVc);
   v = 10; vs = 20; h = 80; h2 = 210;
   EditField(h,v, 70,"Номер",Normal,SerNr,false,0);
-  EditField(h2,v,70,"Дата",Normal,CODate,false,PasteCurDate);
+  EditField(h2,v,70,"Дата начала",Normal,CODate,false,PasteCurDate);
   EditField(h2 + 180,v,70,"Дата заверш.",Normal,EndDate,false,PasteCurDate); //Edit***************************Sasha2,15:59 14.04.2015
   EditField(h,v+=vs,70,"Клиент",Normal,CustCode,false,CUSClass);
   EditField(h2,v,-40,"Наим.",Normal,CustName,false,0);
@@ -5572,5 +5575,24 @@ begin
 
   CheckBox(h,v+=20,0,"OK",OKFlag);
   CheckBox(h,v+=16,0,"Закрыт",Closed);
+  EndWindow;
+end;
+
+window ORCOLClass:1
+  wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
+begin
+  WindowBegin("Контракты",ORCOLClass,CGmlist,-);
+  SpawnClass(ORCODClass);
+  SetWRect(64,80,709,320);
+  Sizeable(-1,-1,0,0);
+  UseView(ORCOVc);
+  RecordList(4,17,-21,-39);
+  RlColKey(4,4,"Номер",SerNr,true,SerNr);
+  RlColKey(70,70,"O_K",OKFlag,false,OKFlag);
+  RlCol   (100,100,"Закрыт",Closed,false);
+  RlColKey(130,130, "Дата нач.",CODate,false,CODate); //Edit***************************Sasha2,10:09 23.04.2015
+  RlColKey(210,210,"Клиент",CustCode,false,CustCode);
+  RlColKey(300,300, "Наименов.",CustName,false,CustName);
+  SearchField("Найти");
   EndWindow;
 end;
