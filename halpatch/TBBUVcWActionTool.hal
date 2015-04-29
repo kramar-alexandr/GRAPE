@@ -404,6 +404,7 @@ begin
   string 10 markup;
   
   MatRowGet(TBBUr,rownr,TBBUrw);
+  price = TBBUrw.Price; //Edit***************************Sasha2,19:25 29.04.2015
   if (nonblank(TBBUrw.ArtCode)) then begin
     INr.Code = TBBUrw.ArtCode;
     if (ReadFirstMain(INr,1,true)) then begin
@@ -425,6 +426,9 @@ begin
       end;
     end;
     TBBURowAddPrice(TBBUr,TBBUrw);
+    if (TBBUrw.Price==0) then begin 
+      TBBUrw.Price = price; //Edit***************************Sasha2,19:25 29.04.2015
+    end;
     MatRowPut(TBBUr,rownr,TBBUrw);
     res = true;
   end;
