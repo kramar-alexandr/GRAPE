@@ -13,6 +13,7 @@ external procedure VIDDefault(Integer,string,var record VIVc); //Edit***********
 external procedure VIVc_PastePayDeal(var record VIVc); //Edit***************************Sasha2,10:06 18.12.2014
 external procedure VIGetRate(var record VIVc); //Edit***************************Sasha2,10:09 18.12.2014
 external procedure UpdateVIPayDate(string,date); //Edit***************************Sasha2,13:57 20.02.2015
+external procedure TBBUVc_PasteTypeName_Rebate(record TBBUVc,integer,var row TBBUVc); //Edit***************************Sasha2,18:23 29.04.2015
 
 SetLangMode(LangRussian,"RUS",0);
 
@@ -257,6 +258,11 @@ begin
 									MatRowGet(TBBU2r,i,TBBU2rw);
 									MatRowPut(TBBUr,rwnum,TBBU2rw);	
 									TBBUDchrsum(TBBUr,rwnum,true,GenOptRec.UseDiscount);
+									if (TBBUrw.stp==23) then begin
+									  MatRowGet(TBBUr,rwnum,TBBUrw);
+    	              TBBUVc_PasteTypeName_Rebate(TBBUr,rwnum,TBBUrw);
+		                MatRowPut(TBBUr,rwnum,TBBUrw);
+									end;
 									//if(TBBUrw.stp<17 or TBBUrw.stp>23)then begin
 										//TBBUDchrsum(TBBUr,rwnum,true,GenOptRec.UseDiscount);
 									//end;
@@ -297,6 +303,11 @@ begin
 	  									//end;
 	  									matrowput(TBBUr,j+i+1,TBBU3rw);
 	  									TBBUDchrsum(TBBUr,j+i+1,true,GenOptRec.UseDiscount);	
+	  									if (TBBUrw.stp==23) then begin
+    									  MatRowGet(TBBUr,j+i+1,TBBUrw);
+        	              TBBUVc_PasteTypeName_Rebate(TBBUr,rwnum,TBBUrw);
+    		                MatRowPut(TBBUr,j+i+1,TBBUrw);
+    									end;
 	  									//if((TBBUrw.stp<17 or TBBUrw.stp>23))then begin
 		  									//TBBUDchrsum(TBBUr,j+i+1,true,GenOptRec.UseDiscount);	
 		  								//end;
@@ -329,6 +340,11 @@ begin
 	  								matrowget(TBBU2r,i,TBBU2rw);
 	  								MatRowPut(TBBUr,rwnum,TBBU2rw);	
 	  								TBBUDchrsum(TBBUr,rwnum,true,GenOptRec.UseDiscount);
+	  								if (TBBUrw.stp==23) then begin
+  									  MatRowGet(TBBUr,rwnum,TBBUrw);
+      	              TBBUVc_PasteTypeName_Rebate(TBBUr,rwnum,TBBUrw);
+  		                MatRowPut(TBBUr,rwnum,TBBUrw);
+  									end;
 	  								//if((TBBUrw.stp<17 or TBBUrw.stp>23))then begin
 		  								//TBBUDchrsum(TBBUr,rwnum,true,GenOptRec.UseDiscount);
 		  							//end;
