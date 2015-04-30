@@ -4113,7 +4113,7 @@ begin
     EditField(300,v,-210,"Старший",Normal,MotherCode,false,PRSClass);
   end;
   EditField(-100,v,-40,"Тип проекта",Normal,PRClass,false,PRClassSClass); //Edit by Victor 19.09.14 //Edit***************************Sasha2,10:05 17.09.2014
-  EditField(h,v+=20,-210,"Описание",Normal,Name,false,0);
+  EditField(h+50,v+=20,-210,"Название проекта",Normal,Name,false,0);
   EditField(h+97,v+=20,-210,"Название старшего проекта",Normal,MotherProjectName,false,0); //Edit***************************Sasha2,11:08 21.10.2014
   if (IsEnterprise) then begin
     //EditField(-100,v,-40,"Этап",Normal,PRStage,false,PRStageSClass); //Edit***************************Sasha2,17:06 12.09.2014
