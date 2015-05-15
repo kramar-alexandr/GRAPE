@@ -1490,6 +1490,63 @@ begin
 return;
 end;
 
+function Boolean TBBUisCorrect(record TBBUVc TBBUr)
+begin
+	record UserVc User;
+	boolean res;
+	row TBBUVc TBBUrw, TBBU2rw;
+	Integer rwcnt,i;
+	
+	res = true;
+	rwcnt = MatRowCnt(TBBUr);
+	
+	if(rwcnt > 0)then begin
+		MatRowGet(TBBUr,rwcnt-1,TBBUrw);	
+		if(TBBUrw.stp != 9)then begin
+			res = false;
+			messagebox(0, "Вконце бюджет должен заканчиваться полем ИТОГО");
+			goto LTBBUisCorrect;
+		end;
+	end;
+	
+	for (i=0;i<rwcnt;i=i+1) begin
+    MatRowGet(TBBUr,i,TBBUrw);
+    if (TBBUrw.stp==18) then begin
+	    MatRowGet(TBBUr,i+1,TBBUrw);
+    	if(TBBUrw.stp!=17)then begin
+    		res = false;
+    		messagebox(0, "Отсутствует заголовок в " & (i + 1) & " строке.");
+    		goto LTBBUisCorrect;
+    	end;
+    end;
+  end;
+	
+  for (i=0;i<rwcnt;i=i+1) begin
+    MatRowGet(TBBUr,i,TBBUrw);
+    if (TBBUrw.stp==9) then begin
+    	if(i+1==rwcnt)then begin
+    		goto LTBBUisCorrect;
+    	end;
+	    MatRowGet(TBBUr,i+1,TBBUrw);
+    	if(TBBUrw.stp!=17)then begin
+				if(TBBUrw.stp==18)then begin
+					goto LTBBUisCorrect2;
+				end;
+				
+    		res = false;
+    		
+    		messagebox(0, "Неверные данные после Итого в " & (i + 1) & " строке.");
+    		goto LTBBUisCorrect;
+    	end;
+    end;
+    LTBBUisCorrect2:;
+  end;
+	
+	LTBBUisCorrect:;
+	TBBUisCorrect = res;
+return;
+end;
+
 global procedure ExportToExcelTBBUDsm() //*** Edit by Victor 15.09.14
 begin
 	record TBBUVc TBBUr;
@@ -1506,6 +1563,11 @@ begin
   	MessageBox(0,"Неподходящий статус утверждения бюджета");
   	return; 
   end; //Edit***************************Sasha2,15:32 21.10.2014 }
+  
+  if(TBBUisCorrect(TBBUr) == false)then begin 	//Edit by Victor 13.05.15
+  	Messagebox(0, "Неверно заполнен бюджет. Следуйте правилам создания и заполнения бюджетов.");
+  	return;
+  end;
 
   //RepSpec.Media = mtExcel; 
   RepSpec.Media = mtClipBoard; // Edit by Victor 25.09.14
