@@ -109,6 +109,18 @@ begin
   MatCol(t,-140,"Кол-во",0,Qty,true,0);
   MatText(t,-100,"Сумма",false);
   MatCol(t,-60,"Сумма",0,Sum,true,0);
+  MatText(t=23,30,"Скидка/Агентская комиссия (консолидированная)",false); //Edit***************************Sasha2,14:48 07.10.2014 }
+  MatCol(t,300,"",0,Spec,false,0);//190
+  MatText(t,-105,"Размер",false); 
+  MatCol(t,-60,"Сумма",0,TypeName,true,0);
+  MatText(t=24,30,"Скидка/Агентская комиссия (на подроект)",false); 
+  MatCol(t,260,"",0,Spec,false,0);//190
+  MatText(t,-105,"Размер",false); 
+  MatCol(t,-60,"Сумма",0,TypeName,true,0); 
+  MatText(t=25,30,"Скидка/Агентская комиссия (на блок)",false); 
+  MatCol(t,240,"",0,Spec,false,0);//190
+  MatText(t,-105,"Размер",false); 
+  MatCol(t,-60,"Сумма",0,TypeName,true,0); //Edit***************************Sasha2,16:21 27.05.2015 }
   MatCol(1,30,"Товар",0,ArtCode,false,INSClass);
   MatCol(1,155,"Кол-во",0,Qty,true,0);
   MatCol(1,200,"Наименование",0,Comment,false,0);
@@ -122,6 +134,9 @@ begin
 
   SpecialMenu("Добавить строку заголовка",' ',0,"HeaderLineTemplateTBBUDsm");
   SpecialMenu("Добавить итого",' ',0,"SubtotalTemplateTBBUDsm");
+  SpecialMenu("Добавить скидку/коммисию (на блок)",' ',0,"SubRebateBlockTemplateTBBUDsm"); //Edit***************************Sasha2,14:29 07.10.2014
+  SpecialMenu("Добавить скидку/коммисию (на подпроект)",' ',0,"SubRebateSubProjTemplateTBBUDsm"); //Edit***************************Sasha2,14:29 07.10.2014
+  SpecialMenu("Добавить скидку/коммисию (консолидированную)",' ',0,"SubRebateConsolidatedTemplateTBBUDsm"); //Edit***************************Sasha2,14:29 07.10.2014
   SpecialMenu("Добавить начало группы задач",' ',0,"SubBlockStartTemplateTBBUDsm"); //Edit***************************Sasha2,14:29 07.10.2014
   SpecialMenu("Добавить конец группы задач",' ',0,"SubBlockEndTemplateTBBUDsm"); //Edit***************************Sasha2,14:29 07.10.2014
 
@@ -413,5 +428,15 @@ begin
   SetWRect(20,80,500,180);
   v = 6; vs = 20; h = 130; h2 = 40;
   EditField(h,v, 150,"Количество",Normal,frc,false,0);
+  EndWindow;
+end;
+
+window CommonVClass:1
+  wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
+begin
+  real h,h2,v,vs;
+  WindowBegin("Общее окно мейнтенанса",CommonVClass,CGMnt,RcType);
+  SetWRect(20,80,500,180);
+  v = 6; vs = 20; h = 130; h2 = 40;
   EndWindow;
 end;

@@ -745,7 +745,6 @@ BEGIN
   	ExtractObj(subcontrlist,pos,subcontrname);
   end;
  
-  
 LRecordAction_raPasteTBBUInSeparatePO:;
   RecordAction_raPasteTBBUInSeparatePO = res;
   RETURN;
@@ -756,7 +755,7 @@ procedure TBBUVc_PasteTypeName_Rebate(record TBBUVc TBBUr,integer rownr,var row 
 BEGIN
   row TBBUVc TBBU2rw;
   Integer i,rwcnt,length;
-  val rebval,rebsize,vat;
+  val rebval,rebsize,vat,vatready,rebvalready;
   boolean testf,notfound;
   string 255 tstr;
   string 1 cs;
@@ -769,66 +768,177 @@ BEGIN
 		TBBUrw.SumCost = BlankVal; //Sasha2: rebate VAT value
 	end else begin
 		rebval = BlankVal;
-    	testf = false;
-    	length = len(TBBUrw.TypeName);
-    	for (i=0;i<length;i=i+1) begin
-    		cs = mid(TBBUrw.TypeName,i,1);
-		    if (asc(cs)==37) then begin
-		      tstr = Left(TBBUrw.TypeName,i);
-		      rebsize = EvalToVal(tstr);
-		      testf = true;
-		      i = length;
-		    end;
-    	end;
-    	
-	    if (testf) then begin
-	    	rwcnt = MatRowCnt(TBBUr);
-  			for (i=(rownr-1);i>=0;i=i-1) begin
-  				MatRowGet(TBBUr,i,TBBU2rw);
-  				if (TBBU2rw.stp!=9 and (TBBU2rw.stp<17 or TBBU2rw.stp>23)) then begin
-  					rebval = rebval + TBBU2rw.Sum;
-  					vat = vat + FindVAT(TBBU2rw.VATCode,TBBU2rw.Sum,TBBUr.InclVAT,TBBUr.NoTAXonVAT);
-  				end;
-  				if (TBBU2rw.stp==18) then begin
-  					i = -1;
-  				end;
-  			end;
-  			for (i=(rownr+1);i<rwcnt;i=i+1) begin
-  		  		MatRowGet(TBBUr,i,TBBU2rw);
-  				if (TBBU2rw.stp!=9 and (TBBU2rw.stp<17 or TBBU2rw.stp>23)) then begin
-  					rebval = rebval + TBBU2rw.Sum;
-  					vat = vat + FindVAT(TBBU2rw.VATCode,TBBU2rw.Sum,TBBUr.InclVAT,TBBUr.NoTAXonVAT);
-  				end;
-  				if (TBBU2rw.stp==18) then begin
-  					i = rwcnt;
-  				end;
-	    	end;
-	    	rebval = rebval*(rebsize/100);
-	    	TBBUrw.SumCost = vat*(rebsize/100); //Sasha2: rebate VAT value
-	    end else begin
-	    	BlockLoad(VATB);
-	    	notfound = true;
-	    	rebval = EvalToVal(TBBUrw.TypeName);
-	    	CUr.Code = TBBUr.CustCode;
-	    	if (ReadFirstMain(CUr,1,true)) then begin
-	    		rwcnt = MatRowCnt(VATB);
-	    		for (i=0;i<rwcnt;i=i+1) begin
-		    		MatRowGet(VATB,i,VATBrw);
-		    		if (VATBrw.VATCode==CUr.VATCode) then begin
-		    			TBBUrw.SumCost = rebval*(VATBrw.ExVatpr/100); //Sasha2: rebate VAT value
-		    			notfound = false;
-		    			i = rwcnt;
-		    		end;
+  	testf = false;
+  	length = len(TBBUrw.TypeName);
+  	for (i=0;i<length;i=i+1) begin
+  		cs = mid(TBBUrw.TypeName,i,1);
+	    if (asc(cs)==37) then begin
+	      tstr = Left(TBBUrw.TypeName,i);
+	      rebsize = EvalToVal(tstr);
+	      testf = true;
+	      i = length;
+	    end;
+  	end;
+  	
+    if (testf) then begin
+    	rwcnt = MatRowCnt(TBBUr);
+    	rebvalready = 0;
+    	vatready = 0;
+    	switch (TBBUrw.stp) begin
+    	 case 23: //консолидировання скидка 
+    	    for (i=(rownr-1);i>=0;i=i-1) begin
+    				MatRowGet(TBBUr,i,TBBU2rw);
+    				if (TBBU2rw.stp!=9 and (TBBU2rw.stp<17 or TBBU2rw.stp>23)) then begin
+    					if (TBBU2rw.stp==24 or TBBU2rw.stp==25) then begin
+    					  rebvalready = rebvalready + TBBU2rw.Sum;
+    					  vatready = vatready + TBBU2rw.SumCost;
+    					end else begin
+    					  rebval = rebval + TBBU2rw.Sum;
+    					  vat = vat + FindVAT(TBBU2rw.VATCode,TBBU2rw.Sum,TBBUr.InclVAT,TBBUr.NoTAXonVAT);
+    					end;
+    				end;
+    			end;
+    			for (i=(rownr+1);i<rwcnt;i=i+1) begin
+    		  	MatRowGet(TBBUr,i,TBBU2rw);
+    				if (TBBU2rw.stp!=9 and (TBBU2rw.stp<17 or TBBU2rw.stp>23)) then begin
+    					if (TBBU2rw.stp==24 or TBBU2rw.stp==25) then begin
+    					  rebvalready = rebvalready + TBBU2rw.Sum;
+    					  vatready = vatready + TBBU2rw.SumCost;
+    					end else begin
+    					  rebval = rebval + TBBU2rw.Sum;
+    					  vat = vat + FindVAT(TBBU2rw.VATCode,TBBU2rw.Sum,TBBUr.InclVAT,TBBUr.NoTAXonVAT);
+    					end;
+    				end;
+        	end;
+        	rebval = (rebval + rebvalready)*(rebsize/100);
+        	TBBUrw.SumCost = (vat + vatready)*(rebsize/100); //Sasha2: rebate VAT value
+    	 case 24: //подпроектная скидка 
+    	    for (i=(rownr-1);i>=0;i=i-1) begin
+    				MatRowGet(TBBUr,i,TBBU2rw);
+    				if (TBBU2rw.stp!=9 and (TBBU2rw.stp<17 or TBBU2rw.stp>24)) then begin
+    					if (TBBU2rw.stp==25) then begin
+    					  rebvalready = rebvalready + TBBU2rw.Sum;
+    					  vatready = vatready + TBBU2rw.SumCost;
+    					end else begin
+    					  rebval = rebval + TBBU2rw.Sum;
+    					  vat = vat + FindVAT(TBBU2rw.VATCode,TBBU2rw.Sum,TBBUr.InclVAT,TBBUr.NoTAXonVAT);
+    					end;
+    				end;
+    				if (TBBU2rw.stp==18) then begin
+    					i = -1;
+    				end;
+    			end;
+    			for (i=(rownr+1);i<rwcnt;i=i+1) begin
+    		  	MatRowGet(TBBUr,i,TBBU2rw);
+    				if (TBBU2rw.stp!=9 and (TBBU2rw.stp<17 or TBBU2rw.stp>24)) then begin
+    					if (TBBU2rw.stp==25) then begin
+    					  rebvalready = rebvalready + TBBU2rw.Sum;
+    					  vatready = vatready + TBBU2rw.SumCost;
+    					end else begin
+    					  rebval = rebval + TBBU2rw.Sum;
+    					  vat = vat + FindVAT(TBBU2rw.VATCode,TBBU2rw.Sum,TBBUr.InclVAT,TBBUr.NoTAXonVAT);
+    					end;
+    				end;
+    				if (TBBU2rw.stp==18) then begin
+    					i = rwcnt;
+    				end;
+        	end;
+        	rebval = (rebval + rebvalready)*(rebsize/100);
+        	TBBUrw.SumCost = (vat + vatready)*(rebsize/100); //Sasha2: rebate VAT value
+    	 case 25: //блочная скидка
+    	    for (i=(rownr-1);i>=0;i=i-1) begin
+    				MatRowGet(TBBUr,i,TBBU2rw);
+    				if (TBBU2rw.stp!=9 and (TBBU2rw.stp<17 or TBBU2rw.stp>25)) then begin
+    					rebval = rebval + TBBU2rw.Sum;
+    					vat = vat + FindVAT(TBBU2rw.VATCode,TBBU2rw.Sum,TBBUr.InclVAT,TBBUr.NoTAXonVAT);
+    				end;
+    				if (TBBU2rw.stp==9 or TBBU2rw.stp==18) then begin
+    					i = -1;
+    				end;
+    			end;
+    			for (i=(rownr+1);i<rwcnt;i=i+1) begin
+    		  	MatRowGet(TBBUr,i,TBBU2rw);
+    				if (TBBU2rw.stp!=9 and (TBBU2rw.stp<17 or TBBU2rw.stp>25)) then begin
+    					rebval = rebval + TBBU2rw.Sum;
+    					vat = vat + FindVAT(TBBU2rw.VATCode,TBBU2rw.Sum,TBBUr.InclVAT,TBBUr.NoTAXonVAT);
+    				end;
+    				if (TBBU2rw.stp==9 or TBBU2rw.stp==18) then begin
+    					i = rwcnt;
+    				end;
+        	end;
+        	rebval = rebval*(rebsize/100);
+        	TBBUrw.SumCost = vat*(rebsize/100); //Sasha2: rebate VAT value
+    	end; 
+    end else begin
+    	BlockLoad(VATB);
+    	notfound = true;
+    	rebval = EvalToVal(TBBUrw.TypeName);
+    	CUr.Code = TBBUr.CustCode;
+    	if (ReadFirstMain(CUr,1,true)) then begin
+    		rwcnt = MatRowCnt(VATB);
+    		for (i=0;i<rwcnt;i=i+1) begin
+	    		MatRowGet(VATB,i,VATBrw);
+	    		if (VATBrw.VATCode==CUr.VATCode) then begin
+	    			TBBUrw.SumCost = rebval*(VATBrw.ExVatpr/100); //Sasha2: rebate VAT value
+	    			notfound = false;
+	    			i = rwcnt;
 	    		end;
-	    	end;
-	    	if (notfound) then begin
-	    		TBBUrw.SumCost = BlankVal; //Sasha2: rebate VAT value
-	    	end;
+    		end;
+    	end;
+    	if (notfound) then begin
+    		TBBUrw.SumCost = BlankVal; //Sasha2: rebate VAT value
+    	end;
 		end;
 	end;
 
-	TBBUrw.Sum = rebval;
+	TBBUrw.Sum = rebval; LogText(0,"TBBUrw.Sum " & TBBUrw.Sum & " TBBUrw.SumCost " & TBBUrw.SumCost);
 	CalcTBBUVcCurrencyPriceAndSum(TBBUr,TBBUrw,TBBUrw.SumCost,TBBUrw.Sum,TBBUrw.Sum,(TBBUrw.Sum!=0)); //Edit***************************Sasha2,17:19 27.02.2015
 
   RETURN;
 END; 
+
+
+global //Edit***************************Sasha2,9:46 28.05.2015 {
+procedure RecalcTBBURebate(var record TBBUVc TBBUr)
+begin 
+  row TBBUVc TBBUrw;
+  integer i,rwcnt;
+  Boolean projf,consolf;
+  
+    rwcnt = MatRowCnt(TBBUr);
+    for (i=0;i<rwcnt;i=i+1) begin
+      MatRowGet(TBBUr,i,TBBUrw);
+      if (TBBUrw.stp==25) then begin
+        TBBUVc_PasteTypeName_Rebate(TBBUr,i,TBBUrw);
+        MatRowPut(TBBUr,i,TBBUrw);
+      end;
+      if (TBBUrw.stp==24) then begin
+        projf = true;
+      end;
+      if (TBBUrw.stp==23) then begin
+        consolf = true;
+      end;
+    end;
+    
+    if (projf) then begin
+      for (i=0;i<rwcnt;i=i+1) begin
+        MatRowGet(TBBUr,i,TBBUrw);
+        if (TBBUrw.stp==24) then begin
+          TBBUVc_PasteTypeName_Rebate(TBBUr,i,TBBUrw);
+          MatRowPut(TBBUr,i,TBBUrw);
+        end;
+      end;
+    end;
+    
+    if (consolf) then begin
+      for (i=0;i<rwcnt;i=i+1) begin
+        MatRowGet(TBBUr,i,TBBUrw);
+        if (TBBUrw.stp==23) then begin
+          TBBUVc_PasteTypeName_Rebate(TBBUr,i,TBBUrw);
+          MatRowPut(TBBUr,i,TBBUrw);
+        end;
+      end;
+    end;
+  
+  return;
+end; //Edit***************************Sasha2,9:47 28.05.2015 }

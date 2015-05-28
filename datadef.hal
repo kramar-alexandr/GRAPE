@@ -1492,6 +1492,7 @@ begin
   ArrayField(IdentQuant,M4Int,0,0);
   ArrayField(Comment2,M4Str,255,0); //Edit***************************Sasha2,12:56 10.10.2014
   ArrayField(Note,M4Str,255,0); 		//Edit by Victor 20.02.15
+  ArrayField(TypeName,M4Str,100,0);
   EndArray;
   MainKeyBegin(MainKey,0);
   KeySegment(PRClass);

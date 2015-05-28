@@ -18,6 +18,7 @@ remote function Boolean TBBUVc_PasteArtCode(var record TBBUVc,Integer,var string
 external procedure TBBUDchrsum(var record TBBUVc,Integer,Boolean,Integer); //Edit***************************Sasha2,10:02 15.09.2014
 external procedure TBBUSumup(var record TBBUVc); //Edit***************************Sasha2,10:02 15.09.2014
 remote function Boolean TBBUVc_PasteQty(var record TBBUVc,Integer); //Edit***************************Sasha2,10:05 15.09.2014
+remote procedure RecalcTBBURebate(var record TBBUVc); //Edit***************************Sasha2,10:02 28.05.2015
 
 procedure GetPRClassObject(string aclass,var string tstr)
 BEGIN
@@ -446,7 +447,7 @@ BEGIN
   if ((rownr==-1) or (rownr>rwcnt)) then begin
     rownr = rwcnt;
   end;
-  for (i=(rownr-1);i>=0;i=i-1) begin
+  /*for (i=(rownr-1);i>=0;i=i-1) begin
     MatRowGet(TBBUr,i,TBBUrw);
     if (TBBUrw.stp!=kInvoiceRowTypeSubtotal and TBBUrw.stp!=21 and TBBUrw.stp!=22) then begin
       pt = pt + TBBUrw.Sum;
@@ -458,13 +459,13 @@ BEGIN
       end;      
     end;
   end;
-LBREAK:;  
+LBREAK:; */ 
   ClearRow(TBBUr,TBBUrw,9);
   TBBUrw.Spec = spec;
-  TBBUrw.Sum = pt;
-  TBBUrw.Cost = pt2;
+  /*TBBUrw.Sum = pt;
+  TBBUrw.Cost = pt2;*/
   MatRowInsert(TBBUr,rownr,TBBUrw);
-  if (rownr<rwcnt) then begin
+  /*if (rownr<rwcnt) then begin
     rwcnt = MatRowCnt(TBBUr);
     for (i=starti+1;i<rwcnt;i=i+1) begin
       if (i!=rownr) then begin
@@ -478,7 +479,7 @@ LBREAK:;
       end;
     end;
   end;
-LSubtotalTBBUDsm:;  
+LSubtotalTBBUDsm:;  */
 
   RETURN;
 END; //Edit***************************Sasha2,10:16 15.09.2014 }
@@ -494,6 +495,7 @@ begin
   record GeneralOptionBlock GOb;
   integer rwcnt,i;
   string 255 inmsg;
+  Boolean blockrebf,projrebf,consolrebf; //Edit***************************Sasha2,10:28 28.05.2015
   
   TempTBBUr.PRClass = PRr.PRClass;
   TempTBBUr.Scope = PRr.Scope;
@@ -570,9 +572,36 @@ begin
   			TBBUrw.Spec = TempTBBUrw.Spec;
   			MatRowPut(TBBUr,i,TBBUrw);
   			//TBBUSumup(TBBUr);	 //Edit***************************Sasha2,17:03 05.03.2015
+  		case 23: 
+  			ClearRow(TBBUr,TBBUrw,23);
+  			TBBUrw.Spec = TempTBBUrw.Spec;
+  			if (NonBlank(TempTBBUrw.TypeName)) then begin
+  			  TBBUrw.TypeName = TempTBBUrw.TypeName;
+  			  consolrebf = true;
+  			end;
+  			MatRowPut(TBBUr,i,TBBUrw);
+  		case 24:
+  			ClearRow(TBBUr,TBBUrw,24);
+  			TBBUrw.Spec = TempTBBUrw.Spec;
+  			if (NonBlank(TempTBBUrw.TypeName)) then begin
+  			  TBBUrw.TypeName = TempTBBUrw.TypeName;
+  			  projrebf = true;
+  			end;
+  			MatRowPut(TBBUr,i,TBBUrw);
+  		case 25: 
+  			ClearRow(TBBUr,TBBUrw,25);
+  			TBBUrw.Spec = TempTBBUrw.Spec;
+  			if (NonBlank(TempTBBUrw.TypeName)) then begin
+  			  TBBUrw.TypeName = TempTBBUrw.TypeName;
+  			  blockrebf = true;
+  			end;
+  			MatRowPut(TBBUr,i,TBBUrw);
   		otherwise
   			//ClearRow(TBBUr,TBBUrw,1);
   		end;
+  	end;
+  	if (blockrebf or projrebf or consolrebf) then begin
+  	  RecalcTBBURebate(TBBUr);
   	end;
   	TBBUSumup(TBBUr);
   end;

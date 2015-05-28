@@ -30,6 +30,7 @@ remote updating function LongInt RecordAction_raPasteTBBUInSeparatePO(record TBB
 remote procedure TBBUVc_PasteTypeName_Rebate(record TBBUVc,integer,var row TBBUVc); //Edit***************************Sasha2,10:02 21.10.2014
 remote function Integer SendForAcceptance_TBBUVc(var record TBBUVc,var record RcVc); //Edit***************************Sasha2,17:15 21.10.2014
 external function Integer CountObjects(string); //Edit***************************Sasha2,17:23 21.10.2014
+remote procedure RecalcTBBURebate(var record TBBUVc); //Edit***************************Sasha2,10:02 28.05.2015
 
 SetLangMode(LangRussian,"RUS",0); //Edit***************************Sasha2,11:27 15.09.2014
 
@@ -321,20 +322,22 @@ begin
 	    	TBBUrw.SumCost = TBBUrw.Cost;
 	    end;
 	    MatRowPut(TBBUr,rownr,TBBUrw); //Edit***************************Sasha2,10:28 13.10.2014 }
-      	TBBUDchrsum(TBBUr,rownr,true,GenOptRec.UseDiscount); //Edit***************************Sasha2,12:21 19.12.2014
-      	TBBUSumup(TBBUr);
+      TBBUDchrsum(TBBUr,rownr,true,GenOptRec.UseDiscount); //Edit***************************Sasha2,12:21 19.12.2014
+      RecalcTBBURebate(TBBUr); //Edit***************************Sasha2,11:03 28.05.2015
+      TBBUSumup(TBBUr);
       PutWindowRecord(wn,TBBUr);          
     end else begin
       MatRowGet(TBBUr,rownr,TBBUrw);
       if (nonblank(TBBUrw.TimeClass)) then begin
         //TBBUDchrsum(TBBUr,rownr,true,GenOptRec.UseDiscount); //Edit***************************Sasha2,12:22 19.12.2014
-	    if (TBBUrw.Qty<>0) then begin //Edit***************************Sasha2,10:28 13.10.2014 {
-	    	TBBUrw.SumCost = TBBUrw.Qty * TBBUrw.Cost;
-	    end else  begin
-	    	TBBUrw.SumCost = TBBUrw.Cost;
-	    end;
-	    MatRowPut(TBBUr,rownr,TBBUrw); //Edit***************************Sasha2,10:28 13.10.2014 }
+  	    if (TBBUrw.Qty<>0) then begin //Edit***************************Sasha2,10:28 13.10.2014 {
+  	    	TBBUrw.SumCost = TBBUrw.Qty * TBBUrw.Cost;
+  	    end else  begin
+  	    	TBBUrw.SumCost = TBBUrw.Cost;
+  	    end;
+	      MatRowPut(TBBUr,rownr,TBBUrw); //Edit***************************Sasha2,10:28 13.10.2014 }
         TBBUDchrsum(TBBUr,rownr,true,GenOptRec.UseDiscount); //Edit***************************Sasha2,12:22 19.12.2014
+        RecalcTBBURebate(TBBUr); //Edit***************************Sasha2,11:03 28.05.2015
         TBBUSumup(TBBUr);
         PutWindowRecord(wn,TBBUr);
       end;
@@ -360,6 +363,7 @@ begin
 
     if ((nonblank(TBBUrw.ArtCode)) or (nonblank(TBBUrw.TimeClass))) then begin
       TBBUDchrsum(TBBUr,rownr,true,GenOptRec.UseDiscount);
+      RecalcTBBURebate(TBBUr); //Edit***************************Sasha2,11:03 28.05.2015
       TBBUSumup(TBBUr);
       PutWindowRecord(wn,TBBUr);          
     end;
@@ -439,7 +443,7 @@ begin
     //DeselectWindow(wn,false);
     GetWindowRecord(wn,TBBUr);
     MatRowGet(TBBUr,rownr,TBBUrw);
-    if (TBBUrw.stp==23) then begin //Sasha2: count Rebate
+    if (TBBUrw.stp>=23 and TBBUrw.stp<=25) then begin //Sasha2: count Rebate
     	TBBUVc_PasteTypeName_Rebate(TBBUr,rownr,TBBUrw);
 		MatRowPut(TBBUr,rownr,TBBUrw);
 		TBBUSumup(TBBUr);
@@ -1051,6 +1055,7 @@ BEGIN
     	end;
     end; //Edit***************************Sasha2,11:21 09.10.2014 }   
 
+    RecalcTBBURebate(TBBUr); //Edit***************************Sasha2,10:04 28.05.2015
     TBBUSumup(TBBUr);
     PutWindowRecord(wn,TBBUr);    
   end;
@@ -1234,26 +1239,28 @@ BEGIN
 
   DeselectWindow(wn,false);
   GetWindowRecord(wn,TBBUr);
-  rwcnt = MatRowCnt(TBBUr);
+  
+  
+  /*rwcnt = MatRowCnt(TBBUr);
   for (i=(rownr-1);i>=0;i=i-1) begin
     MatRowGet(TBBUr,i,TBBUrw);
-    if (TBBUrw.stp!=kInvoiceRowTypeSubtotal and TBBUrw.stp!=21 and TBBUrw.stp!=22) then begin //Edit***************************Sasha2,11:32 10.10.2014
+    if (TBBUrw.stp!=kInvoiceRowTypeSubtotal and (TBBUrw.stp<21 or TBBUrw.stp>24)) then begin //Edit***************************Sasha2,11:32 10.10.2014
       pt = pt + TBBUrw.Sum;
       pt2 = pt2 + TBBUrw.Qty*TBBUrw.Cost;
     end else begin
-      if (TBBUrw.Sum!=0 and TBBUrw.stp!=22) then begin //Edit***************************Sasha2,11:35 10.10.2014
+      if (TBBUrw.Sum!=0 and TBBUrw.stp!=22 and TBBUrw.stp!=23 and TBBUrw.stp!=24) then begin //Edit***************************Sasha2,11:35 10.10.2014
         starti = i;
         goto LBREAK; 
       end;      
     end;
   end;
 
-LBREAK:; 
+LBREAK:; */
   ClearRow(TBBUr,TBBUrw,9);
-  TBBUrw.Sum = pt;
-  TBBUrw.Cost = pt2;
+  //TBBUrw.Sum = pt;
+  //TBBUrw.Cost = pt2;
   MatRowInsert(TBBUr,rownr,TBBUrw);
-  if (rownr<rwcnt) then begin
+  /*if (rownr<rwcnt) then begin
     rwcnt = MatRowCnt(TBBUr);
     for (i=starti+1;i<rwcnt;i=i+1) begin
       if (i!=rownr) then begin
@@ -1266,7 +1273,10 @@ LBREAK:;
         end;
       end;
     end;
-  end;
+  end;*/
+  
+  RecalcTBBURebate(TBBUr); //Edit***************************Sasha2,10:04 28.05.2015
+  TBBUSumup(TBBUr);
 
 LSubtotalTBBUDsm:; 
   PutWindowRecord(wn,TBBUr);
@@ -1305,8 +1315,8 @@ begin
  return;
 end; //Edit***************************Sasha2,11:25 15.09.2014 }
 
-global //Edit***************************Sasha2,14:43 07.10.2014 {
-procedure SubRebateTBBUDsm()
+//Edit***************************Sasha2,14:43 07.10.2014 {
+procedure SubRebateHandleTBBU(integer rebint)
 BEGIN
   record TBBUVc TBBUr;
   row TBBUVc TBBUrw;
@@ -1326,11 +1336,35 @@ BEGIN
     rownr = rwcnt;
   end;
   DeselectWindow(wn,false); 
-  ClearRow(TBBUr,TBBUrw,23);
+  ClearRow(TBBUr,TBBUrw,rebint);
   MatRowInsert(TBBUr,rownr,TBBUrw); 
   PutWindowRecord(wn,TBBUr);
   //WindowFieldGoto(wn,TBBUr,rownr,"Sum",true);
 LOutSubRebateTBBUDsm:;  
+  RETURN;
+END; //Edit***************************Sasha2,14:42 07.10.2014 }
+
+global //Edit***************************Sasha2,14:43 07.10.2014 {
+procedure SubRebateBlockTBBUDsm()
+BEGIN
+ 
+  SubRebateHandleTBBU(25);
+  RETURN;
+END; 
+
+global 
+procedure SubRebateSubProjTBBUDsm()
+BEGIN
+ 
+  SubRebateHandleTBBU(24);
+  RETURN;
+END; 
+
+global 
+procedure SubRebateConsolidatedTBBUDsm()
+BEGIN
+ 
+  SubRebateHandleTBBU(23);
   RETURN;
 END; //Edit***************************Sasha2,14:42 07.10.2014 }
 

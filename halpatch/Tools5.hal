@@ -244,7 +244,7 @@ BEGIN
   rwcnt = MatRowCnt(TBBUp);
   for (i=0;i<rwcnt;i=i+1) begin
     MatRowGet(TBBUp,i,TBBUrw);
-    if (TBBUrw.stp!=9 and (TBBUrw.stp<17 or TBBUrw.stp>23)) then begin //Edit***************************Sasha2,11:49 08.10.2014
+    if (TBBUrw.stp!=9 and (TBBUrw.stp<17 or TBBUrw.stp>25)) then begin //Edit***************************Sasha2,11:49 08.10.2014
       if ((nonblank(TBBUrw.ArtCode)) and (TBBUrw.stp!=9)) then begin
         itemtyp = TBBUrw.ItemType;
         if (itemtyp==0) then begin
@@ -296,14 +296,16 @@ BEGIN
       	  end;
       end; //Edit***************************Sasha2,16:11 08.10.2014 }
     end else begin
-      if (TBBUrw.stp>=17) then begin //Edit***************************Sasha2,15:12 07.10.2014 {
-      	if (TBBUrw.stp==23) then begin
+      if (TBBUrw.stp>18) then begin //Edit***************************Sasha2,15:12 07.10.2014 {
+      	if (TBBUrw.stp>=23 and TBBUrw.stp<=25) then begin
       		totrebate = totrebate + TBBUrw.Sum;
       		totrebate_cur = totrebate_cur + TBBUrw.ClientSum; //Edit***************************Sasha2,17:55 27.02.2015
-      		subtotv = subtotv + TBBUrw.Sum;
-      		subtotv_cur = subtotv_cur + TBBUrw.ClientSum; //Edit***************************Sasha2,17:48 27.02.2015
       		vatrebate = vatrebate + TBBUrw.SumCost; //Sasha2: rebate VAT value
       		vatrebate_cur = vatrebate_cur + TBBUrw.ClientPrice; //Sasha2: rebate currency VAT value
+      		if (TBBUrw.stp==25) then begin
+      		  subtotv = subtotv + TBBUrw.Sum;
+      		  subtotv_cur = subtotv_cur + TBBUrw.ClientSum; //Edit***************************Sasha2,17:48 27.02.2015
+      		end;
       	end;
       	if (TBBUrw.stp==21) then begin
       		blockcnt = blockcnt + 1;
@@ -325,15 +327,22 @@ BEGIN
       		blsum[TBBUrw.IdentQuant] = BlankVal;
       	end;
       end else begin //Edit***************************Sasha2,15:12 07.10.2014 }
-      	if (TBBUrw.Sum!=subtotv) or (TBBUrw.Cost!=costv) then begin
-	        TBBUrw.Sum = subtotv;
-	        TBBUrw.ClientSum = subtotv_cur; //Edit***************************Sasha2,17:49 27.02.2015
-	        TBBUrw.Cost = costv;
-	        MatRowPut(TBBUp,i,TBBUrw);
-	      end;
-	      subtotv = blankval;
-	      subtotv_cur = blankval; //Edit***************************Sasha2,17:49 27.02.2015
-	      costv = blankval;
+      	if (TBBUrw.stp==18) then begin
+      	  subtotv = blankval;
+  	      subtotv_cur = blankval; 
+  	      costv = blankval;
+      	end;
+      	if (TBBUrw.stp==9) then begin
+      	  if (TBBUrw.Sum!=subtotv) or (TBBUrw.Cost!=costv) then begin
+  	        TBBUrw.Sum = subtotv;
+  	        TBBUrw.ClientSum = subtotv_cur; //Edit***************************Sasha2,17:49 27.02.2015
+  	        TBBUrw.Cost = costv;
+  	        MatRowPut(TBBUp,i,TBBUrw);
+  	      end;
+  	      subtotv = blankval;
+  	      subtotv_cur = blankval; //Edit***************************Sasha2,17:49 27.02.2015
+  	      costv = blankval;
+      	end;
       end; 
     end;
   end;
