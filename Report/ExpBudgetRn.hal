@@ -28,11 +28,11 @@ END;
 global procedure ExpBudgetRn(record RcVc RepSpec)//Edit by Victor 16.09.14
 begin
 	record TBBUVc TBBUr, TBBU2r;
-	row TBBUVc TBBUrw;
+	row TBBUVc TBBUrw, TBBU2rw;
 	integer mtrw,i,stp18,stp9,stp17,max,flag1;
 	string 255 prname, jobSpec;
 	val tot,totvat;
-	boolean changed;
+	boolean changed, flagStp24exist;
 	record PRVc PRr;
 	record INVc INr;
 	record ITVc ITr;
@@ -40,6 +40,9 @@ begin
 	record CUVc CUr;
 	record UserVc Userr;
 	boolean TrHs, ifDifferentCurrency;
+	integer rwcnt;
+	string 255 Rebate24Spec, rebate24;
+	val rebate24curr;
 	
 	stp18 = 0;
 	stp17 = 0;
@@ -161,6 +164,24 @@ begin
 					if(ReadFirstMain(TBBU2r,1,true))then begin
 						outstring(0,0,"888",false);
 						outstring(10,0,TBBU2r.TotRebate,false);
+						
+						//*** finding stp 24
+						//if rebate for project can locate not in the end of the project rewrite this to finding stp in whole matrix
+						rwcnt = MatRowCnt(TBBU2r);
+						MatRowGet(TBBU2r,rwcnt-1,TBBU2rw);	
+						if(TBBU2rw.stp == 24)then begin
+							flagStp24exist = true;
+							Rebate24Spec = TBBU2rw.Spec;
+
+							rebate24 = TBBU2rw.TypeName;
+								if(ifDifferentCurrency)then begin
+									rebate24curr = TBBU2rw.ClientSum;
+								end;
+						end else begin
+							flagStp24exist = false;
+						end;						
+						//******************
+						
 					end;
 					
 				endformat;
@@ -191,16 +212,40 @@ begin
 							end;				
 						endformat;
 					end else begin
+						if(TBBUrw.stp == 25)then begin
+							startformat(15);
+								outstring(0,0,TBBUrw.stp,false);
+								outstring(10,0,"Скидка/Агентская комиссия:",false);
+								outstring(50,0,TBBUrw.Spec,false);
+								outstring(150,0,"Размер:",false);
+								outstring(210,0,TBBUrw.TypeName,false);								
+								if(ifDifferentCurrency)then begin
+									outstring(260,0,TBBUrw.ClientSum,false);	
+								end;							
+							endformat;
+						end else begin
+						/*if(TBBUrw.stp == 24)then begin
+							startformat(15);
+								outstring(0,0,TBBUrw.stp,false);
+								outstring(10,0,"Скидка/Агентская комиссия проекта:",false);
+								outstring(50,0,TBBUrw.Spec,false);
+								outstring(150,0,"Размер:",false);
+								outstring(210,0,TBBUrw.TypeName,false);								
+								if(ifDifferentCurrency)then begin
+									outstring(260,0,TBBUrw.ClientSum,false);	
+								end;							
+							endformat;
+						end else begin*/
 						if(TBBUrw.stp == 23)then begin
 							startformat(15);
-									outstring(0,0,TBBUrw.stp,false);
-									outstring(10,0,"Скидка/Агентская комиссия:",false);
-									outstring(50,0,TBBUrw.Spec,false);
-									outstring(150,0,"Размер:",false);
-									outstring(210,0,TBBUrw.TypeName,false);								
-									if(ifDifferentCurrency)then begin
-										outstring(260,0,TBBUrw.ClientSum,false);	
-									end;							
+								outstring(0,0,TBBUrw.stp,false);
+								outstring(10,0,"Скидка/Агентская комиссия",false);
+								outstring(50,0,TBBUrw.Spec,false);
+								outstring(150,0,"Размер:",false);
+								outstring(210,0,TBBUrw.TypeName,false);								
+								if(ifDifferentCurrency)then begin
+									outstring(260,0,TBBUrw.ClientSum,false);	
+								end;							
 								endformat;
 						end else begin
 							if(TBBUrw.stp == 9)then begin
@@ -216,16 +261,18 @@ begin
 								endformat;
 								tot = tot + TBBUrw.Sum;
 												
-								/*startformat(15);
-									outstring(0,0,TBBUrw.stp,false);
-									outstring(0,0,"",false);
-									outstring(50,0,"",false);
-									outstring(150,0,"ИТОГО:",false);
-									outstring(210,0,TBBUrw.Sum,false);
-								endformat;
-								totvat = totvat + TBBUrw.Sum;*/
-												
 								if(stp17==flag1)then begin
+									if(flagStp24exist)then begin
+										startformat(15);
+											outstring(0,0,24,false);
+											outstring(10,0,"Скидка/Агентская комиссия",false);
+											outstring(50,0,Rebate24Spec,false);										
+											outstring(210,0,rebate24,false);								
+											if(ifDifferentCurrency)then begin
+												outstring(260,0,rebate24curr,false);	
+											end;							
+										endformat;
+									end;
 									
 									startformat(15);
 										outstring(0,0,"19",false);
@@ -278,6 +325,8 @@ begin
 										outstring(150,0,"ВСЕГО с НДС:",false);
 										outstring(210,0,tot+tot/100*20,false);
 									endformat;*/
+										//end;
+									end;
 								end;
 							end;
 						end;	

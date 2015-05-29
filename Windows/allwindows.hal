@@ -2695,16 +2695,16 @@ begin
   MatCol(t,-140,"Кол-во",0,Qty,true,0);
   MatText(t,-100,"Сумма",false);
   MatCol(t,-60,"Сумма",0,Sum,true,0); 
-  MatText(t=23,30,"Скидка/Агентская комиссия (консолидированная)",false); 
+  MatText(t=23,30,"Скидка/Агентская комиссия (консолид.)",false); 
   MatCol(t,300,"",0,Spec,false,0);//190
   MatText(t,-105,"Размер",false); 
   MatCol(t,-60,"Сумма",0,TypeName,true,0);//Edit***************************Sasha2,14:48 07.10.2014 }
   MatText(t=24,30,"Скидка/Агентская комиссия (на подроект)",false); //Edit***************************Sasha2,16:21 27.05.2015 {
-  MatCol(t,260,"",0,Spec,false,0);//190
+  MatCol(t,270,"",0,Spec,false,0);//190
   MatText(t,-105,"Размер",false); 
   MatCol(t,-60,"Сумма",0,TypeName,true,0); 
   MatText(t=25,30,"Скидка/Агентская комиссия (на блок)",false); 
-  MatCol(t,240,"",0,Spec,false,0);//190
+  MatCol(t,255,"",0,Spec,false,0);//190
   MatText(t,-105,"Размер",false); 
   MatCol(t,-60,"Сумма",0,TypeName,true,0); //Edit***************************Sasha2,16:21 27.05.2015 }
   MatCol(1,30,"Тип",0,ToUserBud,false,SetSClass);// Edit ************************** Tuesday, 21 October 2014 10:21:09
@@ -2908,9 +2908,9 @@ begin
   SpecialMenu("Загрузить дочерние бюджеты",' ',0,"RecalculateTBBUDsm");// Edit ************************** Friday, 5 September 2014 13:40:13
   SpecialMenu("Добавить строку заголовка",' ',0,"HeaderLineTBBUDsm");
   SpecialMenu("Добавить итого",' ',0,"SubtotalTBBUDsm");
-  SpecialMenu("Добавить скидку/коммисию (на блок)",' ',0,"SubRebateBlockTBBUDsm"); //Edit***************************Sasha2,14:29 07.10.2014
-  SpecialMenu("Добавить скидку/коммисию (на подпроект)",' ',0,"SubRebateSubProjTBBUDsm"); //Edit***************************Sasha2,14:29 07.10.2014
-  SpecialMenu("Добавить скидку/коммисию (консолидированную)",' ',0,"SubRebateConsolidatedTBBUDsm"); //Edit***************************Sasha2,14:29 07.10.2014
+  SpecialMenu("Добавить скидку/комиссию (на блок)",' ',0,"SubRebateBlockTBBUDsm"); //Edit***************************Sasha2,14:29 07.10.2014
+  SpecialMenu("Добавить скидку/комиссию (на подпроект)",' ',0,"SubRebateSubProjTBBUDsm"); //Edit***************************Sasha2,14:29 07.10.2014
+  SpecialMenu("Добавить скидку/комиссию (консолидированную)",' ',0,"SubRebateConsolidatedTBBUDsm"); //Edit***************************Sasha2,14:29 07.10.2014
   //SpecialMenu("Добавить начало группы задач",' ',0,"SubBlockStartTBBUDsm"); //Edit***************************Sasha2,14:29 07.10.2014
   //SpecialMenu("Добавить конец группы задач",' ',0,"SubBlockEndTBBUDsm"); //Edit***************************Sasha2,14:29 07.10.2014
   if (HasApprovals) then begin
