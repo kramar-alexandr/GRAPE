@@ -10,7 +10,7 @@ begin
   Report("Начисления за период",ProfitOverPeriodRClass,ProfitOverPeriodRn,0,modTS); //Edit***************************Sasha2,13:50 26.12.2014
   
   Maintenance("Удалить цены",DelPriceListVClass,DelPriceLMn,modTS);
-  Maintenance("Изменить stp для скидки",CommonVClass,ChangeRebateStpMn,modDBMain); //Edit***************************Sasha2,18:05 27.05.2015
+  Maintenance("Изменить stp для скидки",CommonVClass,ChangeRebateStpMn,modTC); //Edit***************************Sasha2,18:05 27.05.2015
   
   Import("Импорт цен",PLImportIClass,PLImportIn,modTS); //Added********************Dima 20.11.2014
 
