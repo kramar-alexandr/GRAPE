@@ -135,7 +135,7 @@ begin
   SpecialMenu("Добавить строку заголовка",' ',0,"HeaderLineTemplateTBBUDsm");
   SpecialMenu("Добавить итого",' ',0,"SubtotalTemplateTBBUDsm");
   SpecialMenu("Добавить скидку/коммисию (на блок)",' ',0,"SubRebateBlockTemplateTBBUDsm"); //Edit***************************Sasha2,14:29 07.10.2014
-  SpecialMenu("Добавить скидку/коммисию (на подпроект)",' ',0,"SubRebateSubProjTemplateTBBUDsm"); //Edit***************************Sasha2,14:29 07.10.2014
+  SpecialMenu("Добавить скидку/коммисию (на подбюджет)",' ',0,"SubRebateSubProjTemplateTBBUDsm"); //Edit***************************Sasha2,14:29 07.10.2014
   SpecialMenu("Добавить скидку/коммисию (консолидированную)",' ',0,"SubRebateConsolidatedTemplateTBBUDsm"); //Edit***************************Sasha2,14:29 07.10.2014
   SpecialMenu("Добавить начало группы задач",' ',0,"SubBlockStartTemplateTBBUDsm"); //Edit***************************Sasha2,14:29 07.10.2014
   SpecialMenu("Добавить конец группы задач",' ',0,"SubBlockEndTemplateTBBUDsm"); //Edit***************************Sasha2,14:29 07.10.2014

@@ -2909,7 +2909,7 @@ begin
   SpecialMenu("Добавить строку заголовка",' ',0,"HeaderLineTBBUDsm");
   SpecialMenu("Добавить итого",' ',0,"SubtotalTBBUDsm");
   SpecialMenu("Добавить скидку/комиссию (на блок)",' ',0,"SubRebateBlockTBBUDsm"); //Edit***************************Sasha2,14:29 07.10.2014
-  SpecialMenu("Добавить скидку/комиссию (на подпроект)",' ',0,"SubRebateSubProjTBBUDsm"); //Edit***************************Sasha2,14:29 07.10.2014
+  SpecialMenu("Добавить скидку/комиссию (на подбюджет)",' ',0,"SubRebateSubProjTBBUDsm"); //Edit***************************Sasha2,14:29 07.10.2014
   SpecialMenu("Добавить скидку/комиссию (консолидированную)",' ',0,"SubRebateConsolidatedTBBUDsm"); //Edit***************************Sasha2,14:29 07.10.2014
   //SpecialMenu("Добавить начало группы задач",' ',0,"SubBlockStartTBBUDsm"); //Edit***************************Sasha2,14:29 07.10.2014
   //SpecialMenu("Добавить конец группы задач",' ',0,"SubBlockEndTBBUDsm"); //Edit***************************Sasha2,14:29 07.10.2014
