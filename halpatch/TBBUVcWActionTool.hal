@@ -891,7 +891,7 @@ BEGIN
 		end;
 	end;
 
-	TBBUrw.Sum = rebval; LogText(0,"TBBUrw.Sum " & TBBUrw.Sum & " TBBUrw.SumCost " & TBBUrw.SumCost);
+	TBBUrw.Sum = rebval; //LogText(0,"TBBUrw.Sum " & TBBUrw.Sum & " TBBUrw.SumCost " & TBBUrw.SumCost);
 	CalcTBBUVcCurrencyPriceAndSum(TBBUr,TBBUrw,TBBUrw.SumCost,TBBUrw.Sum,TBBUrw.Sum,(TBBUrw.Sum!=0)); //Edit***************************Sasha2,17:19 27.02.2015
 
   RETURN;
