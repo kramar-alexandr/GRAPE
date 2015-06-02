@@ -14,6 +14,7 @@ external procedure VIVc_PastePayDeal(var record VIVc); //Edit*******************
 external procedure VIGetRate(var record VIVc); //Edit***************************Sasha2,10:09 18.12.2014
 external procedure UpdateVIPayDate(string,date); //Edit***************************Sasha2,13:57 20.02.2015
 external procedure TBBUVc_PasteTypeName_Rebate(record TBBUVc,integer,var row TBBUVc); //Edit***************************Sasha2,18:23 29.04.2015
+external procedure RecalcTBBURebate(var record TBBUVc); //Edit***************************Sasha2,9:37 02.06.2015
 
 SetLangMode(LangRussian,"RUS",0);
 
@@ -202,7 +203,7 @@ begin
 	row TBBUVc TBBUrw;
 	boolean testf,TrHs;
 	val t,s;
-	boolean ident;
+	boolean ident,rebatef; //Edit***************************Sasha2,9:38 02.06.2015
 	record GeneralOptionBlock GenOptRec;
 	record PRClassBlock PRClassRec;
   row PRClassBlock PRClassrw;
@@ -211,6 +212,7 @@ begin
 	BlockLoad(GenOptRec);
 	BlockLoad(PRClassRec);
 	rwcnt3 = MatRowCnt(PRClassRec);
+	rebatef = false; //Edit***************************Sasha2,9:40 02.06.2015
 			
 	logtext(0,1);
 	
@@ -258,10 +260,11 @@ begin
 									MatRowGet(TBBU2r,i,TBBU2rw);
 									MatRowPut(TBBUr,rwnum,TBBU2rw);	
 									TBBUDchrsum(TBBUr,rwnum,true,GenOptRec.UseDiscount);
-									MatRowGet(TBBUr,rwnum,TBBUrw);
-									if (TBBUrw.stp>=23 and TBBUrw.stp<=25) then begin
-    	              TBBUVc_PasteTypeName_Rebate(TBBUr,rwnum,TBBUrw);
-		                MatRowPut(TBBUr,rwnum,TBBUrw);
+									//MatRowGet(TBBUr,rwnum,TBBUrw);
+									if (rebatef==false and TBBUrw.stp>=23 and TBBUrw.stp<=25) then begin
+    	              rebatef = true; //Edit***************************Sasha2,9:40 02.06.2015
+    	              //TBBUVc_PasteTypeName_Rebate(TBBUr,rwnum,TBBUrw);
+		                //MatRowPut(TBBUr,rwnum,TBBUrw);
 									end;
 									//if(TBBUrw.stp<17 or TBBUrw.stp>23)then begin
 										//TBBUDchrsum(TBBUr,rwnum,true,GenOptRec.UseDiscount);
@@ -303,10 +306,11 @@ begin
 	  									//end;
 	  									matrowput(TBBUr,j+i+1,TBBU3rw);
 	  									TBBUDchrsum(TBBUr,j+i+1,true,GenOptRec.UseDiscount);	
-	  									MatRowGet(TBBUr,j+i+1,TBBUrw);
-	  									if (TBBUrw.stp>=23 and TBBUrw.stp<=25) then begin
-        	              TBBUVc_PasteTypeName_Rebate(TBBUr,rwnum,TBBUrw);
-    		                MatRowPut(TBBUr,j+i+1,TBBUrw);
+	  									//MatRowGet(TBBUr,j+i+1,TBBUrw);
+	  									if (rebatef==false and TBBUrw.stp>=23 and TBBUrw.stp<=25) then begin
+        	               rebatef = true; //Edit***************************Sasha2,9:40 02.06.2015
+        	              //TBBUVc_PasteTypeName_Rebate(TBBUr,rwnum,TBBUrw);
+    		                //MatRowPut(TBBUr,j+i+1,TBBUrw);
     									end;
 	  									//if((TBBUrw.stp<17 or TBBUrw.stp>23))then begin
 		  									//TBBUDchrsum(TBBUr,j+i+1,true,GenOptRec.UseDiscount);	
@@ -340,10 +344,11 @@ begin
 	  								matrowget(TBBU2r,i,TBBU2rw);
 	  								MatRowPut(TBBUr,rwnum,TBBU2rw);	
 	  								TBBUDchrsum(TBBUr,rwnum,true,GenOptRec.UseDiscount);
-	  								MatRowGet(TBBUr,rwnum,TBBUrw);
-	  								if (TBBUrw.stp>=23 and TBBUrw.stp<=25) then begin
-      	              TBBUVc_PasteTypeName_Rebate(TBBUr,rwnum,TBBUrw);
-  		                MatRowPut(TBBUr,rwnum,TBBUrw);
+	  								//MatRowGet(TBBUr,rwnum,TBBUrw);
+	  								if (rebatef==false and TBBUrw.stp>=23 and TBBUrw.stp<=25) then begin
+      	              rebatef = true; //Edit***************************Sasha2,9:40 02.06.2015
+      	              //TBBUVc_PasteTypeName_Rebate(TBBUr,rwnum,TBBUrw);
+  		                //MatRowPut(TBBUr,rwnum,TBBUrw);
   									end;
 	  								//if((TBBUrw.stp<17 or TBBUrw.stp>23))then begin
 		  								//TBBUDchrsum(TBBUr,rwnum,true,GenOptRec.UseDiscount);
@@ -357,6 +362,9 @@ begin
 				end;
 Ldone:;
 			end;
+			if (rebatef) then begin //Edit***************************Sasha2,9:41 02.06.2015 {
+			  RecalcTBBURebate(TBBUr);
+			end; //Edit***************************Sasha2,9:41 02.06.2015 }
 			TBBUSumup(TBBUr);
 		end;
 	end;
