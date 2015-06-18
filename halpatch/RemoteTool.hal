@@ -261,7 +261,7 @@ begin
 									MatRowPut(TBBUr,rwnum,TBBU2rw);	
 									TBBUDchrsum(TBBUr,rwnum,true,GenOptRec.UseDiscount);
 									//MatRowGet(TBBUr,rwnum,TBBUrw);
-									if (rebatef==false and TBBUrw.stp>=23 and TBBUrw.stp<=25) then begin
+									if (rebatef==false and TBBU2rw.stp>=23 and TBBU2rw.stp<=25) then begin
     	              rebatef = true; //Edit***************************Sasha2,9:40 02.06.2015
     	              //TBBUVc_PasteTypeName_Rebate(TBBUr,rwnum,TBBUrw);
 		                //MatRowPut(TBBUr,rwnum,TBBUrw);
@@ -307,11 +307,11 @@ begin
 	  									matrowput(TBBUr,j+i+1,TBBU3rw);
 	  									TBBUDchrsum(TBBUr,j+i+1,true,GenOptRec.UseDiscount);	
 	  									//MatRowGet(TBBUr,j+i+1,TBBUrw);
-	  									if (rebatef==false and TBBUrw.stp>=23 and TBBUrw.stp<=25) then begin
+	  									/*if (rebatef==false and TBBUrw.stp>=23 and TBBUrw.stp<=25) then begin
         	               rebatef = true; //Edit***************************Sasha2,9:40 02.06.2015
-        	              //TBBUVc_PasteTypeName_Rebate(TBBUr,rwnum,TBBUrw);
-    		                //MatRowPut(TBBUr,j+i+1,TBBUrw);
-    									end;
+        	              TBBUVc_PasteTypeName_Rebate(TBBUr,rwnum,TBBUrw);
+    		                MatRowPut(TBBUr,j+i+1,TBBUrw);
+    									end;*/
 	  									//if((TBBUrw.stp<17 or TBBUrw.stp>23))then begin
 		  									//TBBUDchrsum(TBBUr,j+i+1,true,GenOptRec.UseDiscount);	
 		  								//end;
@@ -345,7 +345,7 @@ begin
 	  								MatRowPut(TBBUr,rwnum,TBBU2rw);	
 	  								TBBUDchrsum(TBBUr,rwnum,true,GenOptRec.UseDiscount);
 	  								//MatRowGet(TBBUr,rwnum,TBBUrw);
-	  								if (rebatef==false and TBBUrw.stp>=23 and TBBUrw.stp<=25) then begin
+	  								if (rebatef==false and TBBU2rw.stp>=23 and TBBU2rw.stp<=25) then begin
       	              rebatef = true; //Edit***************************Sasha2,9:40 02.06.2015
       	              //TBBUVc_PasteTypeName_Rebate(TBBUr,rwnum,TBBUrw);
   		                //MatRowPut(TBBUr,rwnum,TBBUrw);
