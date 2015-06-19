@@ -284,7 +284,8 @@ begin
 	  								For(j=0;j<rwcnt2;j=j+1) begin
 	  									matrowget(TBBU2r,j,TBBU2rw);
 	  									matrowget(TBBUr,j+i+1,TBBU3rw);
-	  									if(TBBU2rw.stp!=TBBU3rw.stp or TBBU2rw.ArtCode!=TBBU3rw.ArtCode)then begin
+	  									if(TBBU2rw.stp!=TBBU3rw.stp or TBBU2rw.ArtCode!=TBBU3rw.ArtCode or TBBU2rw.Price!=TBBU3rw.Price or TBBU2rw.Cost!=TBBU3rw.Cost or 
+	  									   TBBU2rw.SumCost!=TBBU3rw.SumCost or TBBU2rw.TypeName!=TBBU3rw.TypeName) then begin
 	  										ident = false;
 	  									end;
 										end; 
