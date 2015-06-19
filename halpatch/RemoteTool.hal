@@ -304,6 +304,7 @@ begin
 	  									//if nonblank(TBBU2r.ClientCurncyCode) then begin
 	  										TBBU3rw.ClientSum = TBBU3rw.ClientSum + TBBU2rw.ClientSum;
 	  										TBBU3rw.ClientPrice = TBBU2rw.ClientSum;
+	  										TBBU3rw.SumCost = TBBU3rw.SumCost + TBBU2rw.SumCost;
 	  									//end;
 	  									matrowput(TBBUr,j+i+1,TBBU3rw);
 	  									TBBUDchrsum(TBBUr,j+i+1,true,GenOptRec.UseDiscount);	
