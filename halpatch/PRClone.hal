@@ -107,6 +107,7 @@ BEGIN
 				TBBUr.OKFlag = 0;
 				TBBUr.ApproveFlag = 0;
 				TBBUr.AcceptanceStatus = kAcceptanceStateNotStarted;	//need to set in 
+				TBBUr.TransDate = PRr.StartDate;											//Edit by Victor 19.06.15
 				
 				if (RecordInsert(TBBUr,true)) then begin end;
 				

@@ -210,6 +210,11 @@ BEGIN
       goto LTBBUVcRecordCheck;
     end;      
   end;
+  
+  if (TBBUr.TransDate != PRr.StartDate) then begin	//Edit by Victor 19.06.15
+  	TBBUr.TransDate = PRr.StartDate;
+  end;
+  
   MRTBBUr.PRClass = PRr.PRClass; //Edit***************************Sasha2,17:44 07.10.2014 {
   MRTBBUr.Scope = PRr.Scope;
   if (ReadFirstMain(MRTBBUr,2,true)) then begin
