@@ -1149,6 +1149,8 @@ begin
   RecordField(ClientSum3,M4Val,0,0); 										//Edit by Victor 25.02.15
   RecordField(ClientTotSumVAT,M4Val,0,0); 							//Edit by Victor 25.02.15
   RecordField(ClientTotSum,M4Val,0,0); 									//Edit by Victor 25.02.15
+  RecordField(SumCost,M4Val,0,0); 											//Edit by Victor 19.06.15
+  RecordField(RebatePercent,M4Val,0,0); 								//Edit by Victor 19.06.15
     
   ArrayBegin(Math,-,1);
   ArrayField(ArtCode,M4Code,20,INVc);
