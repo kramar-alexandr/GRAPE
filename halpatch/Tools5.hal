@@ -239,6 +239,7 @@ BEGIN
   integer blockcnt; //Edit***************************Sasha2,10:37 09.10.2014
   array Integer blnums; //Edit***************************Sasha2,11:05 09.10.2014
   val tt_cur,s3_cur,subtotv_cur,totrebate_cur,vatrebate_cur,t1; //Edit***************************Sasha2,17:32 27.02.2015
+  val sumCost;	//Edit by Victor 22.06.15
   
   blockcnt = -1; //Edit***************************Sasha2,11:05 09.10.2014 
   rwcnt = MatRowCnt(TBBUp);
@@ -276,6 +277,7 @@ BEGIN
       end;
       t = FindVAT(TBBUrw.VATCode,TBBUrw.Sum,TBBUp.InclVAT,TBBUp.NoTAXonVAT);//Edit by Victor 10.09.14
       s3 = t + s3;//Edit by Victor 10.09.14
+      sumCost = sumCost + TBBUrw.SumCost;
       if (t!=0) then begin //Edit***************************Sasha2,17:47 27.02.2015
         t1 = CalcCurrencyClientVAT(TBBUp,t);
         s3_cur = t1 + s3_cur;
@@ -360,6 +362,7 @@ BEGIN
   	s3_cur = s3_cur + vatrebate_cur;
   end; //Edit***************************Sasha2,17:29 20.10.2014 }
   TBBUp.Sum3 = s3;//Edit by Victor 10.09.14
+  TBBUp.SumCost = sumCost;
   TBBUp.TotSum = tt + totrebate;//Edit***************************Sasha2,16:54 07.10.2014
   TBBUp.TotSumVAT = tt + s3 + totrebate; //Edit***************************Sasha2,16:07 07.10.2014
   if (nonblank(TBBUp.ClientCurncyCode) and (TBBUp.ClientFrRate==0 or TBBUp.ClientToRateB1==0)) then begin
@@ -375,6 +378,7 @@ BEGIN
   TBBUp.GPTot = TBBUp.TotSumVAT - budlosses; //Edit***************************Sasha2,10:29 08.09.2014
   TBBUp.GPTotPercent = Round((TBBUp.GPTot/TBBUp.TotSumVAT)*100,DefaultRoundMode); //Edit***************************Sasha2,11:00 08.09.2014
   TBBUp.TotRebate = totrebate; //Edit***************************Sasha2,15:14 07.10.2014
+  TBBUp.RebatePercent = (TBBUp.TotSum - TBBUp.TotRebate) / TBBUp.TotRebate;	//Edit by Victor 22.06.15
   RETURN;
 END;
 
