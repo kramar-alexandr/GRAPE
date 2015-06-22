@@ -2824,7 +2824,7 @@ begin
   EditField(620,-17,80, "Итого с НДС",Normal,TotSumVAT,true,0);//Edit by Victor 10.09.14
   EditField(620,-55,80, "Итого сумма",Normal,TotSum,true,0); //vertical position = -25
   
-  /*
+  /* Old version of fields positions
   if (IsEnterprise) then begin
     v=v+ vs; VTab(-35,v,-16,v+vs,ToolFlip,5,"E");
     EditField(63+5,-17,40,"Валюта",Normal,CurncyCode,false,CurncyCodeSClass); //Edit***************************Sasha2,10:36 21.10.2014
