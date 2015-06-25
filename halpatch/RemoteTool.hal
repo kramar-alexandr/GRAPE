@@ -192,9 +192,11 @@ LPasteTBBUInVIFunc:;
   RETURN;
 END; //Edit***************************Sasha2,9:50 14.10.2014 }
 
-global procedure CalculateBudget(var record TBBUVc TBBUr,var string budgeterrors)
+
+
+procedure CheckOrSaveCalculatedBudget(var record TBBUVc TBBUr,var string budgeterrors,record GeneralOptionBlock GenOptRec,record PRClassBlock PRClassRec,var Boolean rebatef,boolean checkorsavef,var boolean collapsef)
 begin
-	integer i,rwcnt,rwnum,j,rwcnt2,rwcnt3,k,q;
+  integer i,rwcnt,rwnum,j,rwcnt2,rwcnt3,k,q;
 	record PRVc PRr,PR2r;
 	record TBBUVc TBBU2r;
 	row TBBUVc TBBU2rw;
@@ -203,172 +205,179 @@ begin
 	row TBBUVc TBBUrw;
 	boolean testf,TrHs;
 	val t,s;
-	boolean ident,rebatef; //Edit***************************Sasha2,9:38 02.06.2015
-	record GeneralOptionBlock GenOptRec;
-	record PRClassBlock PRClassRec;
   row PRClassBlock PRClassrw;
   string 100 name;
-	
-	BlockLoad(GenOptRec);
-	BlockLoad(PRClassRec);
-	rwcnt3 = MatRowCnt(PRClassRec);
-	rebatef = false; //Edit***************************Sasha2,9:40 02.06.2015
-			
-	logtext(0,1);
-	
-  if(TBBUr.OKFlag>0)then begin
-  	logtext(0,"“тверждено клиентом!");
-  end else begin
-		if(MatRowCnt(TBBUr)>0)then begin
-			logtext(0, "Ѓюджет не пустой!");
-		end else begin		
-			PRr.MotherCode = TBBUr.PRCode;
-			TrHs = True;
-			while(LoopKey("MotherCode",PRr,1,TrHs)) begin
-				logtext(0,PRr.Code & " " & PRr.MotherCode);
-				testf = true;
-				if (PRr.MotherCode!=TBBUr.PRCode)then begin testf = false; TrHs = false;	end;
-
-				if(testf) then begin
-					
-					TBBU2r.PRCode = PRr.Code;
-					if(readfirstmain(TBBU2r,1,true))then begin
-						if (TBBU2r.AcceptanceStatus!=kAcceptanceStateNotRequired and TBBU2r.AcceptanceStatus!=kAcceptanceStateApproved) then begin
-							budgeterrors = budgeterrors & "Ь " & TBBU2r.PRCode & ", "; //Edit***************************Sasha2,16:00 21.10.2014
+  boolean ident;
+  
+		rwcnt3 = MatRowCnt(PRClassRec);
+		PRr.MotherCode = TBBUr.PRCode;
+		TrHs = True;
+		while(LoopKey("MotherCode",PRr,1,TrHs)) begin
+			logtext(0,PRr.Code & " " & PRr.MotherCode);
+			testf = true;
+			if (PRr.MotherCode!=TBBUr.PRCode)then begin testf = false; TrHs = false;	end;
+			if(testf) then begin
+				
+				TBBU2r.PRCode = PRr.Code;
+				if(readfirstmain(TBBU2r,1,true))then begin
+					if (TBBU2r.AcceptanceStatus!=kAcceptanceStateNotRequired and TBBU2r.AcceptanceStatus!=kAcceptanceStateApproved) then begin
+						budgeterrors = budgeterrors & "Ь " & TBBU2r.PRCode & ", "; //Edit***************************Sasha2,16:00 21.10.2014
+					end;
+					if(MatRowCnt(TBBUr)==0)then begin
+						rwcnt = MatRowCnt(TBBU2r);
+						name = "";
+						if(rwcnt>0)then begin
+								
+							for (q=0;q<rwcnt3;q=q+1) begin
+								MatRowGet(PRClassRec,q,PRClassrw);
+								if(PRr.PRClass == PRClassrw.Code)then begin
+									name = PRClassrw.Comment & "--" & PRClassrw.Comment2;
+								end;
+							end;
+														
+							TBBUrw.stp = 18;
+							TBBUrw.Spec = TBBU2r.PRName;
+							TBBUrw.TypeName = name;
+							TBBUrw.IdentQuant = 1;
+							TBBUrw.PRCode = TBBU2r.PRCode;	//Edit by Victor 28.01.15
+							TBBUrw.PRName = TBBU2r.CustName;	//Edit by Victor 28.01.15
+							MatRowPut(TBBUr,rwnum,TBBUrw);
+							rwnum = rwnum + 1;
+							for (i=0;i<rwcnt;i=i+1) begin
+								MatRowGet(TBBU2r,i,TBBU2rw);
+								MatRowPut(TBBUr,rwnum,TBBU2rw);	
+								TBBUDchrsum(TBBUr,rwnum,true,GenOptRec.UseDiscount);
+								if (checkorsavef==false) then begin
+								  if (rebatef==false and TBBU2rw.stp>=23 and TBBU2rw.stp<=25) then begin
+    	              rebatef = true; //Edit***************************Sasha2,9:40 02.06.2015
+  								end;
+								end;
+								rwnum = rwnum + 1;
+							end;
 						end;
-						if(MatRowCnt(TBBUr)==0)then begin
-							rwcnt = MatRowCnt(TBBU2r);
-							name = "";
-							if(rwcnt>0)then begin
-									
+					end else begin
+						rwcnt = MatRowCnt(TBBUr);
+						ident = false;
+						if (collapsef) then begin
+  						For(i=0;i<rwcnt;i=i+1) begin
+    						matrowget(TBBUr,i,TBBUrw);
+    						if(TBBUrw.stp==18 and TBBUrw.Spec==TBBU2r.PRName)then begin 
+    							ident = true; 
+    							rwcnt2 = MatRowCnt(TBBU2r);
+    							if(rwcnt2<=(rwcnt-i-1))then begin 
+    								For(j=0;j<rwcnt2;j=j+1) begin
+    									matrowget(TBBU2r,j,TBBU2rw);
+    									matrowget(TBBUr,j+i+1,TBBU3rw); 
+    									if(TBBU2rw.stp!=TBBU3rw.stp or TBBU2rw.ArtCode!=TBBU3rw.ArtCode or TBBU2rw.Price!=TBBU3rw.Price or TBBU2rw.Cost!=TBBU3rw.Cost or TBBU2rw.TypeName!=TBBU3rw.TypeName) then begin
+    										ident = false;
+    										if (checkorsavef) then begin
+    										  collapsef = false;
+    										  goto LNoMatch;
+    										end;
+    									end;
+  									end; 
+    							end else begin
+    								ident = false;
+    								if (checkorsavef) then begin
+  									  collapsef = false;
+  									  goto LNoMatch;
+  									end;
+    							end;
+    							
+    							if(ident)then begin
+    								
+    								TBBUrw.IdentQuant = TBBUrw.IdentQuant + 1; 	
+    								matrowput(TBBUr,i,TBBUrw);						
+    								For(j=0;j<rwcnt2;j=j+1) begin
+    									matrowget(TBBU2r,j,TBBU2rw);
+    									matrowget(TBBUr,j+i+1,TBBU3rw);	 
+    									TBBU3rw.Qty = TBBU3rw.Qty + TBBU2rw.Qty;
+    									//if nonblank(TBBU2r.ClientCurncyCode) then begin
+    										TBBU3rw.ClientSum = TBBU3rw.ClientSum + TBBU2rw.ClientSum;
+    										TBBU3rw.ClientPrice = TBBU2rw.ClientSum;
+    										TBBU3rw.SumCost = TBBU3rw.SumCost + TBBU2rw.SumCost;
+    									//end;
+    									matrowput(TBBUr,j+i+1,TBBU3rw);
+    									TBBUDchrsum(TBBUr,j+i+1,true,GenOptRec.UseDiscount);	
+  									end; 
+  									goto Ldone;
+    							end;
+    						end;
+  						end; 
+  					end;
+						if(!ident)then begin
+							rwcnt2 = MatRowCnt(TBBU2r);
+							if(rwcnt2>0)then begin
+								rwnum = rwcnt;
+								clearrow(TBBUr,TBBU3rw,18);
+								name = "";
 								for (q=0;q<rwcnt3;q=q+1) begin
 									MatRowGet(PRClassRec,q,PRClassrw);
 									if(PRr.PRClass == PRClassrw.Code)then begin
 										name = PRClassrw.Comment & "--" & PRClassrw.Comment2;
 									end;
 								end;
-															
-								TBBUrw.stp = 18;
-								TBBUrw.Spec = TBBU2r.PRName;
-								TBBUrw.TypeName = name;
-								TBBUrw.IdentQuant = 1;
-								TBBUrw.PRCode = TBBU2r.PRCode;	//Edit by Victor 28.01.15
-								TBBUrw.PRName = TBBU2r.CustName;	//Edit by Victor 28.01.15
-								MatRowPut(TBBUr,rwnum,TBBUrw);
+								TBBU3rw.stp = 18;
+								TBBU3rw.Spec = TBBU2r.PRName;
+								TBBU3rw.TypeName = name;
+								TBBU3rw.IdentQuant = 1;
+								TBBU3rw.PRCode = TBBU2r.PRCode;	//Edit by Victor 28.01.15
+								TBBU3rw.PRName = TBBU2r.CustName;	//Edit by Victor 28.01.15
+								matrowput(TBBUr,rwnum,TBBU3rw);
 								rwnum = rwnum + 1;
-								for (i=0;i<rwcnt;i=i+1) begin
-									MatRowGet(TBBU2r,i,TBBU2rw);
-									MatRowPut(TBBUr,rwnum,TBBU2rw);	
-									TBBUDchrsum(TBBUr,rwnum,true,GenOptRec.UseDiscount);
-									//MatRowGet(TBBUr,rwnum,TBBUrw);
-									if (rebatef==false and TBBU2rw.stp>=23 and TBBU2rw.stp<=25) then begin
-    	              rebatef = true; //Edit***************************Sasha2,9:40 02.06.2015
-    	              //TBBUVc_PasteTypeName_Rebate(TBBUr,rwnum,TBBUrw);
-		                //MatRowPut(TBBUr,rwnum,TBBUrw);
-									end;
-									//if(TBBUrw.stp<17 or TBBUrw.stp>23)then begin
-										//TBBUDchrsum(TBBUr,rwnum,true,GenOptRec.UseDiscount);
-									//end;
-									rwnum = rwnum + 1;
-								end;
-							end;
-						end else begin
-							rwcnt = MatRowCnt(TBBUr);
-							ident = false;
-							For(i=0;i<rwcnt;i=i+1) begin
-	  						matrowget(TBBUr,i,TBBUrw);
-	  						if(TBBUrw.stp==18 and TBBUrw.Spec==TBBU2r.PRName)then begin
-	  							ident = true;
-	  							rwcnt2 = MatRowCnt(TBBU2r);
-	  							if(rwcnt2<=(rwcnt-i-1))then begin
-	  								For(j=0;j<rwcnt2;j=j+1) begin
-	  									matrowget(TBBU2r,j,TBBU2rw);
-	  									matrowget(TBBUr,j+i+1,TBBU3rw);
-	  									if(TBBU2rw.stp!=TBBU3rw.stp or TBBU2rw.ArtCode!=TBBU3rw.ArtCode or TBBU2rw.Price!=TBBU3rw.Price or TBBU2rw.Cost!=TBBU3rw.Cost or TBBU2rw.SumCost!=TBBU3rw.SumCost or TBBU2rw.TypeName!=TBBU3rw.TypeName) then begin
-	  										ident = false;
-	  									end;
-										end; 
-	  							end else begin
-	  								ident = false;
-	  							end;
-	  							
-	  							if(ident)then begin
-	  								
-	  								TBBUrw.IdentQuant = TBBUrw.IdentQuant + 1; 	
-	  								matrowput(TBBUr,i,TBBUrw);						
-	  								For(j=0;j<rwcnt2;j=j+1) begin
-	  									matrowget(TBBU2r,j,TBBU2rw);
-	  									matrowget(TBBUr,j+i+1,TBBU3rw);	 
-	  									TBBU3rw.Qty = TBBU3rw.Qty + TBBU2rw.Qty;
-	  									//if nonblank(TBBU2r.ClientCurncyCode) then begin
-	  										TBBU3rw.ClientSum = TBBU3rw.ClientSum + TBBU2rw.ClientSum;
-	  										TBBU3rw.ClientPrice = TBBU2rw.ClientSum;
-	  										TBBU3rw.SumCost = TBBU3rw.SumCost + TBBU2rw.SumCost;
-	  									//end;
-	  									matrowput(TBBUr,j+i+1,TBBU3rw);
-	  									TBBUDchrsum(TBBUr,j+i+1,true,GenOptRec.UseDiscount);	
-	  									//MatRowGet(TBBUr,j+i+1,TBBUrw);
-	  									/*if (rebatef==false and TBBUrw.stp>=23 and TBBUrw.stp<=25) then begin
-        	               rebatef = true; //Edit***************************Sasha2,9:40 02.06.2015
-        	              TBBUVc_PasteTypeName_Rebate(TBBUr,rwnum,TBBUrw);
-    		                MatRowPut(TBBUr,j+i+1,TBBUrw);
-    									end;*/
-	  									//if((TBBUrw.stp<17 or TBBUrw.stp>23))then begin
-		  									//TBBUDchrsum(TBBUr,j+i+1,true,GenOptRec.UseDiscount);	
-		  								//end;
-										end; 
-										goto Ldone;
-	  							end;
-	  						end;
-							end; 
-							if(!ident)then begin
-								rwcnt2 = MatRowCnt(TBBU2r);
-								if(rwcnt2>0)then begin
-									rwnum = rwcnt;
-									clearrow(TBBUr,TBBU3rw,18);
-									name = "";
-									for (q=0;q<rwcnt3;q=q+1) begin
-										MatRowGet(PRClassRec,q,PRClassrw);
-										if(PRr.PRClass == PRClassrw.Code)then begin
-											name = PRClassrw.Comment & "--" & PRClassrw.Comment2;
-										end;
-									end;
-									TBBU3rw.stp = 18;
-									TBBU3rw.Spec = TBBU2r.PRName;
-									TBBU3rw.TypeName = name;
-									TBBU3rw.IdentQuant = 1;
-									TBBU3rw.PRCode = TBBU2r.PRCode;	//Edit by Victor 28.01.15
-									TBBU3rw.PRName = TBBU2r.CustName;	//Edit by Victor 28.01.15
-									matrowput(TBBUr,rwnum,TBBU3rw);
-									rwnum = rwnum + 1;
-									For(i=0;i<rwcnt2;i=i+1) begin
-	  								matrowget(TBBU2r,i,TBBU2rw);
-	  								MatRowPut(TBBUr,rwnum,TBBU2rw);	
-	  								TBBUDchrsum(TBBUr,rwnum,true,GenOptRec.UseDiscount);
-	  								//MatRowGet(TBBUr,rwnum,TBBUrw);
-	  								if (rebatef==false and TBBU2rw.stp>=23 and TBBU2rw.stp<=25) then begin
+								For(i=0;i<rwcnt2;i=i+1) begin
+  								matrowget(TBBU2r,i,TBBU2rw);
+  								MatRowPut(TBBUr,rwnum,TBBU2rw);	
+  								TBBUDchrsum(TBBUr,rwnum,true,GenOptRec.UseDiscount);
+  								if (checkorsavef==false) then begin
+								    if (rebatef==false and TBBU2rw.stp>=23 and TBBU2rw.stp<=25) then begin
       	              rebatef = true; //Edit***************************Sasha2,9:40 02.06.2015
-      	              //TBBUVc_PasteTypeName_Rebate(TBBUr,rwnum,TBBUrw);
-  		                //MatRowPut(TBBUr,rwnum,TBBUrw);
   									end;
-	  								//if((TBBUrw.stp<17 or TBBUrw.stp>23))then begin
-		  								//TBBUDchrsum(TBBUr,rwnum,true,GenOptRec.UseDiscount);
-		  							//end;
-	  								rwnum = rwnum + 1;
-									end; 
-								end;
+								  end;
+  								rwnum = rwnum + 1;
+								end; 
 							end;
 						end;
 					end;
 				end;
-Ldone:;
 			end;
-			if (rebatef) then begin //Edit***************************Sasha2,9:41 02.06.2015 {
-			  RecalcTBBURebate(TBBUr);
+Ldone:;
+		end; RESETLOOP(PRr);
+		
+LNoMatch:;
+		
+  return;
+end;
+
+
+global 
+procedure CalculateBudget(var record TBBUVc TBBUMainr,var string budgeterrors)
+begin
+  record GeneralOptionBlock GenOptRec;
+	record PRClassBlock PRClassRec;
+	record TBBUVc TBBUTestr;
+  boolean rebatef,collapsef; //Edit***************************Sasha2,9:38 02.06.2015
+	
+	BlockLoad(GenOptRec);
+	BlockLoad(PRClassRec);
+	
+  if(TBBUMainr.OKFlag>0)then begin
+  	logtext(0,"“тверждено клиентом!");
+  end else begin
+		if(MatRowCnt(TBBUMainr)>0)then begin
+			logtext(0, "Ѓюджет не пустой!");
+		end else begin	
+		  rebatef = false; //Edit***************************Sasha2,9:40 02.06.2015	
+		  collapsef = true; //Edit***************************Sasha2,11:56 25.06.2015
+		  TBBUTestr.PRCode = TBBUMainr.PRCode;
+		  CheckOrSaveCalculatedBudget(TBBUTestr,budgeterrors,GenOptRec,PRClassRec,rebatef,true,collapsef);
+	    CheckOrSaveCalculatedBudget(TBBUMainr,budgeterrors,GenOptRec,PRClassRec,rebatef,false,collapsef);
+	    if (rebatef) then begin //Edit***************************Sasha2,9:41 02.06.2015 {
+			  RecalcTBBURebate(TBBUMainr);
 			end; //Edit***************************Sasha2,9:41 02.06.2015 }
-			TBBUSumup(TBBUr);
+			TBBUSumup(TBBUMainr);
 		end;
 	end;
-	logtext(0,matrowcnt(TBBUr));
+	logtext(0,matrowcnt(TBBUMainr));
 	return;
 end;
