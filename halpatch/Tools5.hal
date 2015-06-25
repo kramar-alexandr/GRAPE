@@ -286,9 +286,9 @@ BEGIN
       subtotv_cur = subtotv_cur + TBBUrw.ClientSum; //Edit***************************Sasha2,17:48 27.02.2015
       costv = costv + TBBUrw.Qty*TBBUrw.Cost;
       gptot = gptot + TBBUrw.GP; //Edit***************************Sasha2,10:27 08.09.2014
-      if (NonBlank(TBBUrw.SubContractor)) then begin
+      //if (NonBlank(TBBUrw.SubContractor)) then begin// Edit ************************** Thursday, 25 June 2015 10:49:08
       	budlosses = budlosses + TBBUrw.SumCost;
-      end;
+      //end;
       if (blockcnt>-1) then begin //Edit***************************Sasha2,16:11 08.10.2014 {
       	  for (j=0;j<=blockcnt;j=j+1) begin
       	  	if (blnums[j]>-1) then begin

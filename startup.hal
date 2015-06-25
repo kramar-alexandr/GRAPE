@@ -12,6 +12,8 @@ begin
   Maintenance("Удалить цены",DelPriceListVClass,DelPriceLMn,modTS);
   Maintenance("Изменить stp для скидки",CommonVClass,ChangeRebateStpMn,modTC); //Edit***************************Sasha2,18:05 27.05.2015
   
+  Maintenance("Пересчитать бюджеты",CommonVClass,RecalcTBBUMn,modTS); //Edit***************************Sasha2,18:05 27.05.2015
+  
   Import("Импорт цен",PLImportIClass,PLImportIn,modTS); //Added********************Dima 20.11.2014
 
 	Setting("Масштабы проектов",ProjScopeTClass,modTS); //Edit***************************Sasha2,17:26 11.09.2014
