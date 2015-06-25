@@ -272,7 +272,7 @@ BEGIN
             typelen = len(TBBUrw.TypeName);
             for (k=0;k<typelen;k=k+1) begin
               if (Asc(Mid(TBBUrw.TypeName,k,1)) == 45) then begin
-                TBBU2rw.TypeName = left(TBBUrw.TypeName,k) & indext & Right(TBBUrw.TypeName,typelen - k);
+                TBBU2rw.TypeName = left(TBBUrw.TypeName,k) & "(" & indext & ")" & Right(TBBUrw.TypeName,typelen - k);
                 indext = indext +1;
                 MatRowPut(TBBUr,j,TBBU2rw);
                 k = typelen;

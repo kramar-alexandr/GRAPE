@@ -264,20 +264,30 @@ begin
     						if(TBBUrw.stp==18 and TBBUrw.Spec==TBBU2r.PRName)then begin 
     							ident = true; 
     							rwcnt2 = MatRowCnt(TBBU2r);
-    							if(rwcnt2<=(rwcnt-i-1))then begin 
-    								For(j=0;j<rwcnt2;j=j+1) begin
-    									matrowget(TBBU2r,j,TBBU2rw);
-    									matrowget(TBBUr,j+i+1,TBBU3rw); 
-    									if(TBBU2rw.stp!=TBBU3rw.stp or TBBU2rw.ArtCode!=TBBU3rw.ArtCode or TBBU2rw.Price!=TBBU3rw.Price or TBBU2rw.Cost!=TBBU3rw.Cost or TBBU2rw.TypeName!=TBBU3rw.TypeName) then begin
-    										ident = false;
-    										if (checkorsavef) then begin
-    										  collapsef = false;
-    										  goto LNoMatch;
-    										end;
+    							PR2r.Code = TBBUrw.PRCode; 
+    							ReadFirstMain(PR2r,1,true);
+    							if (PRr.PRClass==PR2r.PRClass) then begin
+    							  if(rwcnt2<=(rwcnt-i-1))then begin 
+      								For(j=0;j<rwcnt2;j=j+1) begin
+      									matrowget(TBBU2r,j,TBBU2rw);
+      									matrowget(TBBUr,j+i+1,TBBU3rw);
+      									if(TBBU2rw.stp!=TBBU3rw.stp or TBBU2rw.ArtCode!=TBBU3rw.ArtCode or TBBU2rw.Price!=TBBU3rw.Price or TBBU2rw.Cost!=TBBU3rw.Cost or TBBU2rw.TypeName!=TBBU3rw.TypeName) then begin
+      										ident = false;
+      										if (checkorsavef) then begin
+      										  collapsef = false;
+      										  goto LNoMatch;
+      										end;
+      									end;
+    									end; 
+      							end else begin
+      								ident = false;
+      								if (checkorsavef) then begin
+    									  collapsef = false;
+    									  goto LNoMatch;
     									end;
-  									end; 
+      							end;
     							end else begin
-    								ident = false;
+    							  ident = false;
     								if (checkorsavef) then begin
   									  collapsef = false;
   									  goto LNoMatch;
@@ -336,6 +346,11 @@ begin
 								  end;
   								rwnum = rwnum + 1;
 								end; 
+							end;
+						end else begin
+						  if (checkorsavef) then begin
+							  collapsef = false;
+							  goto LNoMatch;
 							end;
 						end;
 					end;
