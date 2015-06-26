@@ -25,6 +25,28 @@ BEGIN
   RETURN;
 END;
 
+global
+function String 200 getType(String longType)
+BEGIN
+  String 200 res;
+	String 2 separator;
+	integer typeLen, i, pos;
+	
+	typeLen = len(longType);
+	
+	for(i = 0; i < typeLen; i = i + 1) begin
+		separator = mid(longType,i,2);
+		if(separator=="--")then begin
+			res = Right(longType, typeLen - (i + 2));
+			goto LgetType;
+		end;
+	end;
+
+  	LgetType:;	
+    getType = res; 
+  RETURN;
+END;
+
 global procedure ExpBudgetRn(record RcVc RepSpec)//Edit by Victor 16.09.14
 begin
 	record TBBUVc TBBUr, TBBU2r;
@@ -41,7 +63,7 @@ begin
 	record UserVc Userr;
 	boolean TrHs, ifDifferentCurrency;
 	integer rwcnt;
-	string 255 Rebate24Spec, rebate24;
+	string 255 Rebate24Spec, rebate24,typeName;
 	val rebate24curr;
 	
 	stp18 = 0;
@@ -369,6 +391,35 @@ begin
 			outstring(250,0,TBBUr.ClientTotSumVAT,false);
 		end;
 	endformat;
+	
+	//TOTAL
+	startformat(15); 
+		outstring(0,0,"",false);
+	endformat;
+	
+	mtrw = matrowcnt(TBBUr);
+	for (i=0;i<mtrw;i=i+1) begin
+		matrowget(TBBUr,i,TBBUrw);
+		if(TBBUrw.stp == 18)then begin
+			typeName = getType(TBBUrw.TypeName);
+			PRr.Code = TBBUrw.PRCode;
+			if(ReadFirstMain(PRr,1,true))then begin
+				jobSpec = PRr.Desc0 & " " & PRr.Desc1 & " " & PRr.Desc2;
+			end;
+			TBBU2r.PRCode = TBBUrw.PRCode;
+			if(ReadFirstMain(TBBU2r,1,true))then begin
+				startformat(15);
+					outstring(100,0,typeName,false);
+					outstring(200,0,jobSpec,false);
+					outstring(150,0,TBBUrw.IdentQuant,false);
+					outstring(210,0,TBBU2r.TotSum,false);
+					if(ifDifferentCurrency)then begin
+						outstring(250,0,TBBU2r.ClientTotSum,false);
+					end;
+				endformat;
+			end;
+		end;
+	end;
 	
 	startformat(15); 
 		outstring(0,0,"",false);
