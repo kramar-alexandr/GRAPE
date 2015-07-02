@@ -1594,6 +1594,7 @@ begin
 //Edit---------------Vitalii 14:57 02.07.2015
 	string 250 filename;
 	area fileToSave;
+	record PRVc PRr;
 	
 	wn = CurWindow;
   DeselectWindow(wn,false);
@@ -1622,16 +1623,22 @@ begin
 	*/
 	
 //Edit---------------Vitalii 14:56 02.07.2015
+	PRr.Code = TBBUr.PRCode;
+	ReadFirstMain(PRr,1,true);
+	if nonblank(PRr.MotherCode) then begin
+		Messagebox(0, "Нельзя экспортировать дочерние бюджеты.");
+		return;
+	end;
 	RepSpec.f1 = TBBUr.PRCode;
 	filename = SaveFileDialog("Budget Export","","xlsx");
 	if ((filename!="Budget Export") and nonblank(filename)) then begin
 		ExportBudgetToXLSX(RepSpec,fileToSave);
+		writeareatofile(fileToSave,filename,0);
+		MessageBox(0,"Готово!");
 	end;
 	if(fileexists(filename))then begin
 		delete_file(filename);
 	end;
-	writeareatofile(fileToSave,filename,0);
-	MessageBox(0,"Готово!");
  return;
 end;
 
