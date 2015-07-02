@@ -440,3 +440,39 @@ begin
   v = 6; vs = 20; h = 130; h2 = 40;
   EndWindow;
 end;
+/*
+//Edit---------------Vitalii 11:14 25.06.2015
+window ExportBudgetRClass:1
+  wtag("language","RUS"), wtag("product","*"), wtag("device","computer")
+begin
+  WindowBegin("Выберите проект для вывода бюджета",ExportBudgetRClass,CGRcW,RcType);
+  SetWRect(20,80,400,270);
+  EditField(120,20,120,"Проект",Normal,f1,false,PRSClass);
+
+  EndWindow;
+end;
+
+window ExportBudgetTestRClass:1
+  wtag("language","RUS"), wtag("product","*"), wtag("device","computer")
+begin
+  WindowBegin("Выберите проект для вывода бюджета",ExportBudgetTestRClass,CGRcW,RcType);
+  SetWRect(20,80,400,270);
+  EditField(120,20,120,"Проект",Normal,f1,false,PRSClass);
+
+  EndWindow;
+end;
+
+//Edit---------------Vitalii 13:48 26.06.2015
+
+window ExportBudgetToXLSXRClass:1
+	wtag("language","RUS"), wtag("product","*"), wtag("device","computer")
+begin
+	real h,v,vs,h1;
+	WindowBegin("Выберите проект для вывода бюджета",ExportBudgetToXLSXRClass,CGother,RcType);
+		SetWRect(20,80,400,270);
+		v = 6; vs = 20; h = 120;
+		EditField(h,v+=20,120,"Проект",Normal,f1,false,PRSClass);
+		HalPushButton(h=50,v+=20,h+110,v+=20,"RunExportBudgetToXLSX","Запуск");
+	EndWindow;
+end;
+*/

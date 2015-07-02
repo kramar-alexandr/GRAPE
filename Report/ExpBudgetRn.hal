@@ -1,4 +1,19 @@
-external procedure CurValToOtherCur(Date,string,val,string,var val,roundmode);
+external procedure XmlXlsxWorkBegin(string,string);
+external procedure CreateSheetsXLSX(integer,array string,string,integer);
+external procedure EndSheet(integer,string,integer);
+external procedure SetSheetsCols(integer,array val,string);
+external procedure BeginSheetData(integer,string);
+external procedure EndSheetData(integer,string);
+external procedure BeginRow(integer,string,integer);
+external procedure EndRow(integer,string,var integer);
+external procedure StringCell(integer,string,var integer,integer,integer,string,var array string,var integer,var integer);
+external procedure NumericCell(integer,string,var integer,integer,integer,val);
+external procedure EmptyCell(integer,string,var integer,integer,integer,integer);
+external procedure MergeCells(integer,string,array string,integer);
+external procedure FillSharedStrings(string,array string,integer,integer);
+external procedure ConvertToXLSX(string);
+external procedure AddImagesToXLSX(integer,string,string,string,integer);
+external function string 10 GetStringCellNum(integer,integer);
 
 SetLangMode(LangRussian,"RUS",0);
 
@@ -63,7 +78,7 @@ begin
 	record UserVc Userr;
 	boolean TrHs, ifDifferentCurrency;
 	integer rwcnt;
-	string 255 Rebate24Spec, rebate24,typeName;
+	string 255 Rebate24Spec, rebate24, typeName;
 	val rebate24curr;
 	
 	stp18 = 0;
@@ -85,48 +100,48 @@ begin
 	
 	startformat(15);
 		outstring(0,0,ifDifferentCurrency,false);
-		outstring(1,0,TBBUr.CurncyCode,false);
+		outstring(100,0,TBBUr.CurncyCode,false);
 		if(ifDifferentCurrency)then begin
-			outstring(2,0,TBBUr.ClientCurncyCode,false);
-			outstring(3,0,TBBUr.ClientFrRate,false);
-			outstring(4,0,TBBUr.ClientToRateB1,false);
+			outstring(200,0,TBBUr.ClientCurncyCode,false);
+			outstring(300,0,TBBUr.ClientFrRate,false);
+			outstring(400,0,TBBUr.ClientToRateB1,false);
 		end;
 	endformat;	
 	
 	startformat(15);
 		outstring(0,0,"",false);
-		outstring(10,0,"Клиент / Бренд",false);
-		outstring(50,0,TBBUr.CustName,false);
+		outstring(30,0,"Клиент / Бренд",false);
+		outstring(100,0,TBBUr.CustName,false);
 	endformat;
 	startformat(15);
 		outstring(0,0,"",false);
-		outstring(10,0,"Название проекта",false);
-		outstring(50,0,TBBUr.PRName,false);
+		outstring(30,0,"Название проекта",false);
+		outstring(100,0,TBBUr.PRName,false);
 	endformat;
 	
 	startformat(15);
 		outstring(0,0,"",false);
-		outstring(10,0,"Подготовил(а)",false);
+		outstring(30,0,"Подготовил(а)",false);
 		Userr.Code = TBBUr.PRLeader;
 		if(ReadFirstMain(Userr,1,true))then begin
-			outstring(50,0,Userr.Name,false);		
+			outstring(100,0,Userr.Name,false);		
 		end;
 
 	endformat;
 	startformat(15);
 		outstring(0,0,"",false);
-		outstring(10,0,"Дата",false);
-		outstring(50,0,TBBUr.TransDate,false);
+		outstring(30,0,"Дата",false);
+		outstring(100,0,TBBUr.TransDate,false);
 		outstring(0,0,"",false);
 	endformat;
 	
 	startformat(15);
 		outstring(0,0,"",false);
-		outstring(10,0,"Описание работ",false);
+		outstring(30,0,"Описание работ",false);
 		PRr.Code = TBBUr.PRCode;
 		if(ReadFirstMain(PRr,1,true))then begin
 			jobSpec = PRr.Desc0 & " " & PRr.Desc1 & " " & PRr.Desc2;
-			outstring(50,0,jobSpec,false);
+			outstring(100,0,jobSpec,false);
 		end;
 
 		//outstring(0,0,"",false);
@@ -138,10 +153,10 @@ begin
 	
 	startformat(15);
 		outstring(0,0,"",false);
-		outstring(10,0,"Задача",false);
+		outstring(30,0,"Задача",false);
 		outstring(100,0,"Стоимость",false);
-		outstring(150,0,"Количество",false);
-		outstring(210,0,"Общая стоимость",false);
+		outstring(200,0,"Количество",false);
+		outstring(300,0,"Общая стоимость",false);
 	endformat;
 	Gray_Divider(0,1);
   	
@@ -161,15 +176,15 @@ begin
 						
 				startformat(15);
 					outstring(0,0,TBBUrw.stp,false);
-					outstring(10,0,TBBUrw.Spec,false);
+					outstring(30,0,TBBUrw.Spec,false);
 					outstring(100,0,TBBUrw.TypeName,false);
-					outstring(150,0,TBBUrw.IdentQuant,false);
-					//outstring(210,0,"",false);						
+					outstring(200,0,TBBUrw.IdentQuant,false);
+					//outstring(300,0,"",false);						
 				endformat;
 				
 				startformat(15);
 					outstring(0,0,"555",false);
-					outstring(10,0,TBBUrw.PRName,false);
+					outstring(30,0,TBBUrw.PRName,false);
 				endformat;
 				
 				startformat(15);
@@ -177,7 +192,7 @@ begin
 					if(ReadFirstMain(PRr,1,true))then begin
 						outstring(0,0,"666",false);
 						jobSpec = PRr.Desc0 & " " & PRr.Desc1 & " " & PRr.Desc2;
-						outstring(10,0,jobSpec,false);
+						outstring(30,0,jobSpec,false);
 					end;
 				endformat;
 				
@@ -185,9 +200,9 @@ begin
 				TBBU2r.PRCode = TBBUrw.PRCode;
 					if(ReadFirstMain(TBBU2r,1,true))then begin
 						outstring(0,0,"888",false);
-						outstring(10,0,TBBU2r.TotRebate,false);
+						outstring(30,0,TBBU2r.TotRebate,false);
 						
-						//*** finding stp 24
+						//--- finding stp 24
 						//if rebate for project can locate not in the end of the project rewrite this to finding stp in whole matrix
 						rwcnt = MatRowCnt(TBBU2r);
 						MatRowGet(TBBU2r,rwcnt-1,TBBU2rw);	
@@ -202,7 +217,7 @@ begin
 						end else begin
 							flagStp24exist = false;
 						end;						
-						//******************
+						//-------------
 						
 					end;
 					
@@ -213,72 +228,60 @@ begin
 					stp17 = stp17 + 1;
 					startformat(15);
 						outstring(0,0,TBBUrw.stp,false);
-						outstring(10,0,TBBUrw.Spec,false);
+						outstring(30,0,TBBUrw.Spec,false);
 						outstring(100,0,"",false);
-						outstring(150,0,"",false);
-						outstring(210,0,"",false);
+						outstring(200,0,"",false);
+						outstring(300,0,"",false);
 					endformat;
 				end else begin
 					if(TBBUrw.stp == 1)then begin
 						startformat(15);
 							outstring(0,0,TBBUrw.stp,false);
-							outstring(10,0,TBBUrw.Comment,false);
+							outstring(30,0,TBBUrw.Comment,false);
 							outstring(70,0,TBBUrw.Comment2,false);
 							outstring(100,0,TBBUrw.Price,false);
-							outstring(150,0,TBBUrw.Qty,false);
-							outstring(210,0,TBBUrw.Sum,false);		
+							outstring(200,0,TBBUrw.Qty,false);
+							outstring(300,0,TBBUrw.Sum,false);		
 							if(ifDifferentCurrency)then begin
-								outstring(250,0,TBBUrw.ClientSum,false);
+								outstring(400,0,TBBUrw.ClientSum,false);
 							//end else begin
-								//outstring(250,0,"",false);
+								//outstring(400,0,"",false);
 							end;				
 						endformat;
 					end else begin
 						if(TBBUrw.stp == 25)then begin
 							startformat(15);
 								outstring(0,0,TBBUrw.stp,false);
-								outstring(10,0,"Скидка/Агентская комиссия:",false);
-								outstring(50,0,TBBUrw.Spec,false);
-								outstring(150,0,"Размер:",false);
-								outstring(210,0,TBBUrw.TypeName,false);								
+								outstring(30,0,"Скидка/Агентская комиссия:",false);
+								outstring(100,0,TBBUrw.Spec,false);
+								outstring(200,0,"Размер:",false);
+								outstring(300,0,TBBUrw.TypeName,false);								
 								if(ifDifferentCurrency)then begin
-									outstring(260,0,TBBUrw.ClientSum,false);	
+									outstring(400,0,TBBUrw.ClientSum,false);	
 								end;							
 							endformat;
 						end else begin
-						/*if(TBBUrw.stp == 24)then begin
-							startformat(15);
-								outstring(0,0,TBBUrw.stp,false);
-								outstring(10,0,"Скидка/Агентская комиссия проекта:",false);
-								outstring(50,0,TBBUrw.Spec,false);
-								outstring(150,0,"Размер:",false);
-								outstring(210,0,TBBUrw.TypeName,false);								
-								if(ifDifferentCurrency)then begin
-									outstring(260,0,TBBUrw.ClientSum,false);	
-								end;							
-							endformat;
-						end else begin*/
 						if(TBBUrw.stp == 23)then begin
 							startformat(15);
 								outstring(0,0,TBBUrw.stp,false);
-								outstring(10,0,"Скидка/Агентская комиссия",false);
-								outstring(50,0,TBBUrw.Spec,false);
-								outstring(150,0,"Размер:",false);
-								outstring(210,0,TBBUrw.TypeName,false);								
+								outstring(30,0,"Скидка/Агентская комиссия:",false);
+								outstring(100,0,TBBUrw.Spec,false);
+								outstring(200,0,"Размер:",false);
+								outstring(300,0,TBBUrw.TypeName,false);								
 								if(ifDifferentCurrency)then begin
-									outstring(260,0,TBBUrw.ClientSum,false);	
+									outstring(400,0,TBBUrw.ClientSum,false);	
 								end;							
 								endformat;
 						end else begin
 							if(TBBUrw.stp == 9)then begin
 								startformat(15);
 									outstring(0,0,TBBUrw.stp,false);
-									outstring(10,0,"",false);
-									outstring(50,0,"",false);
-									outstring(150,0,"ИТОГО Проект:",false);
-									outstring(210,0,TBBUrw.Sum,false);
+									outstring(30,0,"",false);
+									outstring(100,0,"",false);
+									outstring(200,0,"ИТОГО Проект:",false);
+									outstring(300,0,TBBUrw.Sum,false);
 									if(ifDifferentCurrency)then begin
-										outstring(250,0,TBBUrw.ClientSum,false);
+										outstring(400,0,TBBUrw.ClientSum,false);
 									end;
 								endformat;
 								tot = tot + TBBUrw.Sum;
@@ -287,65 +290,65 @@ begin
 									if(flagStp24exist)then begin
 										startformat(15);
 											outstring(0,0,24,false);
-											outstring(10,0,"Скидка/Агентская комиссия",false);
-											outstring(50,0,Rebate24Spec,false);										
-											outstring(210,0,rebate24,false);								
+											outstring(30,0,"Скидка/Агентская комиссия:",false);
+											outstring(100,0,Rebate24Spec,false);										
+											outstring(300,0,rebate24,false);								
 											if(ifDifferentCurrency)then begin
-												outstring(260,0,rebate24curr,false);	
+												outstring(400,0,rebate24curr,false);	
 											end;							
 										endformat;
 									end;
 									
 									startformat(15);
 										outstring(0,0,"19",false);
-										outstring(10,0,"",false);
-										outstring(50,0,"",false);
-										outstring(150,0,"ИТОГО:",false);
-										outstring(210,0,TBBU2r.TotSum,false);
+										outstring(30,0,"",false);
+										outstring(100,0,"",false);
+										outstring(200,0,"ИТОГО:",false);
+										outstring(300,0,TBBU2r.TotSum,false);
 										if(ifDifferentCurrency)then begin
-											outstring(250,0,TBBU2r.ClientTotSum,false);
+											outstring(400,0,TBBU2r.ClientTotSum,false);
 										end;
 									endformat;
 									startformat(15);
 										outstring(0,0,"19",false);
-										outstring(10,0,"",false);
-										outstring(50,0,"",false);
-										outstring(150,0,"НДС (20%):",false);
-										outstring(210,0,TBBU2r.Sum3,false);
+										outstring(30,0,"",false);
+										outstring(100,0,"",false);
+										outstring(200,0,"НДС (20%):",false);
+										outstring(300,0,TBBU2r.Sum3,false);
 										if(ifDifferentCurrency)then begin
-											outstring(250,0,TBBU2r.ClientSum3,false);
+											outstring(400,0,TBBU2r.ClientSum3,false);
 										end;
 									endformat;
 									startformat(15);
 										outstring(0,0,"19",false);
-										outstring(10,0,"",false);
-										outstring(50,0,"",false);
-										outstring(150,0,"ВСЕГО с НДС:",false);
-										outstring(210,0,TBBU2r.TotSumVAT,false);
+										outstring(30,0,"",false);
+										outstring(100,0,"",false);
+										outstring(200,0,"ВСЕГО с НДС:",false);
+										outstring(300,0,TBBU2r.TotSumVAT,false);
 										if(ifDifferentCurrency)then begin
-											outstring(250,0,TBBU2r.ClientTotSumVAT,false);
+											outstring(400,0,TBBU2r.ClientTotSumVAT,false);
 										end;
 									endformat;
 									/*startformat(15);
 										outstring(0,0,"19",false);
-										outstring(10,0,"",false);
-										outstring(50,0,"",false);
-										outstring(150,0,"ИТОГО:",false);
-										outstring(210,0,tot,false);
+										outstring(30,0,"",false);
+										outstring(100,0,"",false);
+										outstring(200,0,"ИТОГО:",false);
+										outstring(300,0,tot,false);
 									endformat;
 									startformat(15);
 										outstring(0,0,"19",false);
-										outstring(10,0,"",false);
-										outstring(50,0,"",false);
-										outstring(150,0,"НДС (20%):",false);
-										outstring(210,0,tot/100*20,false);
+										outstring(30,0,"",false);
+										outstring(100,0,"",false);
+										outstring(200,0,"НДС (20%):",false);
+										outstring(300,0,tot/100*20,false);
 									endformat;
 									startformat(15);
 										outstring(0,0,"19",false);
-										outstring(10,0,"",false);
-										outstring(50,0,"",false);
-										outstring(150,0,"ВСЕГО с НДС:",false);
-										outstring(210,0,tot+tot/100*20,false);
+										outstring(30,0,"",false);
+										outstring(100,0,"",false);
+										outstring(200,0,"ВСЕГО с НДС:",false);
+										outstring(300,0,tot+tot/100*20,false);
 									endformat;*/
 										//end;
 									end;
@@ -363,32 +366,32 @@ begin
 	endformat;
 	startformat(15);
 		outstring(0,0,"20",false);
-		outstring(1,0,"",false);
-		outstring(2,0,"",false);
-		outstring(150,0,"ИТОГО",false);
-		outstring(210,0,TBBUr.TotSum,false);
+		outstring(100,0,"",false);
+		outstring(200,0,"",false);
+		outstring(200,0,"ИТОГО:",false);
+		outstring(300,0,TBBUr.TotSum,false);
 		if(ifDifferentCurrency)then begin
-			outstring(250,0,TBBUr.ClientTotSum,false);
+			outstring(400,0,TBBUr.ClientTotSum,false);
 		end;
 	endformat;
 	startformat(15);
 		outstring(0,0,"20",false);
-		outstring(1,0,"",false);
-		outstring(2,0,"",false);
-		outstring(150,0,"НДС (20%)",false);
-		outstring(210,0,TBBUr.Sum3,false);
+		outstring(100,0,"",false);
+		outstring(200,0,"",false);
+		outstring(200,0,"НДС (20%):",false);
+		outstring(300,0,TBBUr.Sum3,false);
 		if(ifDifferentCurrency)then begin
-			outstring(250,0,TBBUr.ClientSum3,false);
+			outstring(400,0,TBBUr.ClientSum3,false);
 		end;
 	endformat;
 	startformat(15);
 		outstring(0,0,"20",false);
-		outstring(1,0,"",false);
-		outstring(2,0,"",false);
-		outstring(150,0,"ИТОГО с НДС:",false);
-		outstring(210,0,TBBUr.TotSumVAT,false);
+		outstring(100,0,"",false);
+		outstring(200,0,"",false);
+		outstring(200,0,"ИТОГО с НДС:",false);
+		outstring(300,0,TBBUr.TotSumVAT,false);
 		if(ifDifferentCurrency)then begin
-			outstring(250,0,TBBUr.ClientTotSumVAT,false);
+			outstring(400,0,TBBUr.ClientTotSumVAT,false);
 		end;
 	endformat;
 	
@@ -411,16 +414,16 @@ begin
 				startformat(15);
 					outstring(100,0,typeName,false);
 					outstring(200,0,jobSpec,false);
-					outstring(150,0,TBBUrw.IdentQuant,false);
-					outstring(210,0,TBBU2r.TotSum,false);
+					outstring(200,0,TBBUrw.IdentQuant,false);
+					outstring(300,0,TBBU2r.TotSum,false);
 					if(ifDifferentCurrency)then begin
-						outstring(250,0,TBBU2r.ClientTotSum,false);
+						outstring(400,0,TBBU2r.ClientTotSum,false);
 					end;
 				endformat;
 			end;
 		end;
 	end;
-	
+
 	startformat(15); 
 		outstring(0,0,"",false);
 	endformat;
@@ -437,11 +440,11 @@ begin
 				if(ReadFirstMain(ITr, 1, true))then begin
 					startformat(15); 
 						outstring(0,0,"777",false);
-						outstring(1,0,ITr.Comment,false);
-						outstring(2,0,INr.AlternativeCode,false);
-						outstring(3,0,INr.Name,false);
-						outstring(4,0,PLr.ExVatPrice,false);
-					endformat;
+						outstring(100,0,ITr.Comment,false);
+						outstring(200,0,INr.AlternativeCode,false);
+						outstring(300,0,INr.Name,false);
+						outstring(400,0,PLr.ExVatPrice,false);
+					endformat; 
 				end;
 			end;
 		end;		
@@ -449,3 +452,1065 @@ begin
 	endjob;
 return;
 end;
+
+//Edit---------------Vitalii 11:33 25.06.2015
+global
+procedure ExpBudgetTestRn(record RcVc RepSpec)
+BEGIN
+	record TBBUVc TBBUr, TBBU2r;
+	row TBBUVc TBBUrw, TBBU2rw;
+	integer mtrw,i,stp18,stp9,stp17,max,flag1;
+	string 255 prname, jobSpec;
+	val tot,totvat;
+	boolean changed, flagStp24exist;
+	record PRVc PRr;
+	record INVc INr;
+	record ITVc ITr;
+	record PLVc PLr;
+	record CUVc CUr;
+	record UserVc Userr;
+	boolean TrHs, ifDifferentCurrency;
+	integer rwcnt;
+	string 255 Rebate24Spec, rebate24, typeName;
+	val rebate24curr;
+	integer tab1, tab2, tab3, tab4, 
+			tab5, tab6, tab7;
+	
+	tab1 = 0; tab2 = 20; tab3 = 100;
+	tab4 = 200; tab5 = 270; tab6 = 370;
+	tab7 = 410;
+	
+	stp18 = 0;
+	stp17 = 0;
+	stp9 = 0;
+	flag1 = 0;
+	changed = false;
+	TBBUr.PRCode = RepSpec.f1;
+	if(ReadFirstMain(TBBUr,1,true))then begin
+		
+	end;
+	ifDifferentCurrency = false;
+	if(nonblank(TBBUr.ClientCurncyCode) and (TBBUr.ClientCurncyCode != TBBUr.CurncyCode))then begin
+		ifDifferentCurrency = true;
+	end;
+	StartReportNoHeaderJob("Бюджет");
+	mtrw = matrowcnt(TBBUr);
+	for (i=0;i<mtrw;i=i+1) begin
+		matrowget(TBBUr,i,TBBUrw);
+		if (TBBUrw.ToUserBud == 0) then begin
+			switch (TBBUrw.stp) begin
+				case 18:
+					black_divider(0,1);
+					StartFormat(15);
+						OutString(tab2,0,"начало листа",false);
+						OutString(tab3,0,"начало листа",false);
+						OutString(tab4,0,"начало листа",false);
+						OutString(tab5,0,"начало листа",false);
+						OutString(tab6,0,"начало листа",false);
+						OutString(tab7,0,"начало листа",false);
+					EndFormat;
+					black_divider(0,1);
+					//Заголовок бюджета
+					//TBBUrw.TypeName - содержит имя листа
+					flag1 = CountStp(TBBUr,i) - 1;
+					stp18 = stp18 + 1;
+					if(stp18>1) then begin 
+						stp18 = 1; 
+						stp17 = 0;
+						tot = 0;
+						totvat = 0;
+					end;
+					StartFormat(15);
+					EndFormat;
+					StartFormat(15);
+					EndFormat;
+					StartFormat(15);
+					EndFormat;
+					StartFormat(15);
+					EndFormat;
+					StartFormat(15);
+						OutString(tab1,0,"",false);
+						OutString(tab2,0,"",false);
+						OutString(tab3,0,"Бюджет",false);
+					EndFormat;
+					StartFormat(15);
+					EndFormat;
+					StartFormat(15);
+						OutString(tab1,0,"",false);
+						OutString(tab2,0,"Клиент / Бренд",false);
+						OutString(tab3,0,TBBUr.CustName,false);
+					EndFormat;
+					StartFormat(15);
+						OutString(tab1,0,"",false);
+						OutString(tab2,0,"Название проекта",false);
+						OutString(tab3,0,TBBUr.PRName,false);
+					EndFormat;
+					StartFormat(15);
+						OutString(tab1,0,"",false);
+						OutString(tab2,0,"Подготовил(а)",false);
+						Userr.Code = TBBUr.PRLeader;
+						if(ReadFirstMain(Userr,1,true))then begin
+							OutString(tab3,0,Userr.Name,false);
+						end;
+					EndFormat;
+					StartFormat(15);
+						OutString(tab1,0,"",false);
+						OutString(tab2,0,"Дата",false);
+						OutString(tab3,0,TBBUr.TransDate,false);
+					EndFormat;
+					StartFormat(15);
+						OutString(tab1,0,"",false);
+						OutString(tab2,0,"Описание работ",false);
+						PRr.Code = TBBUrw.PRCode;
+						if(ReadFirstMain(PRr,1,true))then begin
+							jobSpec = PRr.Desc0 & " " & PRr.Desc1 & " " & PRr.Desc2;
+							OutString(tab3,0,jobSpec,false);
+						end;
+					EndFormat;
+					StartFormat(15);
+					EndFormat;
+					StartFormat(15);
+					EndFormat;
+					
+					TBBU2r.PRCode = TBBUrw.PRCode;
+					if(ReadFirstMain(TBBU2r,1,true))then begin
+						//outstring(0,0,"888",false);
+						//outstring(30,0,TBBU2r.TotRebate,false);
+						
+						//--- finding stp 24
+						//if rebate for project can locate not in the end of the project rewrite this to finding stp in whole matrix
+						rwcnt = MatRowCnt(TBBU2r);
+						MatRowGet(TBBU2r,rwcnt-1,TBBU2rw);	
+						if(TBBU2rw.stp == 24)then begin
+							flagStp24exist = true;
+							Rebate24Spec = TBBU2rw.Spec;
+							rebate24 = TBBU2rw.TypeName;
+								if(ifDifferentCurrency)then begin
+									rebate24curr = TBBU2rw.ClientSum;
+								end;
+						end else begin
+							flagStp24exist = false;
+						end;						
+						//------------------
+						
+					end;
+				case 17:
+					//Заголовок серый
+					stp17 = stp17 + 1;
+					StartFormat(15);
+						OutString(tab1,0,"",false);
+						OutString(tab2,0,TBBUrw.Spec,false);
+						OutString(tab3,0,"",false);
+						OutString(tab4,0,"",false);
+						OutString(tab5,0,"",false);
+						OutString(tab6,0,"",false);
+						OutString(tab7,0,"",false);
+					EndFormat;
+				case 1:
+					//строка бюджета
+					StartFormat(15);
+						OutString(tab1,0,"",false);
+						OutString(tab2,0,TBBUrw.Comment,false);
+						OutString(tab3,0,TBBUrw.Comment2,false);
+						OutString(tab4,0,TBBUrw.Price,false);
+						OutString(tab5,0,TBBUrw.Qty,false);
+						OutString(tab6,0,TBBUrw.Sum,false);
+						if(ifDifferentCurrency)then begin
+							OutString(tab7,0,TBBUrw.ClientSum,false);
+						end;
+					EndFormat;
+				case 9:
+					//Итого по заголовку
+					StartFormat(15);
+						OutString(tab1,0,"",false);
+						OutString(tab2,0,"",false);
+						OutString(tab3,0,"",false);
+						OutString(tab4,0,"",false);
+						OutString(tab5,0,"",false);
+						OutString(tab6,0,TBBUrw.Sum,false);
+						if(ifDifferentCurrency)then begin
+							OutString(tab7,0,TBBUrw.ClientSum,false);
+						end;
+					EndFormat;
+					tot = tot + TBBUrw.Sum;
+					StartFormat(15);
+					EndFormat;
+					//Итого бюджета
+					if(stp17==flag1)then begin
+						if(flagStp24exist)then begin
+							StartFormat(15);
+								OutString(tab1,0,"",false);
+								OutString(tab2,0,"",false);
+								OutString(tab3,0,"",false);
+								OutString(tab4,0,"",false);
+								OutString(tab6,0,"Скидка/Агентская комиссия:",true);
+								OutString(tab6,0,rebate24,false);
+								if(ifDifferentCurrency)then begin
+									OutString(tab7,0,rebate24curr,false);	
+								end;							
+							EndFormat;
+						end;
+						StartFormat(15);
+							OutString(tab1,0,"",false);
+							OutString(tab2,0,"",false);
+							OutString(tab3,0,"",false);
+							OutString(tab4,0,"",false);
+							OutString(tab5,0,"ИТОГО:",false);
+							OutString(tab6,0,TBBU2r.TotSum,false);
+							if(ifDifferentCurrency)then begin
+								OutString(tab7,0,TBBU2r.ClientTotSum,false);
+							end;
+						EndFormat;
+						StartFormat(15);
+							OutString(tab1,0,"",false);
+							OutString(tab2,0,"",false);
+							OutString(tab3,0,"",false);
+							OutString(tab4,0,"",false);
+							OutString(tab5,0,"НДС (20%):",false);
+							OutString(tab6,0,TBBU2r.Sum3,false);
+							if(ifDifferentCurrency)then begin
+								OutString(tab7,0,TBBU2r.ClientSum3,false);
+							end;
+						EndFormat;
+						StartFormat(15);
+							OutString(tab1,0,"",false);
+							OutString(tab2,0,"",false);
+							OutString(tab3,0,"",false);
+							OutString(tab4,0,"",false);
+							OutString(tab5,0,"ВСЕГО с НДС:",false);
+							OutString(tab6,0,TBBU2r.TotSumVAT,false);
+							if(ifDifferentCurrency)then begin
+								OutString(tab7,0,TBBU2r.ClientTotSumVAT,false);
+							end;
+						EndFormat;
+						black_divider(0,1);
+						StartFormat(15);
+							OutString(tab2,0,"Конец листа",false);
+							OutString(tab3,0,"Конец листа",false);
+							OutString(tab4,0,"Конец листа",false);
+							OutString(tab5,0,"Конец листа",false);
+							OutString(tab6,0,"Конец листа",false);
+							OutString(tab7,0,"Конец листа",false);
+						EndFormat;
+						black_divider(0,1);
+					end;
+				case 25:
+					StartFormat(15);
+						OutString(tab1,0,"",false);
+						OutString(tab2,0,"Скидка/Агентская комиссия:",false);
+						OutString(tab3,0,TBBUrw.Spec,false);
+						OutString(tab4,0,"",false);
+						OutString(tab5,0,"Размер:",true);
+						OutString(tab6,0,TBBUrw.TypeName,false);
+						if(ifDifferentCurrency)then begin
+							OutString(tab7,0,TBBUrw.ClientSum,false);	
+						end;							
+					EndFormat;
+				case 23:
+					StartFormat(15);
+						OutString(tab1,0,"",false);
+						OutString(tab2,0,"Скидка/Агентская комиссия:",false);
+						OutString(tab3,0,TBBUrw.Spec,false);
+						OutString(tab4,0,"",false);
+						OutString(tab5,0,"Размер:",true);
+						OutString(tab6,0,TBBUrw.TypeName,false);
+						if(ifDifferentCurrency)then begin
+							OutString(tab7,0,TBBUrw.ClientSum,false);	
+						end;							
+					EndFormat;
+			end;
+		end;
+	end;
+	black_divider(0,1);
+	startformat(15); 
+		outstring(tab1,0,"TOTAL",false);
+		outstring(tab2,0,"TOTAL",false);
+		outstring(tab3,0,"TOTAL",false);
+		outstring(tab4,0,"TOTAL",false);
+		outstring(tab5,0,"TOTAL",false);
+		outstring(tab6,0,"TOTAL",false);
+		outstring(tab7,0,"TOTAL",false);
+	endformat;
+	black_divider(0,1);
+	mtrw = matrowcnt(TBBUr);
+	for (i=0;i<mtrw;i=i+1) begin
+		matrowget(TBBUr,i,TBBUrw);
+		if(TBBUrw.stp == 18)then begin
+			typeName = getType(TBBUrw.TypeName);
+			PRr.Code = TBBUrw.PRCode;
+			if(ReadFirstMain(PRr,1,true))then begin
+				jobSpec = PRr.Desc0 & " " & PRr.Desc1 & " " & PRr.Desc2;
+			end;
+			TBBU2r.PRCode = TBBUrw.PRCode;
+			if(ReadFirstMain(TBBU2r,1,true))then begin
+				startformat(15);
+					outstring(tab1,0,"",false);
+					outstring(tab2,0,typeName,false);
+					outstring(tab3,0,jobSpec,false);
+					outstring(tab4,0,"",false);
+					outstring(tab5,0,TBBUrw.IdentQuant,false);
+					outstring(tab6,0,TBBU2r.TotSum,false);
+					if(ifDifferentCurrency)then begin
+						outstring(tab7,0,TBBU2r.ClientTotSum,false);
+					end;
+				endformat;
+			end;
+		end;
+		if(TBBUrw.stp == 23)then begin
+			logtext(0,TBBUrw.Spec & " , " & TBBUrw.TypeName & " , " & TBBUrw.ClientSum);
+		end;
+	end;
+
+	
+	startformat(15);
+		outstring(tab1,0,"",false);
+		outstring(tab2,0,"",false);
+		outstring(tab3,0,"",false);
+		outstring(tab4,0,"",false);
+		outstring(tab5,0,"Скидка/Агентская комиссия:",false);
+		outstring(tab6,0,"1234",false);
+		if(ifDifferentCurrency)then begin
+			outstring(tab7,0,"123",false);
+		end;
+	endformat;
+	startformat(15);
+		outstring(tab1,0,"",false);
+		outstring(tab2,0,"",false);
+		outstring(tab3,0,"",false);
+		outstring(tab4,0,"",false);
+		outstring(tab5,0,"ИТОГО:",false);
+		outstring(tab6,0,TBBUr.TotSum,false);
+		if(ifDifferentCurrency)then begin
+			outstring(tab7,0,TBBUr.ClientTotSum,false);
+		end;
+	endformat;
+	startformat(15);
+		outstring(tab1,0,"",false);
+		outstring(tab2,0,"",false);
+		outstring(tab3,0,"",false);
+		outstring(tab4,0,"",false);
+		outstring(tab5,0,"НДС (20%):",false);
+		outstring(tab6,0,TBBUr.Sum3,false);
+		if(ifDifferentCurrency)then begin
+			outstring(tab7,0,TBBUr.ClientSum3,false);
+		end;
+	endformat;
+	startformat(15);
+		outstring(tab1,0,"",false);
+		outstring(tab2,0,"",false);
+		outstring(tab3,0,"",false);
+		outstring(tab4,0,"",false);
+		outstring(tab5,0,"ИТОГО с НДС:",false);
+		outstring(tab6,0,TBBUr.TotSumVAT,false);
+		if(ifDifferentCurrency)then begin
+			outstring(tab7,0,TBBUr.ClientTotSumVAT,false);
+		end;
+	endformat;
+	black_divider(0,1);
+	startformat(15); 
+		outstring(tab1,0,"Rate Card",false);
+		outstring(tab2,0,"Rate Card",false);
+		outstring(tab3,0,"Rate Card",false);
+		outstring(tab4,0,"Rate Card",false);
+		outstring(tab5,0,"Rate Card",false);
+		outstring(tab6,0,"Rate Card",false);
+		outstring(tab7,0,"Rate Card",false);
+	endformat;
+	black_divider(0,1);
+	
+	CUr.Code = TBBUr.CustCode;
+	if(ReadFirstMain(CUr, 1, true))then begin
+		INr.Group = "";
+		while (LoopKey("Group",INr,1,true)) begin
+			PLr.PLCode = CUr.PLCode;
+			PLr.ArtCode = INr.Code;
+			if(ReadFirstMain(PLr, 2, true))then begin
+				ITr.Code = INr.Group;
+				if(ReadFirstMain(ITr, 1, true))then begin
+					startformat(15); 
+						outstring(tab1,0,"",false);
+						outstring(tab2,0,ITr.Comment,false);
+						outstring(tab3,0,INr.AlternativeCode,false);
+						outstring(tab4,0,INr.Name,false);
+						outstring(tab5,0,"",false);
+						outstring(tab6,0,PLr.ExVatPrice,false);
+						outstring(tab7,0,PLr.ExVatPrice/TBBUr.ClientToRateB1*TBBUr.ClientFrRate,false);
+					endformat;
+				end;
+			end;
+		end;		
+	end;
+	EndJob;
+	
+	RETURN;
+END;
+
+function string 200 GetShNameFromTypeName(string TypeName)
+BEGIN
+	area temp;
+	
+	AddStringToArea(TypeName,temp);
+	GetShNameFromTypeName = GetStringFromArea(temp,1,FindStringInArea("--",temp)-1);;
+	RETURN;
+END;
+
+global procedure ExportBudgetToXLSX(record RcVc RepSpec,var area areatofile)
+BEGIN
+	record TBBUVc TBBUr,TBBU2r,tempTBBUr;
+	row TBBUVc TBBUrw,TBBU2rw,tempTBBUrw,tempTBBU2rw;
+	integer mtrw,i,j,stp18,stp9,stp17,max,flag1;
+	string 255 prname, jobSpec;
+	val tot,totvat;
+	boolean changed, flagStp24exist;
+	record PRVc PRr;
+	record INVc INr;
+	record ITVc ITr;
+	record PLVc PLr;
+	record CUVc CUr;
+	record UserVc Userr;
+	boolean TrHs, ifDifferentCurrency;
+	integer rwcnt;
+	string 255 Rebate24Spec, rebate24, typeName;
+	string 100 stp23Spec,stp23TypeName,stp23ClientSum;
+	string 100 tempITrComment;
+	integer tempRownum;
+	string 100 tempTypeNameTOT,tempJobSpecTOT;
+	val rebate24curr;
+	integer tab1, tab2, tab3, tab4, 
+			tab5, tab6, tab7;
+
+	array string 10 sheetNames;
+	array val sheetColls;
+	array string 21 mergeCell;
+	string 255 fileToSave;
+	integer qtyOfSheets,sheetnum,rownum,colnum,style,qtyOfEmpStr;
+	array string 100 SharedStrings;
+	integer numOfUniqueSharedStrings,numOfSharedStrings,qtyMergeCell;
+	string 16 reportName;
+	boolean rowpass;
+	
+	tab1 = 0; tab2 = 20; tab3 = 100;
+	tab4 = 200; tab5 = 270; tab6 = 370;
+	tab7 = 410;
+	
+	if(windowsmode==1)then begin
+		fileToSave = "tmpxlsx.xlsx";
+	end else begin
+		fileToSave = "/tmpxlsx.xlsx";
+	end;
+	deletefolder(Left(fileToSave,(len(fileToSave) - 5)));
+
+	stp18 = 0;
+	stp17 = 0;
+	stp9 = 0;
+	flag1 = 0;
+	changed = false;
+	TBBUr.PRCode = RepSpec.f1;
+	if(ReadFirstMain(TBBUr,1,true))then begin
+		
+	end;
+	
+	sheetNames[qtyOfSheets] = "TOTAL";
+	qtyOfSheets = qtyOfSheets + 1;
+	mtrw = matrowcnt(TBBUr);
+	for (i=0;i<mtrw;i=i+1) begin
+		matrowget(TBBUr,i,TBBUrw);
+		if (TBBUrw.ToUserBud == 0 and TBBUrw.stp == 18) begin
+			sheetNames[qtyOfSheets] = GetShNameFromTypeName(TBBUrw.TypeName);
+			qtyOfSheets = qtyOfSheets + 1;
+		end;
+	end;
+	sheetNames[qtyOfSheets] = "Rate Card";
+	qtyOfSheets = qtyOfSheets + 1;
+	
+	numOfUniqueSharedStrings = 0;
+	numOfSharedStrings = 0;
+	reportName = "ExpBudgetRn";
+	
+	ifDifferentCurrency = false;
+	if(nonblank(TBBUr.ClientCurncyCode) and (TBBUr.ClientCurncyCode != TBBUr.CurncyCode))then begin
+		ifDifferentCurrency = true;
+	end;
+		
+	XmlXlsxWorkBegin(fileToSave,reportName);
+	CreateSheetsXLSX(qtyOfSheets,sheetNames,fileToSave,qtyOfSheets);
+	//TOTAL
+	sheetColls[0] = 7;
+	sheetColls[1] = 22;
+	sheetColls[2] = 61;
+	sheetColls[3] = 10;
+	sheetColls[4] = 18;
+	sheetColls[5] = 17;
+	sheetnum = sheetnum + 1;
+	SetSheetsCols(sheetnum,sheetColls,fileToSave);
+	BeginSheetData(sheetnum,fileToSave);
+	AddImagesToXLSX(sheetnum,sheetNames[sheetnum - 1],fileToSave,reportName,1);
+	style = 3;
+	colnum = 3;
+	rownum = 5;
+	BeginRow(sheetnum,fileToSave,rownum);
+		StringCell(sheetnum,fileToSave,colnum,rownum,style,"БЮДЖЕТ",SharedStrings,numOfUniqueSharedStrings,numOfSharedStrings);
+	EndRow(sheetnum,fileToSave,rownum);
+	style = 10;
+	colnum = 2;
+	rownum = rownum + 1;
+	BeginRow(sheetnum,fileToSave,rownum);
+		StringCell(sheetnum,fileToSave,colnum,rownum,style,"Клиент / Бренд",SharedStrings,numOfUniqueSharedStrings,numOfSharedStrings);
+		style = 2;
+		StringCell(sheetnum,fileToSave,colnum,rownum,style,TBBUr.CustName,SharedStrings,numOfUniqueSharedStrings,numOfSharedStrings);
+	EndRow(sheetnum,fileToSave,rownum);
+	style = 10;
+	colnum = 2;
+	BeginRow(sheetnum,fileToSave,rownum);
+		StringCell(sheetnum,fileToSave,colnum,rownum,style,"Название проекта",SharedStrings,numOfUniqueSharedStrings,numOfSharedStrings);
+		style = 2;
+		StringCell(sheetnum,fileToSave,colnum,rownum,style,TBBUr.PRName,SharedStrings,numOfUniqueSharedStrings,numOfSharedStrings);
+	EndRow(sheetnum,fileToSave,rownum);
+	style = 10;
+	colnum = 2;
+	BeginRow(sheetnum,fileToSave,rownum);
+		StringCell(sheetnum,fileToSave,colnum,rownum,style,"Подготовил(а)",SharedStrings,numOfUniqueSharedStrings,numOfSharedStrings);
+		style = 2;
+		Userr.Code = TBBUr.PRLeader;
+		if(ReadFirstMain(Userr,1,true))then begin
+			StringCell(sheetnum,fileToSave,colnum,rownum,style,Userr.Name,SharedStrings,numOfUniqueSharedStrings,numOfSharedStrings);
+		end else begin
+			qtyOfEmpStr = 1;
+			EmptyCell(sheetnum,fileToSave,colnum,rownum,style,qtyOfEmpStr);
+		end;
+	EndRow(sheetnum,fileToSave,rownum);
+	style = 10;
+	colnum = 2;
+	BeginRow(sheetnum,fileToSave,rownum);
+		StringCell(sheetnum,fileToSave,colnum,rownum,style,"Дата",SharedStrings,numOfUniqueSharedStrings,numOfSharedStrings);
+		style = 2;
+		StringCell(sheetnum,fileToSave,colnum,rownum,style,TBBUr.TransDate,SharedStrings,numOfUniqueSharedStrings,numOfSharedStrings);
+	EndRow(sheetnum,fileToSave,rownum);
+	style = 4;
+	colnum = 2;
+	rownum = rownum + 1;
+	BeginRow(sheetnum,fileToSave,rownum);
+		StringCell(sheetnum,fileToSave,colnum,rownum,style,"Тип работы",SharedStrings,numOfUniqueSharedStrings,numOfSharedStrings);
+		StringCell(sheetnum,fileToSave,colnum,rownum,style,"Описание",SharedStrings,numOfUniqueSharedStrings,numOfSharedStrings);
+		StringCell(sheetnum,fileToSave,colnum,rownum,style,"Кол-во",SharedStrings,numOfUniqueSharedStrings,numOfSharedStrings);
+		StringCell(sheetnum,fileToSave,colnum,rownum,style,"Стоимость, " & TBBUr.CurncyCode,SharedStrings,numOfUniqueSharedStrings,numOfSharedStrings);
+		if (ifDifferentCurrency) then begin
+			StringCell(sheetnum,fileToSave,colnum,rownum,style,"Стоимость, " & TBBUr.ClientCurncyCode,SharedStrings,numOfUniqueSharedStrings,numOfSharedStrings);
+		end;
+	EndRow(sheetnum,fileToSave,rownum);
+	rownum = rownum + 1;
+	mtrw = matrowcnt(TBBUr);
+	j = 0;
+	for (i=0;i<mtrw;i=i+1) begin
+		matrowget(TBBUr,i,TBBUrw);
+		if(TBBUrw.stp == 18)then begin
+			typeName = getType(TBBUrw.TypeName);
+			PRr.Code = TBBUrw.PRCode;
+			if(ReadFirstMain(PRr,1,true))then begin
+				jobSpec = PRr.Desc0 & " " & PRr.Desc1 & " " & PRr.Desc2;
+			end;
+			TBBU2r.PRCode = TBBUrw.PRCode;
+			if (ReadFirstMain(TBBU2r,1,true)) then begin
+				tempTBBUrw.TypeName = typeName;
+				tempTBBUrw.Comment2 = jobSpec;
+				tempTBBUrw.IdentQuant = TBBUrw.IdentQuant;
+				tempTBBUrw.Sum = TBBU2r.TotSum;
+				tempTBBUrw.ClientSum = TBBU2r.ClientTotSum;
+				MatRowPut(tempTBBUr,j,tempTBBUrw);
+				j = j + 1;
+			end;
+		end;
+		if (TBBUrw.stp == 23) then begin
+			stp23Spec = TBBUrw.Spec;
+			stp23TypeName = TBBUrw.TypeName;
+			stp23ClientSum = TBBUrw.ClientSum;
+		end;
+	end;
+	mtrw = MatRowCnt(tempTBBUr);
+	for (i=0;i<mtrw;i=i+1) begin
+		MatRowGet(tempTBBUr,i,tempTBBUrw);
+		for (j=i+1;j<mtrw;j=j+1) begin
+			MatRowGet(tempTBBUr,j,tempTBBU2rw);
+			if ((tempTBBUrw.TypeName==tempTBBU2rw.TypeName) and (tempTBBUrw.Comment2==tempTBBU2rw.Comment2)) then begin
+				tempTBBUrw.IdentQuant = tempTBBUrw.IdentQuant + tempTBBU2rw.IdentQuant;
+				tempTBBUrw.Sum = tempTBBUrw.Sum + tempTBBU2rw.Sum;
+				tempTBBUrw.ClientSum = tempTBBUrw.ClientSum + tempTBBU2rw.ClientSum;
+				MatRowPut(tempTBBUr,i,tempTBBUrw);
+				MatRowDelete(tempTBBUr,j);
+				j = j - 1;
+				mtrw = mtrw - 1;
+			end;
+		end;
+	end;
+	mtrw = MatRowCnt(tempTBBUr);
+	for (i=0;i<mtrw;i=i+1) begin
+		MatRowGet(tempTBBUr,i,tempTBBUrw);
+		style = 5;
+		colnum = 2;
+		BeginRow(sheetnum,fileToSave,rownum);
+			StringCell(sheetnum,fileToSave,colnum,rownum,style,tempTBBUrw.TypeName,SharedStrings,numOfUniqueSharedStrings,numOfSharedStrings);
+			StringCell(sheetnum,fileToSave,colnum,rownum,style,tempTBBUrw.Comment2,SharedStrings,numOfUniqueSharedStrings,numOfSharedStrings);
+			style = 15;
+			NumericCell(sheetnum,fileToSave,colnum,rownum,style,tempTBBUrw.IdentQuant);
+			style = 12;
+			NumericCell(sheetnum,fileToSave,colnum,rownum,style,tempTBBUrw.Sum);
+			if(ifDifferentCurrency)then begin
+				NumericCell(sheetnum,fileToSave,colnum,rownum,style,tempTBBUrw.ClientSum);
+			end;
+		EndRow(sheetnum,fileToSave,rownum);
+	end;
+	rownum = rownum + 1;
+	if (nonblank(stp23TypeName) or nonblank(stp23ClientSum)) then begin
+		style = 37;
+		colnum = 2;
+		BeginRow(sheetnum,fileToSave,rownum);
+			StringCell(sheetnum,fileToSave,colnum,rownum,style,"Скидка/Агентская комиссия:",SharedStrings,numOfUniqueSharedStrings,numOfSharedStrings);
+			style = 38;
+			qtyOfEmpStr = 1;
+			EmptyCell(sheetnum,fileToSave,colnum,rownum,style,qtyOfEmpStr);
+			style = 39;
+			qtyOfEmpStr = 1;
+			EmptyCell(sheetnum,fileToSave,colnum,rownum,style,qtyOfEmpStr);
+			style = 18;
+			StringCell(sheetnum,fileToSave,colnum,rownum,style,stp23TypeName,SharedStrings,numOfUniqueSharedStrings,numOfSharedStrings);
+			if (ifDifferentCurrency) then begin
+				StringCell(sheetnum,fileToSave,colnum,rownum,style,stp23ClientSum,SharedStrings,numOfUniqueSharedStrings,numOfSharedStrings);
+			end;
+			mergeCell[qtyMergeCell] = GetStringCellNum(2,rownum) & ":" & GetStringCellNum(colnum - 3,rownum);
+			qtyMergeCell = qtyMergeCell + 1;
+		EndRow(sheetnum,fileToSave,rownum);
+	end;
+	style = 34;
+	colnum = 2;
+	BeginRow(sheetnum,fileToSave,rownum);
+		StringCell(sheetnum,fileToSave,colnum,rownum,style,"ИТОГО:",SharedStrings,numOfUniqueSharedStrings,numOfSharedStrings);
+		style = 35;
+		qtyOfEmpStr = 1;
+		EmptyCell(sheetnum,fileToSave,colnum,rownum,style,qtyOfEmpStr);
+		style = 36;
+		qtyOfEmpStr = 1;
+		EmptyCell(sheetnum,fileToSave,colnum,rownum,style,qtyOfEmpStr);
+		style = 8;
+		NumericCell(sheetnum,fileToSave,colnum,rownum,style,TBBUr.TotSum);
+		if (ifDifferentCurrency) then begin
+			NumericCell(sheetnum,fileToSave,colnum,rownum,style,TBBUr.ClientTotSum);
+		end;
+		mergeCell[qtyMergeCell] = GetStringCellNum(2,rownum) & ":" & GetStringCellNum(colnum - 3,rownum);
+		qtyMergeCell = qtyMergeCell + 1;
+	EndRow(sheetnum,fileToSave,rownum);
+	style = 28;
+	colnum = 2;
+	BeginRow(sheetnum,fileToSave,rownum);
+		StringCell(sheetnum,fileToSave,colnum,rownum,style,"НДС (20%):",SharedStrings,numOfUniqueSharedStrings,numOfSharedStrings);
+		style = 29;
+		qtyOfEmpStr = 1;
+		EmptyCell(sheetnum,fileToSave,colnum,rownum,style,qtyOfEmpStr);
+		style = 30;
+		qtyOfEmpStr = 1;
+		EmptyCell(sheetnum,fileToSave,colnum,rownum,style,qtyOfEmpStr);
+		style = 13;
+		NumericCell(sheetnum,fileToSave,colnum,rownum,style,TBBUr.Sum3);
+		if (ifDifferentCurrency) then begin
+			NumericCell(sheetnum,fileToSave,colnum,rownum,style,TBBUr.ClientSum3);
+		end;
+		mergeCell[qtyMergeCell] = GetStringCellNum(2,rownum) & ":" & GetStringCellNum(colnum - 3,rownum);
+		qtyMergeCell = qtyMergeCell + 1;
+	EndRow(sheetnum,fileToSave,rownum);
+	style = 21;
+	colnum = 2;
+	BeginRow(sheetnum,fileToSave,rownum);
+		StringCell(sheetnum,fileToSave,colnum,rownum,style,"ВСЕГО с НДС:",SharedStrings,numOfUniqueSharedStrings,numOfSharedStrings);
+		style = 22;
+		qtyOfEmpStr = 1;
+		EmptyCell(sheetnum,fileToSave,colnum,rownum,style,qtyOfEmpStr);
+		style = 23;
+		qtyOfEmpStr = 1;
+		EmptyCell(sheetnum,fileToSave,colnum,rownum,style,qtyOfEmpStr);
+		style = 14;
+		NumericCell(sheetnum,fileToSave,colnum,rownum,style,TBBUr.TotSumVAT);
+		if (ifDifferentCurrency) then begin
+			NumericCell(sheetnum,fileToSave,colnum,rownum,style,TBBUr.ClientTotSumVAT);
+		end;
+		mergeCell[qtyMergeCell] = GetStringCellNum(2,rownum) & ":" & GetStringCellNum(colnum - 3,rownum);
+		qtyMergeCell = qtyMergeCell + 1;
+	EndRow(sheetnum,fileToSave,rownum);
+	style = 11;
+	colnum = 2;
+	rownum = rownum + 1;
+	BeginRow(sheetnum,fileToSave,rownum);
+		StringCell(sheetnum,fileToSave,colnum,rownum,style,"Утверждено:",SharedStrings,numOfUniqueSharedStrings,numOfSharedStrings);
+	EndRow(sheetnum,fileToSave,rownum);
+	rownum = rownum + 1;
+	colnum = 2;
+	BeginRow(sheetnum,fileToSave,rownum);
+		StringCell(sheetnum,fileToSave,colnum,rownum,style,"ФИО Клиента",SharedStrings,numOfUniqueSharedStrings,numOfSharedStrings);
+		StringCell(sheetnum,fileToSave,colnum,rownum,style,"__________________________",SharedStrings,numOfUniqueSharedStrings,numOfSharedStrings);
+	EndRow(sheetnum,fileToSave,rownum);
+	rownum = rownum + 1;
+	colnum = 2;
+	BeginRow(sheetnum,fileToSave,rownum);
+		StringCell(sheetnum,fileToSave,colnum,rownum,style,"Подпись",SharedStrings,numOfUniqueSharedStrings,numOfSharedStrings);
+		StringCell(sheetnum,fileToSave,colnum,rownum,style,"__________________________",SharedStrings,numOfUniqueSharedStrings,numOfSharedStrings);
+	EndRow(sheetnum,fileToSave,rownum);
+	EndSheetData(sheetnum,fileToSave);
+	MergeCells(sheetnum,fileToSave,mergeCell,qtyMergeCell);
+	qtyMergeCell = 0;
+	EndSheet(sheetnum,fileToSave,1);
+	
+	sheetColls[0] = 7;
+	sheetColls[1] = 40;
+	sheetColls[2] = 40;
+	sheetColls[3] = 15;
+	sheetColls[4] = 15;
+	sheetColls[5] = 15;
+	sheetColls[6] = 15;
+	mtrw = matrowcnt(TBBUr);
+	for (i=0;i<mtrw;i=i+1) begin
+		matrowget(TBBUr,i,TBBUrw);
+		if (TBBUrw.ToUserBud == 0) then begin
+			switch (TBBUrw.stp) begin
+				case 18:
+					rowpass = true;
+					rownum = 5;
+					sheetnum = sheetnum + 1;
+					SetSheetsCols(sheetnum,sheetColls,fileToSave);
+					BeginSheetData(sheetnum,fileToSave);
+					AddImagesToXLSX(sheetnum,sheetNames[sheetnum - 1],fileToSave,reportName,1);
+					//Заголовок бюджета
+					flag1 = CountStp(TBBUr,i) - 1;
+					stp18 = stp18 + 1;
+					if(stp18>1) then begin 
+						stp18 = 1; 
+						stp17 = 0;
+						tot = 0;
+						totvat = 0;
+					end;
+					style = 3;
+					colnum = 3;
+					BeginRow(sheetnum,fileToSave,rownum);
+						StringCell(sheetnum,fileToSave,colnum,rownum,style,"БЮДЖЕТ",SharedStrings,numOfUniqueSharedStrings,numOfSharedStrings);
+					EndRow(sheetnum,fileToSave,rownum);
+					style = 1;
+					colnum = 2;
+					rownum = rownum + 1;
+					BeginRow(sheetnum,fileToSave,rownum);
+						StringCell(sheetnum,fileToSave,colnum,rownum,style,"Клиент / Бренд",SharedStrings,numOfUniqueSharedStrings,numOfSharedStrings);
+						style = 2;
+						StringCell(sheetnum,fileToSave,colnum,rownum,style,TBBUr.CustName,SharedStrings,numOfUniqueSharedStrings,numOfSharedStrings);
+					EndRow(sheetnum,fileToSave,rownum);
+					style = 1;
+					colnum = 2;
+					BeginRow(sheetnum,fileToSave,rownum);
+						StringCell(sheetnum,fileToSave,colnum,rownum,style,"Название проекта",SharedStrings,numOfUniqueSharedStrings,numOfSharedStrings);
+						style = 2;
+						StringCell(sheetnum,fileToSave,colnum,rownum,style,TBBUr.PRName,SharedStrings,numOfUniqueSharedStrings,numOfSharedStrings);
+					EndRow(sheetnum,fileToSave,rownum);
+					style = 1;
+					colnum = 2;
+					BeginRow(sheetnum,fileToSave,rownum);
+						StringCell(sheetnum,fileToSave,colnum,rownum,style,"Подготовил(а)",SharedStrings,numOfUniqueSharedStrings,numOfSharedStrings);
+						style = 2;
+						Userr.Code = TBBUr.PRLeader;
+						if(ReadFirstMain(Userr,1,true))then begin
+							StringCell(sheetnum,fileToSave,colnum,rownum,style,Userr.Name,SharedStrings,numOfUniqueSharedStrings,numOfSharedStrings);
+						end else begin
+							qtyOfEmpStr = 1;
+							EmptyCell(sheetnum,fileToSave,colnum,rownum,style,qtyOfEmpStr);
+						end;
+					EndRow(sheetnum,fileToSave,rownum);
+					style = 1;
+					colnum = 2;
+					BeginRow(sheetnum,fileToSave,rownum);
+						StringCell(sheetnum,fileToSave,colnum,rownum,style,"Дата",SharedStrings,numOfUniqueSharedStrings,numOfSharedStrings);
+						style = 2;
+						StringCell(sheetnum,fileToSave,colnum,rownum,style,TBBUr.TransDate,SharedStrings,numOfUniqueSharedStrings,numOfSharedStrings);
+					EndRow(sheetnum,fileToSave,rownum);
+					style = 1;
+					colnum = 2;
+					BeginRow(sheetnum,fileToSave,rownum);
+						StringCell(sheetnum,fileToSave,colnum,rownum,style,"Описание работ",SharedStrings,numOfUniqueSharedStrings,numOfSharedStrings);
+						style = 2;
+						PRr.Code = TBBUrw.PRCode;
+						if(ReadFirstMain(PRr,1,true))then begin
+							jobSpec = PRr.Desc0 & " " & PRr.Desc1 & " " & PRr.Desc2;
+							StringCell(sheetnum,fileToSave,colnum,rownum,style,jobSpec,SharedStrings,numOfUniqueSharedStrings,numOfSharedStrings);
+						end else begin
+							qtyOfEmpStr = 1;
+							EmptyCell(sheetnum,fileToSave,colnum,rownum,style,qtyOfEmpStr);
+						end;
+					EndRow(sheetnum,fileToSave,rownum);
+					style = 4;
+					colnum = 2;
+					rownum = rownum + 1;
+					BeginRow(sheetnum,fileToSave,rownum);
+						StringCell(sheetnum,fileToSave,colnum,rownum,style,"Задача/Специалист",SharedStrings,numOfUniqueSharedStrings,numOfSharedStrings);
+						StringCell(sheetnum,fileToSave,colnum,rownum,style,"Примечание",SharedStrings,numOfUniqueSharedStrings,numOfSharedStrings);
+						StringCell(sheetnum,fileToSave,colnum,rownum,style,"Стоимость часа",SharedStrings,numOfUniqueSharedStrings,numOfSharedStrings);
+						StringCell(sheetnum,fileToSave,colnum,rownum,style,"Кол-во часов",SharedStrings,numOfUniqueSharedStrings,numOfSharedStrings);
+						StringCell(sheetnum,fileToSave,colnum,rownum,style,"Стоимость, " & TBBUr.CurncyCode,SharedStrings,numOfUniqueSharedStrings,numOfSharedStrings);
+						if (ifDifferentCurrency) then begin
+							StringCell(sheetnum,fileToSave,colnum,rownum,style,"Стоимость, " & TBBUr.ClientCurncyCode,SharedStrings,numOfUniqueSharedStrings,numOfSharedStrings);
+						end;
+					EndRow(sheetnum,fileToSave,rownum);
+					TBBU2r.PRCode = TBBUrw.PRCode;
+					if(ReadFirstMain(TBBU2r,1,true))then begin
+						//--- finding stp 24
+						//if rebate for project can locate not in the end of the project rewrite this to finding stp in whole matrix
+						rwcnt = MatRowCnt(TBBU2r);
+						MatRowGet(TBBU2r,rwcnt-1,TBBU2rw);	
+						if(TBBU2rw.stp == 24)then begin
+							flagStp24exist = true;
+							Rebate24Spec = TBBU2rw.Spec;
+
+							rebate24 = TBBU2rw.TypeName;
+								if(ifDifferentCurrency)then begin
+									rebate24curr = TBBU2rw.ClientSum;
+								end;
+						end else begin
+							flagStp24exist = false;
+						end;						
+						//------------------
+						
+					end;
+				case 17:
+					//Заголовок серый
+					stp17 = stp17 + 1;
+					style = 24;
+					colnum = 2;
+					if (rowpass) then begin
+						rownum = rownum + 1;
+						rowpass = false;
+					end;
+					BeginRow(sheetnum,fileToSave,rownum);
+						StringCell(sheetnum,fileToSave,colnum,rownum,style,TBBUrw.Spec,SharedStrings,numOfUniqueSharedStrings,numOfSharedStrings);
+						if (ifDifferentCurrency) then begin
+							qtyOfEmpStr = 5;
+						end else begin
+							qtyOfEmpStr = 4;
+						end;
+						EmptyCell(sheetnum,fileToSave,colnum,rownum,style,qtyOfEmpStr);
+						mergeCell[qtyMergeCell] = GetStringCellNum(2,rownum) & ":" & GetStringCellNum(colnum-1,rownum);
+						qtyMergeCell = qtyMergeCell + 1;
+					EndRow(sheetnum,fileToSave,rownum);
+					
+				case 1:
+					//строка бюджета
+					rowpass = true;
+					style = 5;
+					colnum = 2;
+					BeginRow(sheetnum,fileToSave,rownum);
+						StringCell(sheetnum,fileToSave,colnum,rownum,style,TBBUrw.Comment,SharedStrings,numOfUniqueSharedStrings,numOfSharedStrings);
+						StringCell(sheetnum,fileToSave,colnum,rownum,style,TBBUrw.Comment2,SharedStrings,numOfUniqueSharedStrings,numOfSharedStrings);
+						style = 6;
+						NumericCell(sheetnum,fileToSave,colnum,rownum,style,TBBUrw.Price);
+						NumericCell(sheetnum,fileToSave,colnum,rownum,style,TBBUrw.Qty);
+						NumericCell(sheetnum,fileToSave,colnum,rownum,style,TBBUrw.Sum);
+						if (ifDifferentCurrency) then begin
+							NumericCell(sheetnum,fileToSave,colnum,rownum,style,TBBUrw.ClientSum);
+						end;
+					EndRow(sheetnum,fileToSave,rownum);
+				case 9:
+					//Итого по заголовку
+					style = 7;
+					colnum = 6;
+					BeginRow(sheetnum,fileToSave,rownum);
+						NumericCell(sheetnum,fileToSave,colnum,rownum,style,TBBUrw.Sum);
+						if (ifDifferentCurrency) then begin
+							NumericCell(sheetnum,fileToSave,colnum,rownum,style,TBBUrw.ClientSum);
+						end;
+					EndRow(sheetnum,fileToSave,rownum);
+					tot = tot + TBBUrw.Sum;
+					//Итого бюджета
+					if(stp17==flag1)then begin
+						rownum = rownum + 1;
+						if(flagStp24exist)then begin
+							style = 31;
+							colnum = 2;
+							BeginRow(sheetnum,fileToSave,rownum);
+								StringCell(sheetnum,fileToSave,colnum,rownum,style,"Скидка/Агентская комиссия:",SharedStrings,numOfUniqueSharedStrings,numOfSharedStrings);
+								style = 32;
+								qtyOfEmpStr = 2;
+								EmptyCell(sheetnum,fileToSave,colnum,rownum,style,qtyOfEmpStr);
+								style = 33;
+								qtyOfEmpStr = 1;
+								EmptyCell(sheetnum,fileToSave,colnum,rownum,style,qtyOfEmpStr);
+								style = 17;
+								StringCell(sheetnum,fileToSave,colnum,rownum,style,rebate24,SharedStrings,numOfUniqueSharedStrings,numOfSharedStrings);
+								if (ifDifferentCurrency) then begin
+									StringCell(sheetnum,fileToSave,colnum,rownum,style,rebate24curr,SharedStrings,numOfUniqueSharedStrings,numOfSharedStrings);
+								end;
+								mergeCell[qtyMergeCell] = GetStringCellNum(2,rownum) & ":" & GetStringCellNum(colnum - 3,rownum);
+								qtyMergeCell = qtyMergeCell + 1;
+							EndRow(sheetnum,fileToSave,rownum);
+						end;
+						style = 25;
+						colnum = 2;
+						BeginRow(sheetnum,fileToSave,rownum);
+							StringCell(sheetnum,fileToSave,colnum,rownum,style,"ИТОГО:",SharedStrings,numOfUniqueSharedStrings,numOfSharedStrings);
+							style = 26;
+							qtyOfEmpStr = 2;
+							EmptyCell(sheetnum,fileToSave,colnum,rownum,style,qtyOfEmpStr);
+							style = 27;
+							qtyOfEmpStr = 1;
+							EmptyCell(sheetnum,fileToSave,colnum,rownum,style,qtyOfEmpStr);
+							style = 8;
+							NumericCell(sheetnum,fileToSave,colnum,rownum,style,TBBU2r.TotSum);
+							if (ifDifferentCurrency) then begin
+								NumericCell(sheetnum,fileToSave,colnum,rownum,style,TBBU2r.ClientTotSum);
+							end;
+							mergeCell[qtyMergeCell] = GetStringCellNum(2,rownum) & ":" & GetStringCellNum(colnum - 3,rownum);
+							qtyMergeCell = qtyMergeCell + 1;
+						EndRow(sheetnum,fileToSave,rownum);
+						style = 28;
+						colnum = 2;
+						BeginRow(sheetnum,fileToSave,rownum);
+							StringCell(sheetnum,fileToSave,colnum,rownum,style,"НДС (20%):",SharedStrings,numOfUniqueSharedStrings,numOfSharedStrings);
+							style = 29;
+							qtyOfEmpStr = 2;
+							EmptyCell(sheetnum,fileToSave,colnum,rownum,style,qtyOfEmpStr);
+							style = 30;
+							qtyOfEmpStr = 1;
+							EmptyCell(sheetnum,fileToSave,colnum,rownum,style,qtyOfEmpStr);
+							style = 6;
+							NumericCell(sheetnum,fileToSave,colnum,rownum,style,TBBU2r.Sum3);
+							if (ifDifferentCurrency) then begin
+								NumericCell(sheetnum,fileToSave,colnum,rownum,style,TBBU2r.ClientSum3);
+							end;
+							mergeCell[qtyMergeCell] = GetStringCellNum(2,rownum) & ":" & GetStringCellNum(colnum - 3,rownum);
+							qtyMergeCell = qtyMergeCell + 1;
+						EndRow(sheetnum,fileToSave,rownum);
+						style = 21;
+						colnum = 2;
+						BeginRow(sheetnum,fileToSave,rownum);
+							StringCell(sheetnum,fileToSave,colnum,rownum,style,"ВСЕГО с НДС:",SharedStrings,numOfUniqueSharedStrings,numOfSharedStrings);
+							style = 22;
+							qtyOfEmpStr = 2;
+							EmptyCell(sheetnum,fileToSave,colnum,rownum,style,qtyOfEmpStr);
+							style = 23;
+							qtyOfEmpStr = 1;
+							EmptyCell(sheetnum,fileToSave,colnum,rownum,style,qtyOfEmpStr);
+							style = 9;
+							NumericCell(sheetnum,fileToSave,colnum,rownum,style,TBBU2r.TotSumVAT);
+							if (ifDifferentCurrency) then begin
+								NumericCell(sheetnum,fileToSave,colnum,rownum,style,TBBU2r.ClientTotSumVAT);
+							end;
+							mergeCell[qtyMergeCell] = GetStringCellNum(2,rownum) & ":" & GetStringCellNum(colnum - 3,rownum);
+							qtyMergeCell = qtyMergeCell + 1;
+						EndRow(sheetnum,fileToSave,rownum);
+						EndSheetData(sheetnum,fileToSave);
+						MergeCells(sheetnum,fileToSave,mergeCell,qtyMergeCell);
+						qtyMergeCell = 0;
+						EndSheet(sheetnum,fileToSave,1);
+					end;
+				case 25:
+					rowpass = true;
+					style = 5;
+					colnum = 2;
+					BeginRow(sheetnum,fileToSave,rownum);
+						StringCell(sheetnum,fileToSave,colnum,rownum,style,"Скидка/Агентская комиссия:",SharedStrings,numOfUniqueSharedStrings,numOfSharedStrings);
+						qtyOfEmpStr = 2;
+						EmptyCell(sheetnum,fileToSave,colnum,rownum,style,qtyOfEmpStr);
+						style = 16;
+						StringCell(sheetnum,fileToSave,colnum,rownum,style,"Размер:",SharedStrings,numOfUniqueSharedStrings,numOfSharedStrings);
+						style = 6;
+						StringCell(sheetnum,fileToSave,colnum,rownum,style,TBBUrw.TypeName,SharedStrings,numOfUniqueSharedStrings,numOfSharedStrings);
+						if (ifDifferentCurrency) then begin
+							StringCell(sheetnum,fileToSave,colnum,rownum,style,TBBUrw.ClientSum,SharedStrings,numOfUniqueSharedStrings,numOfSharedStrings);
+						end;
+					EndRow(sheetnum,fileToSave,rownum);
+			end;
+		end;
+	end;
+	//Rate Card
+	sheetColls[0] = 9;
+	sheetColls[1] = 16;
+	sheetColls[2] = 24;
+	sheetColls[3] = 37;
+	sheetColls[4] = 12;
+	sheetColls[5] = 13;
+
+	rownum = 5;
+	sheetnum = sheetnum + 1;
+	SetSheetsCols(sheetnum,sheetColls,fileToSave);
+	BeginSheetData(sheetnum,fileToSave);
+	AddImagesToXLSX(sheetnum,sheetNames[sheetnum - 1],fileToSave,reportName,1);
+	style = 10;
+	colnum = 2;
+	rownum = 5;
+	BeginRow(sheetnum,fileToSave,rownum);
+		StringCell(sheetnum,fileToSave,colnum,rownum,style,"STANDARD PERSONNEL RATE CARD",SharedStrings,numOfUniqueSharedStrings,numOfSharedStrings);
+	EndRow(sheetnum,fileToSave,rownum);
+	style = 4;
+	colnum = 2;
+	rownum = rownum + 1;
+	BeginRow(sheetnum,fileToSave,rownum);
+		StringCell(sheetnum,fileToSave,colnum,rownum,style,"Department/ Подразделение",SharedStrings,numOfUniqueSharedStrings,numOfSharedStrings);
+		StringCell(sheetnum,fileToSave,colnum,rownum,style,"Specialist",SharedStrings,numOfUniqueSharedStrings,numOfSharedStrings);
+		StringCell(sheetnum,fileToSave,colnum,rownum,style,"Специалист",SharedStrings,numOfUniqueSharedStrings,numOfSharedStrings);
+		StringCell(sheetnum,fileToSave,colnum,rownum,style,"Hourly rate/ стоимость 1 часа, " & TBBUr.CurncyCode,SharedStrings,numOfUniqueSharedStrings,numOfSharedStrings);
+		if (ifDifferentCurrency) then begin
+			StringCell(sheetnum,fileToSave,colnum,rownum,style,"Hourly rate/ стоимость 1 часа, " & TBBUr.ClientCurncyCode,SharedStrings,numOfUniqueSharedStrings,numOfSharedStrings);
+		end;
+	EndRow(sheetnum,fileToSave,rownum);
+	rownum = rownum + 1;
+	CUr.Code = TBBUr.CustCode;
+	if(ReadFirstMain(CUr, 1, true))then begin
+		INr.Group = "";
+		tempITrComment = "";
+		tempRownum = rownum;
+		while (LoopKey("Group",INr,1,true)) begin
+			PLr.PLCode = CUr.PLCode;
+			PLr.ArtCode = INr.Code;
+			if(ReadFirstMain(PLr, 2, true))then begin
+				ITr.Code = INr.Group;
+				if(ReadFirstMain(ITr, 1, true))then begin
+					style = 40;
+					colnum = 2;
+					BeginRow(sheetnum,fileToSave,rownum);
+						if (tempITrComment<>ITr.Comment) then begin
+							if nonblank(tempITrComment) then begin
+								mergeCell[qtyMergeCell] = GetStringCellNum(2,tempRownum) & ":" & GetStringCellNum(2,rownum - 1);
+								qtyMergeCell = qtyMergeCell + 1;
+							end;
+							tempITrComment = ITr.Comment;
+							tempRownum = rownum;
+						end;
+						StringCell(sheetnum,fileToSave,colnum,rownum,style,ITr.Comment,SharedStrings,numOfUniqueSharedStrings,numOfSharedStrings);
+						style = 19;
+						StringCell(sheetnum,fileToSave,colnum,rownum,style,INr.AlternativeCode,SharedStrings,numOfUniqueSharedStrings,numOfSharedStrings);
+						StringCell(sheetnum,fileToSave,colnum,rownum,style,INr.Name,SharedStrings,numOfUniqueSharedStrings,numOfSharedStrings);
+						style = 20;
+						NumericCell(sheetnum,fileToSave,colnum,rownum,style,PLr.ExVatPrice);
+						if (ifDifferentCurrency) then begin
+							NumericCell(sheetnum,fileToSave,colnum,rownum,style,PLr.ExVatPrice/TBBUr.ClientToRateB1*TBBUr.ClientFrRate);
+						end;
+					EndRow(sheetnum,fileToSave,rownum);
+				end;
+			end;
+		end;
+		mergeCell[qtyMergeCell] = GetStringCellNum(2,tempRownum) & ":" & GetStringCellNum(2,rownum - 1);
+		qtyMergeCell = qtyMergeCell + 1;
+	end;
+	rownum = rownum + 1;
+	style = 11;
+	colnum = 2;
+	BeginRow(sheetnum,fileToSave,rownum);
+		StringCell(sheetnum,fileToSave,colnum,rownum,style,"Директор",SharedStrings,numOfUniqueSharedStrings,numOfSharedStrings);
+	EndRow(sheetnum,fileToSave,rownum);
+	colnum = 2;
+	rownum = rownum + 1;
+	BeginRow(sheetnum,fileToSave,rownum);
+		StringCell(sheetnum,fileToSave,colnum,rownum,style,"М.П.",SharedStrings,numOfUniqueSharedStrings,numOfSharedStrings);
+	EndRow(sheetnum,fileToSave,rownum);
+	EndSheetData(sheetnum,fileToSave);
+	MergeCells(sheetnum,fileToSave,mergeCell,qtyMergeCell);
+	qtyMergeCell = 0;
+	EndSheet(sheetnum,fileToSave,1);
+
+	FillSharedStrings(fileToSave,SharedStrings,numOfUniqueSharedStrings,numOfSharedStrings);
+	ConvertToXLSX(fileToSave);
+	millisleep(2000);
+	addfiletoarea(fileToSave,areatofile,false);
+	delete_file(fileToSave);
+	RETURN;
+END;

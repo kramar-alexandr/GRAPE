@@ -31,6 +31,8 @@ remote procedure TBBUVc_PasteTypeName_Rebate(record TBBUVc,integer,var row TBBUV
 remote function Integer SendForAcceptance_TBBUVc(var record TBBUVc,var record RcVc); //Edit***************************Sasha2,17:15 21.10.2014
 external function Integer CountObjects(string); //Edit***************************Sasha2,17:23 21.10.2014
 remote procedure RecalcTBBURebate(var record TBBUVc); //Edit***************************Sasha2,10:02 28.05.2015
+//Edit---------------Vitalii 15:00 02.07.2015
+remote procedure ExportBudgetToXLSX(record RcVc,var area);
 
 SetLangMode(LangRussian,"RUS",0); //Edit***************************Sasha2,11:27 15.09.2014
 
@@ -1586,10 +1588,12 @@ end;
 global procedure ExportToExcelTBBUDsm() //*** Edit by Victor 15.09.14
 begin
 	record TBBUVc TBBUr;
-	record PRVc PRr;
-	Integer wn,rwcnt;
 	record RcVc RepSpec;
-	string 255 path,args;
+	string 255 path;
+	integer wn;
+//Edit---------------Vitalii 14:57 02.07.2015
+	string 250 filename;
+	area fileToSave;
 	
 	wn = CurWindow;
   DeselectWindow(wn,false);
@@ -1605,6 +1609,7 @@ begin
   	return;
   end;
 
+  /*
   //RepSpec.Media = mtExcel; 
   RepSpec.Media = mtClipBoard; // Edit by Victor 25.09.14
   RepSpec.repname = "ExpBudgetRn";
@@ -1613,7 +1618,20 @@ begin
   
   path = Left(CurrentPath, len(CurrentPath)-1);
 	RunProgram(CurrentPath & "\\ExcelFormating\\ExcelFormating.jar","");
- 	RunProgram(CurrentPath & "ExcelFormating/ExcelFormating.sh",path); // Put path 
+ 	RunProgram(CurrentPath & "ExcelFormating/ExcelFormating.sh",path); // Put path
+	*/
+	
+//Edit---------------Vitalii 14:56 02.07.2015
+	RepSpec.f1 = TBBUr.PRCode;
+	filename = SaveFileDialog("Budget Export","","xlsx");
+	if ((filename!="Budget Export") and nonblank(filename)) then begin
+		ExportBudgetToXLSX(RepSpec,fileToSave);
+	end;
+	if(fileexists(filename))then begin
+		delete_file(filename);
+	end;
+	writeareatofile(fileToSave,filename,0);
+	MessageBox(0,"Готово!");
  return;
 end;
 

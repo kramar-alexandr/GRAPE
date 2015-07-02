@@ -6,7 +6,11 @@ begin
 	
 	Report("Журнал платежей по проектам",ProjectPayPlanRClass,ProjectPayPlanRn,0,modTS);
   Report("Информация о проекте",ProjectInfoRClass,ProjectInfoRn,0,modTS);
+  //Edit---------------Vitalii 9:53 26.06.2015
   //Report("Бюджет проекта",ExportBudgetRClass,ExpBudgetRn,0,modTS); //Edit by Victor 15.09.14
+  //Report("Бюджет проекта TEST",ExportBudgetTestRClass,ExpBudgetTestRn,0,modTS);
+  //Report("Бюджет проекта Excel",ExportBudgetToXLSXRClass,ExpBudgetTestRn,0,modTS);
+  //--------Vitalii
   Report("Начисления за период",ProfitOverPeriodRClass,ProfitOverPeriodRn,0,modTS); //Edit***************************Sasha2,13:50 26.12.2014
   
   Maintenance("Удалить цены",DelPriceListVClass,DelPriceLMn,modTS);
