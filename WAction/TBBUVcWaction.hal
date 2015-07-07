@@ -1633,11 +1633,11 @@ begin
 	filename = SaveFileDialog("Budget Export","","xlsx");
 	if ((filename!="Budget Export") and nonblank(filename)) then begin
 		ExportBudgetToXLSX(RepSpec,fileToSave);
+		if(fileexists(filename))then begin
+			delete_file(filename);
+		end;
 		writeareatofile(fileToSave,filename,0);
 		MessageBox(0,"Готово!");
-	end;
-	if(fileexists(filename))then begin
-		delete_file(filename);
 	end;
  return;
 end;
