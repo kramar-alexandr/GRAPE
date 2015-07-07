@@ -288,10 +288,10 @@ begin
       							end;
     							end else begin
     							  ident = false;
-    								if (checkorsavef) then begin
+    								/*if (checkorsavef) then begin
   									  collapsef = false;
   									  goto LNoMatch;
-  									end;
+  									end;*/
     							end;
     							
     							if(ident)then begin
