@@ -194,7 +194,7 @@ END; //Edit***************************Sasha2,9:50 14.10.2014 }
 
 
 
-procedure CheckOrSaveCalculatedBudget(var record TBBUVc TBBUr,var string budgeterrors,record GeneralOptionBlock GenOptRec,record PRClassBlock PRClassRec,var Boolean rebatef,boolean checkorsavef,var boolean collapsef)
+procedure CheckOrSaveCalculatedBudget(var record TBBUVc TBBUr,var string budgeterrors,record GeneralOptionBlock GenOptRec,record PRClassBlock PRClassRec,var Boolean rebatef,boolean checkorsavef,var vector boolean notcollapsef)
 begin
   integer i,rwcnt,rwnum,j,rwcnt2,rwcnt3,k,q;
 	record PRVc PRr,PR2r;
@@ -203,7 +203,7 @@ begin
 	row TBBUVc TBBU3rw;
 	row PRVc PRrw;
 	row TBBUVc TBBUrw;
-	boolean testf,TrHs;
+	boolean testf,TrHs,testf2;
 	val t,s;
   row PRClassBlock PRClassrw;
   string 100 name;
@@ -258,63 +258,60 @@ begin
 					end else begin
 						rwcnt = MatRowCnt(TBBUr);
 						ident = false;
-						if (collapsef) then begin
-  						For(i=0;i<rwcnt;i=i+1) begin
-    						matrowget(TBBUr,i,TBBUrw);
-    						if(TBBUrw.stp==18 and TBBUrw.Spec==TBBU2r.PRName)then begin 
-    							ident = true; 
-    							rwcnt2 = MatRowCnt(TBBU2r);
-    							PR2r.Code = TBBUrw.PRCode; 
-    							ReadFirstMain(PR2r,1,true);
-    							if (PRr.PRClass==PR2r.PRClass) then begin
-    							  if(rwcnt2<=(rwcnt-i-1))then begin 
-      								For(j=0;j<rwcnt2;j=j+1) begin
-      									matrowget(TBBU2r,j,TBBU2rw);
-      									matrowget(TBBUr,j+i+1,TBBU3rw);
-      									if(TBBU2rw.stp!=TBBU3rw.stp or TBBU2rw.ArtCode!=TBBU3rw.ArtCode or TBBU2rw.Price!=TBBU3rw.Price or TBBU2rw.Cost!=TBBU3rw.Cost or TBBU2rw.TypeName!=TBBU3rw.TypeName) then begin
-      										ident = false;
-      										if (checkorsavef) then begin
-      										  collapsef = false;
-      										  goto LNoMatch;
-      										end;
-      									end;
-    									end; 
-      							end else begin
-      								ident = false;
-      								if (checkorsavef) then begin
-    									  collapsef = false;
-    									  goto LNoMatch;
-    									end;
-      							end;
-    							end else begin
-    							  ident = false;
-    								/*if (checkorsavef) then begin
-  									  collapsef = false;
-  									  goto LNoMatch;
-  									end;*/
-    							end;
-    							
-    							if(ident)then begin
-    								
-    								TBBUrw.IdentQuant = TBBUrw.IdentQuant + 1; 	
-    								matrowput(TBBUr,i,TBBUrw);						
+						For(i=0;i<rwcnt;i=i+1) begin
+  						matrowget(TBBUr,i,TBBUrw);
+  						if(TBBUrw.stp==18 and TBBUrw.Spec==TBBU2r.PRName)then begin 
+  							ident = true; 
+  							rwcnt2 = MatRowCnt(TBBU2r);
+  							PR2r.Code = TBBUrw.PRCode; 
+  							ReadFirstMain(PR2r,1,true);
+  							testf2 = true;
+  							if (PRr.PRClass!=PR2r.PRClass) then begin testf2 = false; end;
+  							if (PRr.PRClass==PR2r.PRClass and notcollapsef[PR2r.PRClass]==true) then begin testf2 = false; end;
+  							if (testf2) then begin
+  							  if(rwcnt2<=(rwcnt-i-1))then begin 
     								For(j=0;j<rwcnt2;j=j+1) begin
     									matrowget(TBBU2r,j,TBBU2rw);
-    									matrowget(TBBUr,j+i+1,TBBU3rw);	 
-    									TBBU3rw.Qty = TBBU3rw.Qty + TBBU2rw.Qty;
-    									//if nonblank(TBBU2r.ClientCurncyCode) then begin
-    										TBBU3rw.ClientSum = TBBU3rw.ClientSum + TBBU2rw.ClientSum;
-    										TBBU3rw.ClientPrice = TBBU2rw.ClientSum;
-    										TBBU3rw.SumCost = TBBU3rw.SumCost + TBBU2rw.SumCost;
-    									//end;
-    									matrowput(TBBUr,j+i+1,TBBU3rw);
-    									TBBUDchrsum(TBBUr,j+i+1,true,GenOptRec.UseDiscount);	
+    									matrowget(TBBUr,j+i+1,TBBU3rw);
+    									if(TBBU2rw.stp!=TBBU3rw.stp or TBBU2rw.ArtCode!=TBBU3rw.ArtCode or TBBU2rw.Price!=TBBU3rw.Price or TBBU2rw.Cost!=TBBU3rw.Cost or TBBU2rw.TypeName!=TBBU3rw.TypeName) then begin
+    										ident = false;
+    										if (checkorsavef) then begin
+    										  notcollapsef[PR2r.PRClass] = true;
+    										  //goto LNoMatch;
+    										end;
+    									end;
   									end; 
-  									goto Ldone;
+    							end else begin
+    								ident = false;
+    								if (checkorsavef) then begin
+  									  notcollapsef[PR2r.PRClass] = true;
+  									  //goto LNoMatch;
+  									end;
     							end;
-    						end;
-  						end; 
-  					end;
+  							end else begin
+  							  ident = false;
+  							end;
+  							
+  							if(ident)then begin
+  								
+  								TBBUrw.IdentQuant = TBBUrw.IdentQuant + 1; 	
+  								matrowput(TBBUr,i,TBBUrw);						
+  								For(j=0;j<rwcnt2;j=j+1) begin
+  									matrowget(TBBU2r,j,TBBU2rw);
+  									matrowget(TBBUr,j+i+1,TBBU3rw);	 
+  									TBBU3rw.Qty = TBBU3rw.Qty + TBBU2rw.Qty;
+  									//if nonblank(TBBU2r.ClientCurncyCode) then begin
+  										TBBU3rw.ClientSum = TBBU3rw.ClientSum + TBBU2rw.ClientSum;
+  										TBBU3rw.ClientPrice = TBBU2rw.ClientSum;
+  										TBBU3rw.SumCost = TBBU3rw.SumCost + TBBU2rw.SumCost;
+  									//end;
+  									matrowput(TBBUr,j+i+1,TBBU3rw);
+  									TBBUDchrsum(TBBUr,j+i+1,true,GenOptRec.UseDiscount);	
+									end; 
+									goto Ldone;
+  							end;
+  						end;
+						end; 
 						if(!ident)then begin
 							rwcnt2 = MatRowCnt(TBBU2r);
 							if(rwcnt2>0)then begin
@@ -348,10 +345,10 @@ begin
 								end; 
 							end;
 						end else begin
-						  if (checkorsavef) then begin
+						  /*if (checkorsavef) then begin
 							  collapsef = false;
 							  goto LNoMatch;
-							end;
+							end;*/
 						end;
 					end;
 				end;
@@ -371,7 +368,8 @@ begin
   record GeneralOptionBlock GenOptRec;
 	record PRClassBlock PRClassRec;
 	record TBBUVc TBBUTestr;
-  boolean rebatef,collapsef; //Edit***************************Sasha2,9:38 02.06.2015
+  boolean rebatef;
+  vector boolean notcollapsef; //Edit***************************Sasha2,9:38 02.06.2015
 	
 	BlockLoad(GenOptRec);
 	BlockLoad(PRClassRec);
@@ -383,10 +381,9 @@ begin
 			logtext(0, "Ѓюджет не пустой!");
 		end else begin	
 		  rebatef = false; //Edit***************************Sasha2,9:40 02.06.2015	
-		  collapsef = true; //Edit***************************Sasha2,11:56 25.06.2015
 		  TBBUTestr.PRCode = TBBUMainr.PRCode;
-		  CheckOrSaveCalculatedBudget(TBBUTestr,budgeterrors,GenOptRec,PRClassRec,rebatef,true,collapsef);
-	    CheckOrSaveCalculatedBudget(TBBUMainr,budgeterrors,GenOptRec,PRClassRec,rebatef,false,collapsef);
+		  CheckOrSaveCalculatedBudget(TBBUTestr,budgeterrors,GenOptRec,PRClassRec,rebatef,true,notcollapsef);
+	    CheckOrSaveCalculatedBudget(TBBUMainr,budgeterrors,GenOptRec,PRClassRec,rebatef,false,notcollapsef);
 	    if (rebatef) then begin //Edit***************************Sasha2,9:41 02.06.2015 {
 			  RecalcTBBURebate(TBBUMainr);
 			end; //Edit***************************Sasha2,9:41 02.06.2015 }
