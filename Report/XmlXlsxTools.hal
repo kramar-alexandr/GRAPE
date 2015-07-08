@@ -1,5 +1,4 @@
 external function string 255 StrReplace(string,string,string);
-external remote procedure BudgetsObjectsRn(record RcVc,var area);
 
 
 global
@@ -426,25 +425,3 @@ BEGIN
 	end;
 	RETURN;
 END;
-
-
-global procedure RunBudgetObjectsRn() begin
-	string 250 filename;
-	area fileToSave;
-	record RcVc RepSpec;
-	integer wn;
-	
-	wn = curwindow;
-	deselectwindow(wn,true);
-	getwindowrecord(wn,RepSpec);
-	filename = SaveFileDialog("Budget Objects Report","","xlsx");
-	if ((filename!="Budget Objects Report") and nonblank(filename)) then begin
-		BudgetsObjectsRn(RepSpec,fileToSave);
-	end;
-	if(fileexists(filename))then begin
-		delete_file(filename);
-	end;
-	writeareatofile(fileToSave,filename,0);
-
-return;
-end;
