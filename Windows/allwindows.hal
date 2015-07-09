@@ -2734,8 +2734,8 @@ begin
   MatCol(1,200,"Субподрядчик",0,SubContractor,false,VESClass); //Edit***************************Sasha2,12:48 10.10.2014
   MatCol(t=1,-350,"Комментарий",0,Comment3,false,0); //Edit***************************Sasha2,17:23 28.11.2014
   //MatCol(t=1,-235,"Наценка",0,Markup,true,0);	//Edit by Victor 24.10.14
-  MatCol(t=1,-235,"Ст-ть за ед.",0,Cost,true,0); 
-  MatCol(t,-140,"Прибыль",0,GP,true,0);
+  //MatCol(t=1,-235,"Ст-ть за ед.",0,Cost,true,0); 
+  //MatCol(t,-140,"Прибыль",0,GP,true,0);
   MatCol(t,-80,"Сум.Стоим",0,SumCost,true,0); //temporary
   //MatCol(t,-50,"№ сч/ф",0,Invoiced,true,0); temporary
 //  MatColTL(1,-50,"Inv. No.",0,-1,0,-1,Invoiced,true,0);
@@ -2746,6 +2746,7 @@ begin
   Flip(3);
   t = 1;
   MatCol(1,200,"Наименование",0,Comment,false,0);
+  MatCol(t,-320,"Ст-ть за ед.",0,Cost,true,0);//Edit***************************Sasha2,9:40 10.09.2014
   if (IsEnterprise) then begin
     MatCol(t,-255,"Врем. класс",0,TimeClass,false,TimeClassSClass);
   end;
@@ -2760,6 +2761,7 @@ begin
   Flip(4);
   t=1;
   MatCol(1,200,"Наименование",0,Comment,false,0);
+  MatCol(t,-320,"Прибыль",0,GP,true,0);
   if (HasObjects) then begin
     MatCol(t,-235,"Объекты",0,Objects,false,ObjSClass);
   end;
