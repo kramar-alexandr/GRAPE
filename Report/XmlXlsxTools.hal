@@ -426,14 +426,14 @@ BEGIN
 
 		WriteAreaToFile(newcmd,"/cmd",0);
 		RunProgram("jar.sh","");*/
-		if(fileexists("/tmpxlsx/.DS_Store"))then begin
-			delete_file("/tmpxlsx/.DS_Store");
+		if(fileexists(path & "/.DS_Store"))then begin
+			delete_file(path & "/.DS_Store");
 		end;
-		if(fileexists("/tmpxlsx/xl/.DS_Store"))then begin
-			delete_file("/tmpxlsx/xl/.DS_Store");
+		if(fileexists(path & "/xl/.DS_Store"))then begin
+			delete_file(path & "/xl/.DS_Store");
 		end;
 		logtext(0,"RunProgram");
-		RunProgram("jar","-cf0M /tmpxlsx.xlsx -C /tmpxlsx/ .");
+		RunProgram("jar","-cf0M " & path & ".xlsx -C " & path & "/ .");
 		logtext(0,"ConvertToXLSX end");
 	end;
 	RETURN;
