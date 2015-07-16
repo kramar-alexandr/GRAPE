@@ -1260,6 +1260,7 @@ BEGIN
 				IVr.PayDeal = lPRr.PayDeal;*/
 				res = 1;
 				IVr.InvDate = prrw.PlanDate;
+				IVr.SalesMan = lPRr.Leader;
 				res = ProInvHead(IVr,lPRr);
 				if (res!=0) then begin
 					goto LPRDownPayInvoice;
