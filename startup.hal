@@ -22,10 +22,10 @@ begin
   Import("Импорт цен",PLImportIClass,PLImportIn,modTS); //Added********************Dima 20.11.2014
 
 	Setting("Масштабы проектов",ProjScopeTClass,modTS); //Edit***************************Sasha2,17:26 11.09.2014
-	Setting("Акты выполненных работ с клиентами",ADJLClass,modTS); //Edit by Victor 12.09.2014
-	Setting("Дополнительные соглашения с клиентами",SALClass,modTS); //Edit by Victor 12.09.2014
-	Setting("Акты выполненных работ с подрядчиками",ADJVILClass,modTS); //Edit by Victor 12.09.2014
-	Setting("Дополнительные соглашения с подрядчиками",SAVILClass,modTS); //Edit by Victor 12.09.2014
+	Setting("Акты выполненных работ с клиентами",ADJLClass,modSL); //Edit by Victor 17.07.2015
+	Setting("Дополнительные соглашения с клиентами",SALClass,modSL); //Edit by Victor 17.07.2015
+	Setting("Акты выполненных работ с подрядчиками",ADJVILClass,modPL); //Edit by Victor 17.07.2015
+	Setting("Дополнительные соглашения с подрядчиками",SAVILClass,modPL); //Edit by Victor 17.07.2015
 	Setting("Шаблоны для бюджетов проектов",TemplateTBBULClass,modTS); //Edit***************************Sasha2,11:49 12.09.2014
 	Setting("Цены",PLLClass,modTS); //Edit***************************Sasha2,11:49 12.09.2014
 	Setting("Прейскуранты",PLDefLClass,modTS); //Edit***************************Sasha2,11:49 12.09.2014
