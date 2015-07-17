@@ -41,9 +41,7 @@ BEGIN
 	area tempArea;
 	string 225 path;
 	
-	logtext(0,"XmlXlsxWorkBegin begin");
 	path = PathCorrection(pathToXLSX);
-	logtext(0,path);
 	CreateFolder(path);
 	CreateFolder(path & "/_rels");
 	CreateFolder(path & "/docProps");
@@ -62,7 +60,6 @@ BEGIN
 	CopyFile("tmp/" & reportName & "/theme1.xml",path & "/xl/theme/theme1.xml");
 //---/xl/styles.xml
 	CopyFile("tmp/" & reportName & "/styles.xml",path & "/xl/styles.xml");
-	logtext(0,"XmlXlsxWorkBegin end");
 	RETURN;
 END;
 
@@ -73,7 +70,6 @@ BEGIN
 	area tempArea;
 	string 225 path;
 	
-	logtext(0,"CreateSheetsXLSX begin");
 	path = PathCorrection(pathToXLSX);
 	if (imagesQty<>0) then begin
 		CreateFolder(path & "/xl/drawings");
@@ -123,7 +119,6 @@ BEGIN
 	AddTextToArea("<?xml version=" & Chr(34) & "1.0" & Chr(34) & " encoding=" & Chr(34) & "UTF-8" & Chr(34) & " standalone=" & Chr(34) & "yes" & Chr(34) & "?><Properties xmlns=" & Chr(34) & "http:" & Chr(47) & Chr(47) & "schemas.openxmlformats.org" & Chr(47) & "officeDocument" & Chr(47) & "2006" & Chr(47) & "extended-properties" & Chr(34) & " xmlns:vt=" & Chr(34) & "http:" & Chr(47) & Chr(47) & "schemas.openxmlformats.org" & Chr(47) & "officeDocument" & Chr(47) & "2006" & Chr(47) & "docPropsVTypes" & Chr(34) & "><Application>Microsoft Excel<" & Chr(47) & "Application><DocSecurity>0<" & Chr(47) & "DocSecurity><ScaleCrop>false<" & Chr(47) & "ScaleCrop><HeadingPairs><vt:vector size=" & Chr(34) & "2" & Chr(34) & " baseType=" & Chr(34) & "variant" & Chr(34) & "><vt:variant><vt:lpstr>Worksheets<" & Chr(47) & "vt:lpstr><" & Chr(47) & "vt:variant><vt:variant><vt:i4>" & qtyOfSheets & "<" & Chr(47) & "vt:i4><" & Chr(47) & "vt:variant><" & Chr(47) & "vt:vector><" & Chr(47) & "HeadingPairs><TitlesOfParts><vt:vector size=" & Chr(34) & qtyOfSheets & Chr(34) & " baseType=" & Chr(34) & "lpstr" & Chr(34) & ">",tempArea);
 	for (i=0;i<qtyOfSheets;i=i+1) begin
 		AddTextToArea("<vt:lpstr>"&namesArray[i]&"</vt:lpstr>",tempArea);
-		logtext(0,"sheet " & i+1 & " - "& namesArray[i] & " created");
 	end;
 	AddTextToArea("<" & Chr(47) & "vt:vector><" & Chr(47) & "TitlesOfParts><LinksUpToDate>false<" & Chr(47) & "LinksUpToDate><SharedDoc>false<" & Chr(47) & "SharedDoc><HyperlinksChanged>false<" & Chr(47) & "HyperlinksChanged><AppVersion>14.0300<" & Chr(47) & "AppVersion><" & Chr(47) & "Properties>",tempArea);
 	WriteAreaToFile(tempArea,path & "/docProps/app.xml",0);
@@ -149,7 +144,6 @@ BEGIN
 		AddTextToArea("<?xml version=" & Chr(34) & "1.0" & Chr(34) & " encoding=" & Chr(34) & "UTF-8" & Chr(34) & " standalone=" & Chr(34) & "yes" & Chr(34) & "?><worksheet xmlns=" & Chr(34) & "http:" & Chr(47) & Chr(47) & "schemas.openxmlformats.org" & Chr(47) & "spreadsheetml" & Chr(47) & "2006" & Chr(47) & "main" & Chr(34) & " xmlns:r=" & Chr(34) & "http:" & Chr(47) & Chr(47) & "schemas.openxmlformats.org" & Chr(47) & "officeDocument" & Chr(47) & "2006" & Chr(47) & "relationships" & Chr(34) & " xmlns:mc=" & Chr(34) & "http:" & Chr(47) & Chr(47) & "schemas.openxmlformats.org" & Chr(47) & "markup-compatibility" & Chr(47) & "2006" & Chr(34) & " mc:Ignorable=" & Chr(34) & "x14ac" & Chr(34) & " xmlns:x14ac=" & Chr(34) & "http:" & Chr(47) & Chr(47) & "schemas.microsoft.com" & Chr(47) & "office" & Chr(47) & "spreadsheetml" & Chr(47) & "2009" & Chr(47) & "9" & Chr(47) & "ac" & Chr(34) & "><dimension ref=" & Chr(34) & "A1:AZ3000" & Chr(34) & Chr(47) & "><sheetViews><sheetView workbookViewId=" & Chr(34) & "0" & Chr(34) & Chr(47) & "><" & Chr(47) & "sheetViews><sheetFormatPr defaultRowHeight=" & Chr(34) & "15" & Chr(34) & " x14ac:dyDescent=" & Chr(34) & "0.25" & Chr(34) & Chr(47) & ">",tempArea);
 		WriteAreaToFile(tempArea,path & "/xl/worksheets/sheet" & i+1 & ".xml",0);
 	end;
-	logtext(0,"CreateSheetsXLSX end");
 	RETURN;
 END;
 
@@ -159,7 +153,6 @@ BEGIN
 	area tempArea;
 	string 225 path;
 	
-	logtext(0,"AddImagesToXLSX begin");
 	path = PathCorrection(pathToXLSX);
 //---/xl/drawings/drawing1 ... n.xml
 //---/xl/drawings/_rels/drawing1 ... n.xml.rels
@@ -186,7 +179,6 @@ BEGIN
 	SetAreaZeroSize(tempArea);
 	AddTextToArea("<?xml version=" & Chr(34) & "1.0" & Chr(34) & " encoding=" & Chr(34) & "UTF-8" & Chr(34) & " standalone=" & Chr(34) & "yes" & Chr(34) & "?><Relationships xmlns=" & Chr(34) & "http:" & Chr(47) & Chr(47) & "schemas.openxmlformats.org" & Chr(47) & "package" & Chr(47) & "2006" & Chr(47) & "relationships" & Chr(34) & "><Relationship Id=" & Chr(34) & "rId1" & Chr(34) & " Type=" & Chr(34) & "http:" & Chr(47) & Chr(47) & "schemas.openxmlformats.org" & Chr(47) & "officeDocument" & Chr(47) & "2006" & Chr(47) & "relationships" & Chr(47) & "drawing" & Chr(34) & " Target=" & Chr(34) & ".." & Chr(47) & "drawings" & Chr(47) & "drawing" & SheetNum & ".xml" & Chr(34) & Chr(47) & "><" & Chr(47) & "Relationships>",tempArea);
 	WriteAreaToFile(tempArea,path & "/xl/worksheets/_rels/sheet" & SheetNum & ".xml.rels",0);
-	logtext(0,"AddImagesToXLSX end");
 	RETURN;
 END;
 
@@ -196,7 +188,6 @@ BEGIN
 	area tempArea;
 	string 225 path;
 
-	logtext(0,"EndSheet begin for SheetNum = " & SheetNum);
 	path = PathCorrection(pathToXLSX);
 	if (imgNum<>0) then begin
 		AddTextToArea("<drawing r:id=" & Chr(34) & "rId1" & Chr(34) & Chr(47) & ">",tempArea);
@@ -212,18 +203,18 @@ BEGIN
 	integer i;
 	area tempArea;
 	string 225 path;
+	string 100 tstr
 
-	logtext(0,"SetSheetsCols begin");
 	path = PathCorrection(pathToXLSX);
 	AddTextToArea("<cols>",tempArea);
 	i = 0;
 	while (sizeArray[i] <> 0) begin
-		AddTextToArea("<col min=" & Chr(34) & i+1 & Chr(34) & " max=" & Chr(34) & i+1 & Chr(34) & " width=" & Chr(34) & sizeArray[i]+0.71 & Chr(34) & " customWidth=" & Chr(34) & "1" & Chr(34) & Chr(47) & ">",tempArea);
+		tstr = ValToString(sizeArray[i]+0.71,M4Val,"",".",0);
+		AddTextToArea("<col min=" & Chr(34) & i+1 & Chr(34) & " max=" & Chr(34) & i+1 & Chr(34) & " width=" & Chr(34) & tstr & Chr(34) & " customWidth=" & Chr(34) & "1" & Chr(34) & Chr(47) & ">",tempArea);
 		i = i + 1;
 	end;
 	AddTextToArea("<" & Chr(47) & "cols>",tempArea);
 	WriteAreaToFile(tempArea,path & "/xl/worksheets/sheet" & SheetNum & ".xml",1);
-	logtext(0,"SetSheetsCols end");
 	RETURN;
 END;
 
@@ -334,6 +325,7 @@ BEGIN
 	area tempArea;
 	string 225 path;
 	string 10 r;
+	string 100 tstr;
 	integer i;
 	
 	if (data==BlankVal) then begin
@@ -342,7 +334,8 @@ BEGIN
 		r = GetStringCellNum(ColNum, RowNum);
 
 		path = PathCorrection(pathToXLSX);
-		AddTextToArea("<c r=" & Chr(34) & r & Chr(34) & " s=" & Chr(34) & style & Chr(34) & "><v>" & data & "<" & Chr(47) & "v><" & Chr(47) & "c>",tempArea);
+		tstr = ValToString(data,M4Val,"",".",0);
+		AddTextToArea("<c r=" & Chr(34) & r & Chr(34) & " s=" & Chr(34) & style & Chr(34) & "><v>" & tstr & "<" & Chr(47) & "v><" & Chr(47) & "c>",tempArea);
 		WriteAreaToFile(tempArea,path & "/xl/worksheets/sheet" & SheetNum & ".xml",1);
 		ColNum = ColNum + 1;
 	end;
@@ -396,7 +389,6 @@ BEGIN
 	string 1 c;
 	longint alen,i;
 
-	logtext(0,"ConvertToXLSX begin");
 	PosOfSleshInPath = 0;
 	path = PathCorrection(pathToXLSX);
 	fileName = path;
@@ -407,6 +399,7 @@ BEGIN
 	AddTextToArea(fileName,tempArea);
 	PosOfSleshInPath = FindStringInArea(Chr(92),tempArea);
 	end;
+	
 	if(windowsmode==1)then begin
 		RunProgram("tmp" & Chr(92) & "buildXLSX.bat",Chr(34) & path & Chr(34));
 	end else begin
@@ -433,9 +426,7 @@ BEGIN
 		if(fileexists(path & "/xl/.DS_Store"))then begin
 			delete_file(path & "/xl/.DS_Store");
 		end;
-		logtext(0,"RunProgram");
 		RunProgram("jar","-cf0M " & path & ".xlsx -C " & path & "/ . -C " & path & "/ _rels/.rels");
-		logtext(0,"ConvertToXLSX end");
 	end;
 	RETURN;
 END;
