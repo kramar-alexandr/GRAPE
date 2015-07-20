@@ -2627,7 +2627,7 @@ begin
   EditField(h,v+=vs,80, "Клиент",St_i,CustCode,false,CUSClass);
   EditField(h2,v,240, "Наименов.",Normal,CustName,false,0);
   CheckBox(h2+250,v,0,"Бюджет утвержден",OKFlag); //Edit***************************Sasha2,11:52 16.09.2014
-  CheckBox(h2+250,v+20,0,"Подтверждено клиентом",ApproveFlag);// Edit ************************** Tuesday, 19 August 2014 09:30:21
+  CheckBox(h2+250,v+20,0,"Утверждено клиентом",ApproveFlag);// Edit ************************** Tuesday, 19 August 2014 09:30:21
 
   EditField(h,v+=vs,80, "Дата операции",Normal,TransDate,false,PasteCurDate);
   EnterSkip(Math);
@@ -2907,12 +2907,12 @@ begin
   end;
   if (HasApprovals) then begin
     ButtonFrame(h3=570,v=16,123,6,"Статус утверждения");
-    RadioButton(h3,v,kAcceptanceStateNotRequired,0,"не обязательно",AcceptanceStatus);
-    RadioButton(h3,v+=16,kAcceptanceStateNotStarted,0,"не начато",AcceptanceStatus);
-    RadioButton(h3,v+=16,kAcceptanceStateNotRequested,0,"не запрошено",AcceptanceStatus);
-    RadioButton(h3,v+=16,kAcceptanceStatePending,0,"в ожидании",AcceptanceStatus);
-    RadioButton(h3,v+=16,kAcceptanceStateApproved,0,"утверждено",AcceptanceStatus);
-    RadioButton(h3,v+=16,kAcceptanceStateRejected,0,"отклонено",AcceptanceStatus);
+    RadioButton(h3,v,kAcceptanceStateNotRequired,0,"Без утверждения",AcceptanceStatus);
+    RadioButton(h3,v+=16,kAcceptanceStateNotStarted,0,"Создан",AcceptanceStatus);
+    RadioButton(h3,v+=16,kAcceptanceStateNotRequested,0,"На доработку",AcceptanceStatus);
+    RadioButton(h3,v+=16,kAcceptanceStatePending,0,"На согласовании",AcceptanceStatus);
+    RadioButton(h3,v+=16,kAcceptanceStateApproved,0,"Утвержден компанией",AcceptanceStatus);
+    RadioButton(h3,v+=16,kAcceptanceStateRejected,0,"Не принят",AcceptanceStatus);
   end;
   
   //Edit by Victor 25.02.15 {
