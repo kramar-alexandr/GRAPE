@@ -1642,6 +1642,28 @@ begin
  return;
 end;
 
+global //Edit***************************Sasha2,13:02 20.07.2015 {
+updating procedure BackToRevisionStatusTBBUDsm()
+BEGIN
+  record TBBUVc TBBUr;
+  Integer wn;
+  
+  wn = CurWindow;
+  if (WindowState(wn)==0) then begin//Rs_normal
+    GetWindowRecord(wn,TBBUr);
+    if (UserCanAction("AllowSetBackToRevision",false)==true or TBBUr.PRLeader==CurrentUser) then begin
+      if (TBBUr.AcceptanceStatus==kAcceptanceStateApproved) then begin
+        TBBUr.AcceptanceStatus = kAcceptanceStateNotRequested;
+        RECORDSTORE(TBBUr,true);
+        PutWindowRecord(wn,TBBUr);
+      end;
+    end;
+  end else begin
+    Beep;
+  end;
+  RETURN;
+END; //Edit***************************Sasha2,13:02 20.07.2015 }
+
 global //Edit***************************Sasha2,17:38 13.10.2014 {
 updating procedure SeparatePOFromTBBUDsm()
 BEGIN

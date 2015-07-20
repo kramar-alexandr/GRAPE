@@ -2957,7 +2957,8 @@ begin
     end;
   end;
   SpecialMenu("Вставить бюджет из шаблона",'b',7,"CreateTBBUFromTemplateDsm"); //Edit***************************Sasha2,10:56 15.09.2014
-  SpecialMenu("Экспортировать в Excel",'E',8,"ExportToExcelTBBUDsm");	//Edit by Victor 15.09.14
+  SpecialMenu("Вернуть на доработку после клиента",'',9,"BackToRevisionStatusTBBUDsm");	//Edit***************************Sasha2,13:02 20.07.2015
+  SpecialMenu("Экспортировать в Excel",'E',10,"ExportToExcelTBBUDsm");	//Edit by Victor 15.09.14
 
 //      SpecialMenu("Открыть налоговую матрицу",' ',25,"OpenTaxMatrixTBBUDsm");
   EndWindow;

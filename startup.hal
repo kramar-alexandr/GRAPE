@@ -307,6 +307,7 @@ begin
   StrSetText(AllowTransfertoInvoice,"Перемещение сч/ф касс. терм. в сч/ф клиента");
   StrSetText(AllowTransfertoSL,"Перемещение сч/ф касс. терм. в книгу продаж");
   StrSetText(AllowTransfertoOrder,"Перемещение сч/ф касс. терм. в счёт клиенту");
+  StrSetText(AllowSetBackToRevision,"Разрешить возвращать бюджет на доработку после клиента"); //Edit***************************Sasha2,11:15 26.12.2014
   StrSetText(AllowPRBudgetChangePrice,"Разрешить править цены в бюджете проекта"); //Edit***************************Sasha2,9:59 08.10.2014
   			// Скидки были закомментированы в окошках
   //StrSetText(AllowPRBudgetChangeDiscount,"Разрешить править скидки в бюджете проекта"); //Edit***************************Sasha2,9:59 08.10.2014
