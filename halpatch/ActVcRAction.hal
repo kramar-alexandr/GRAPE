@@ -1289,6 +1289,11 @@ BEGIN
   Actr.LengthClass = ActLenClass(Actr.TransDate,Actr.EndDate);
   Actr.CreationDate = CurrentDate;
   Actr.LastChangedDate = CurrentDate;
+  if (blank(Actr.PRCode)) then begin //Edit***************************Sasha2,15:35 20.07.2015 {
+    if (Actr.FromFileName=="TBBUVc" and NonBlank(Actr.FromSerNr)) then begin
+      Actr.PRCode = Actr.FromSerNr;
+    end;
+  end; //Edit***************************Sasha2,15:35 20.07.2015 }17:17 20.07.2015
   ActVcRecordSave = res;
   RETURN;
 END;
@@ -1446,6 +1451,11 @@ BEGIN
       Actr.EndTime = CurrentTime;
     end;
   end;
+  if (blank(Actr.PRCode)) then begin //Edit***************************Sasha2,15:35 20.07.2015 {
+    if (Actr.FromFileName=="TBBUVc" and NonBlank(Actr.FromSerNr)) then begin
+      Actr.PRCode = Actr.FromSerNr;
+    end;
+  end; //Edit***************************Sasha2,15:35 20.07.2015 }
   ActVcRecordUpdate = res;
   RETURN;
 END;
