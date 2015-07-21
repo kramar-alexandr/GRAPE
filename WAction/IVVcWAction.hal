@@ -2168,3 +2168,28 @@ begin
   IVMobilePOSDClassAfterEditField = res;
   return;
 end;
+
+
+global
+function Boolean IVLClassOnOpenWindow(Integer wn)
+begin
+	record UserVc User;
+		
+	if(usercanaction("CutIVList",true)==false)then begin
+		if(usercanaction("CutIVListViewGroup",false))then begin
+			User.Code = currentuser;
+			if(readfirstmain(User,1,true))then begin
+				if(nonblank(User.SalesGroup))then begin
+					setwindowsubset(wn,User.SalesGroup);
+				end else begin
+					setwindowsubset(wn,User.Code);
+				end;
+			end;
+		end else begin
+			setwindowsubset(wn,currentuser);
+		end;
+	end;
+	
+	IVLClassOnOpenWindow = true;
+return;
+end;
