@@ -528,7 +528,7 @@ begin
   return;
 end;
 
-global
+/*global
 function Boolean TBBUDClassOKFlagButtonAction(Integer wn,Integer value)
 BEGIN
   Boolean res;
@@ -590,9 +590,9 @@ BEGIN
 		res = UserCanAction("AllowTakeOutCheckFlagAllBudget",false);
   end;*/
     
-  TBBUDClassOKFlagButtonAction = res;
+/*  TBBUDClassOKFlagButtonAction = res;
   RETURN;
-END;
+END;*/
 
 global //Edit***************************Sasha2,13:49 16.09.2014 {
 function Boolean TBBUDClassApproveFlagButtonAction(Integer wn,Integer value)
@@ -628,30 +628,29 @@ BEGIN
   
   if (TBBUr.ApproveFlag==0) then begin 
   	res = false;
-  	  if (TBBUr.OKFlag!=0) then begin
-	  	  if (UserCanAction("AllowPutApproveFlagAllBudget",false)) then begin
-					PRr.Code = TBBUr.PRCode;
-					if(ReadfirstMain(PRr, 1, true))then begin
-						if(nonblank(PRr.FinishedDate))then begin
-							res = true;
-						end else begin
-							res = false;
-							messagebox(0,"Не известна дата завершения проекта!");
-						end;
-					end;
-		  end else begin
-		  	PRr.Code = TBBUr.PRCode;
-		  	ReadFirstMain(PRr,1,true);
-		  	if (UserCanAction("AllowPutApproveFlagOnlyProjectBudget",false) and PRr.Leader==CurrentUser) then begin
-		  		if(nonblank(PRr.FinishedDate))then begin
-						res = true;
-					end else begin
-						res = false;
-						messagebox(0,"Не известна дата завершения проекта!");
-					end;
-		  	end;
-		  end;
-  	  end;  
+		//Edit by Victor 20.07.15
+		if (UserCanAction("AllowPutApproveFlagAllBudget",false) and TBBUr.AcceptanceStatus == kAcceptanceStateApproved) then begin
+			PRr.Code = TBBUr.PRCode;
+			if(ReadfirstMain(PRr, 1, true))then begin
+				if(nonblank(PRr.FinishedDate))then begin
+					res = true;
+				end else begin
+					res = false;
+					messagebox(0,"Не известна дата завершения проекта!");
+				end;
+			end;
+		end;
+		
+		PRr.Code = TBBUr.PRCode;
+		ReadFirstMain(PRr,1,true);
+		if (UserCanAction("AllowPutApproveFlagOnlyProjectBudget",false) and PRr.Leader==CurrentUser and TBBUr.AcceptanceStatus == kAcceptanceStateApproved) then begin
+			if(nonblank(PRr.FinishedDate))then begin
+				res = true;
+			end else begin
+				res = false;
+				messagebox(0,"Не известна дата завершения проекта!");
+			end;
+		end;
   end; 
     
   TBBUDClassApproveFlagButtonAction = res;
@@ -672,14 +671,14 @@ BEGIN
 	res = true;
 	if (WindowState(wn)==updatemode) then begin
     GetPrevWindowRecord(wn,TBBUr);
-    if(TBBUr.OKFlag!=0) then begin 
+    if(TBBUr.ApproveFlag!=0) then begin 	//Edit by Victor 20.07.15
   		res = false; 
   	end;
   end;
   
   if (WindowState(wn)==normalmode) then begin
     GetWindowRecord(wn,TBBUr);
-    if(TBBUr.OKFlag!=0) then begin 
+    if(TBBUr.ApproveFlag!=0) then begin 	//Edit by Victor 20.07.15
   		res = false; 
   	end;
   end;
@@ -702,14 +701,14 @@ BEGIN
 	res = true;
 	if (WindowState(wn)==updatemode) then begin
     GetPrevWindowRecord(wn,TBBUr);
-    if(TBBUr.OKFlag!=0) then begin 
+    if(TBBUr.ApproveFlag!=0) then begin 	//Edit by Victor 20.07.15
   		res = false; 
   	end;
   end;
   
   if (WindowState(wn)==normalmode) then begin
     GetWindowRecord(wn,TBBUr);
-    if(TBBUr.OKFlag!=0) then begin 
+    if(TBBUr.ApproveFlag!=0) then begin 	//Edit by Victor 20.07.15
   		res = false; 
   	end;
   end;
@@ -731,14 +730,14 @@ BEGIN
 	res = true;
 	if (WindowState(wn)==updatemode) then begin
     GetPrevWindowRecord(wn,TBBUr);
-    if(TBBUr.OKFlag!=0) then begin 
+    if(TBBUr.ApproveFlag!=0) then begin 	//Edit by Victor 20.07.15
   		res = false; 
   	end;
   end;
   
   if (WindowState(wn)==normalmode) then begin
     GetWindowRecord(wn,TBBUr);
-    if(TBBUr.OKFlag!=0) then begin 
+    if(TBBUr.ApproveFlag!=0) then begin 	//Edit by Victor 20.07.15
   		res = false; 
   	end;
   end;
@@ -760,14 +759,14 @@ BEGIN
 	res = true;
 	if (WindowState(wn)==updatemode) then begin
     GetPrevWindowRecord(wn,TBBUr);
-    if(TBBUr.OKFlag!=0) then begin 
+    if(TBBUr.ApproveFlag!=0) then begin 	//Edit by Victor 20.07.15
   		res = false; 
   	end;
   end;
   
   if (WindowState(wn)==normalmode) then begin
     GetWindowRecord(wn,TBBUr);
-    if(TBBUr.OKFlag!=0) then begin 
+    if(TBBUr.ApproveFlag!=0) then begin 	//Edit by Victor 20.07.15
   		res = false; 
   	end;
   end;
@@ -822,7 +821,7 @@ BEGIN
 
   if (WindowState(wn)==updatemode) then begin
     GetPrevWindowRecord(wn,TBBUr);
-    if(TBBUr.OKFlag!=0) then begin 
+    if(TBBUr.ApproveFlag!=0) then begin 	//Edit by Victor 20.07.15
   		res = false; 
   		goto LTBBUDClassActiveEditField;
   	end;
@@ -1111,7 +1110,7 @@ begin
   
   if (WindowState(wn)==updatemode) then begin
     GetPrevWindowRecord(wn,TBBUr);
-    if(TBBUr.OKFlag!=0) then begin 
+    if(TBBUr.ApproveFlag!=0) then begin 	//Edit by Victor 20.07.15
   		res = false; 
   		goto LTBBUDClassDeleteRowTest;
   	end;
@@ -1182,7 +1181,7 @@ begin
   
   if (WindowState(wn)==updatemode) then begin
     GetPrevWindowRecord(wn,TBBUr);
-    if(TBBUr.OKFlag!=0) then begin 
+    if(TBBUr.ApproveFlag!=0) then begin 	//Edit by Victor 20.07.15
   		res = false; 
   	end;
   end;

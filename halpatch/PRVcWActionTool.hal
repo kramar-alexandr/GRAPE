@@ -646,3 +646,36 @@ begin
   end;
   return;
 end;
+
+global updating 
+procedure CreatePRAct(record PRVc PRp)
+BEGIN
+  record ActVc Actr;
+  Integer wn,nwn;
+  
+  RecordNew(Actr);
+		Actr.SerNr = -1;
+		Actr.SerNr = NextSerNr("ActVc",Actr.TransDate,-1,false,""); 
+		Actr.PrioLevel = -1;
+  	Actr.MainPersons = PRp.Members;
+  	Actr.ActType = "CHAT";
+  	Actr.AlarmType = 1;
+  	Actr.PRCode = PRp.Code;
+		Actr.CUCode = PRp.CustCode;
+		Actr.Contact = PRp.Contact;
+		Actr.CUName = PRp.CustName;
+		Actr.Comment = USetStr(31034) & PRp.Code & " (" & PRp.Name & ")" ;
+		Actr.FromFileName = "PRVc";
+		Actr.FromSerNr = PRp.Code;
+  	  	
+  if(RecordInsert(Actr,true)) then begin 
+  	CreateRecordLink(PRp,CurrentCompany,Actr,CurrentCompany); 
+		CreateRecordLink(Actr,CurrentCompany,PRp,CurrentCompany); 
+  	//messagebox(0, "Created" & Actr.SerNr);
+  end;
+
+	
+	nwn = OpenWindow("ActDClass",1,0,"","",Actr);
+  
+  RETURN;
+END;

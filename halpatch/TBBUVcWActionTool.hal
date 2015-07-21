@@ -942,3 +942,42 @@ begin
   
   return;
 end; //Edit***************************Sasha2,9:47 28.05.2015 }
+
+
+global updating 
+procedure CreateTBBUAct(record TBBUVc TBBUr)
+BEGIN
+  record ActVc Actr;
+  record PRVc PRr;
+  Integer wn,nwn;
+  
+  PRr.Code = TBBUr.PRCode;
+  if(ReadFirstMain(PRr, 1, true))then begin
+		RecordNew(Actr);
+			Actr.SerNr = -1;
+			Actr.SerNr = NextSerNr("ActVc",Actr.TransDate,-1,false,""); 
+			Actr.PrioLevel = -1;
+			Actr.MainPersons = PRr.Members;
+			Actr.ActType = "CHAT";
+			Actr.AlarmType = 1;
+			Actr.PRCode = PRr.Code;
+			Actr.CUCode = PRr.CustCode;
+			Actr.Contact = PRr.Contact;
+			Actr.CUName = PRr.CustName;
+			Actr.Comment = USetStr(31035) & PRr.Code & " (" & PRr.Name & ")" ;
+			Actr.FromFileName = "TBBUVc";
+			Actr.FromSerNr = TBBUr.PRCode;
+		
+		if(RecordInsert(Actr,true)) then begin 
+			//messagebox(0, "Created " & Actr.SerNr);
+			CreateRecordLink(TBBUr,CurrentCompany,Actr,CurrentCompany); 
+			CreateRecordLink(Actr,CurrentCompany,TBBUr,CurrentCompany); 
+		end;
+		
+		nwn = OpenWindow("ActDClass",1,0,"","",Actr);
+	
+  end;
+	
+  
+  RETURN;
+END;

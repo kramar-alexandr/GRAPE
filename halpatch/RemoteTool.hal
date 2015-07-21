@@ -374,7 +374,7 @@ begin
 	BlockLoad(GenOptRec);
 	BlockLoad(PRClassRec);
 	
-  if(TBBUMainr.OKFlag>0)then begin
+  if(TBBUMainr.ApproveFlag>0)then begin	//Edit by Victor 20.07.15
   	logtext(0,"Утверждено клиентом!");
   end else begin
 		if(MatRowCnt(TBBUMainr)>0)then begin

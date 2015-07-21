@@ -121,24 +121,75 @@ begin
 end;
 
 global
+updating procedure TBBUYesNoWClassAccept()
+begin
+  Integer wn,nwn, mwn,err;
+  record TBBUVc TBBUr;
+  record PRVc PRr;
+  
+  wn = CurWindow;
+  mwn = MotherWindow(wn);
+  
+  GetWindowRecord(mwn,PRr);
+  DeselectWindow(mwn,false);
+  CloseWindow(wn);   
+  if (WindowState(mwn)==0) then begin//Rs_normal
+		err = PastePRInTBBU(PRr,TBBUr);
+		switch (err) begin
+			case 0:
+				wn = OpenWindow("TBBUDClass",1,0,"","",TBBUr);      
+			otherwise
+				MessageBox(err,"");
+		end;
+	end;
+  
+  return;
+end;
+
+global
+updating procedure TBBUYesNoWClassCancel()
+begin
+  Integer wn;
+  
+  wn = CurWindow;
+  
+  CloseWindow(wn);   
+    
+  return;
+end;
+
+
+global
 procedure DoTBBUFromPRD()
 BEGIN
   record PRVc PRr;
-  Integer wn,err;
+  Integer wn,err,nwn,ab;
   record TBBUVc TBBUr;
-  
+  record RcVc RepSpec;
+
   wn = CurWindow;
-  GetWindowRecord(wn,PRr);
-  DeselectWindow(wn,false);
-  if (WindowState(wn)==0) then begin//Rs_normal
-    err = PastePRInTBBU(PRr,TBBUr);
-    switch (err) begin
-      case 0:
-        wn = OpenWindow("TBBUDClass",1,0,"","",TBBUr);      
-      otherwise
-        MessageBox(err,"");
-    end;
-  end;
+  
+  nwn = OpenWindow("TBBUYesNoWClass",0,wn,"","",RepSpec);
+  //GetWindowRecord(nwn,RepSpec);
+  //DeselectWindow(nwn,false);
+  
+  //ab = WIndowActiveButton(nwn);
+  
+    
+	/*GetWindowRecord(wn,PRr);
+	DeselectWindow(wn,false);  
+
+	if (WindowState(wn)==0) then begin//Rs_normal
+		err = PastePRInTBBU(PRr,TBBUr);
+		switch (err) begin
+			case 0:
+				wn = OpenWindow("TBBUDClass",1,0,"","",TBBUr);      
+			otherwise
+				MessageBox(err,"");
+		end;
+	end;*/
+	
+  //LDoTBBUFromPRD:;
   RETURN;
 END;
 

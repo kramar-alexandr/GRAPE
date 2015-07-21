@@ -440,6 +440,27 @@ begin
   v = 6; vs = 20; h = 130; h2 = 40;
   EndWindow;
 end;
+
+window TBBUYesNoWClass:1
+  wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
+begin
+  real h,h2,v,vs;
+  WindowBegin("Please Confirm",TBBUYesNoWClass,CGother,RcType);
+  Modality(1);
+  UseView(RcVc);
+  SetWRect(80,200,420,315);
+  h = -196; v = 30;
+  StaticText(20,v,"Обсудить бюджет с директором?",false);
+  v = -35;
+  //PushButton(h,v,h+80,v+25,1,"Yes");
+  //PushButton(h+=100,v,h+80,v+25,2,"No");
+
+  HalPushButton(h,v,h+80,v+25,"TBBUYesNoWClassCancel","Yes");
+  HalPushButton(h+=100,v,h+80,v+25,"TBBUYesNoWClassAccept","No");
+  EndWindow;
+end;
+
+
 /*
 //Edit---------------Vitalii 11:14 25.06.2015
 window ExportBudgetRClass:1
