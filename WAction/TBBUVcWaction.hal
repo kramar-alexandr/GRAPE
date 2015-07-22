@@ -657,6 +657,21 @@ BEGIN
   RETURN; 
 END; //Edit***************************Sasha2,13:49 16.09.2014 }
 
+global //Edit***************************Sasha2,16:52 22.07.2015 {
+function Boolean TBBUDClassAcceptanceStatusButtonAction(Integer wn,Integer value)
+BEGIN
+  Boolean res;
+  record TBBUVc TBBUr;
+  
+  res = false;
+  if (UserCanAction("AllowChangeAcceptanceStatus",false)) then begin
+    res = true;
+  end;
+    
+  TBBUDClassAcceptanceStatusButtonAction = res;
+  RETURN; 
+END; //Edit***************************Sasha2,16:52 22.07.2015 } 
+
 global
 function Boolean TBBUDClassBudStockedButtonAction(Integer wn,Integer value)
 BEGIN

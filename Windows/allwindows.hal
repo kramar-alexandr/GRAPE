@@ -2897,7 +2897,7 @@ begin
       Tile(tnr,80,false,tnr,Members); tnr = tnr + 1;
     end;
   end;
-  EditField(h,vm=(v=6),-170,"Участники",ViewOnly,Members,false,0);
+  EditField(h,vm=(v=6),400,"Участники",ViewOnly,Members,false,0);
   EditField(h,v+=vs,50,"Руководит.",Normal,PRLeader,false,0);
   if (HasLanguages) then begin
     EditField(h,v+=vs,50,"Язык",Normal,LangCode,false,LangSClass);

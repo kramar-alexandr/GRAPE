@@ -164,6 +164,7 @@ begin
   StrSetText(DisallowSaleBelowGP,"Не разрешать продажи ниже минимальной прибыли");
   StrSetText(DisallowWSFromSVO,"Не разрешать заказы на работу из заказа на обслуживание");
   StrSetText(ShowSerialNronPOSInvoices,"Отображать сер.№ на сч/ф кассвого терминала");
+  StrSetText(AllowChangeAcceptanceStatus,"Разрешать изменять статус бюджета"); //Edit***************************Sasha2,17:02 22.07.2015
   StrSetText(AllowDispute,"Согласовывать сч/ф");
   StrSetText(DownloadHalcust,"Download halcust & halpatch");  
   StrSetText(ORToDownPay,"Аванс из счета клиенту");
