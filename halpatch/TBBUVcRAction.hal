@@ -27,7 +27,11 @@ record PRVc PRr;
 	
 	PRr.Code = TBBUr.PRCode;
 	if(readfirstmain(PRr,1,true))then begin
-		PRr.BUOKFlag = TBBUr.OKFlag;
+	  if (TBBUr.AcceptanceStatus==kAcceptanceStateApproved) then begin
+	    PRr.BUOKFlag = 18;
+	  end else begin
+	   PRr.BUOKFlag = 0;
+	  end;
 		recordStore(PRr,true);
 	end;
 return;
@@ -572,9 +576,10 @@ begin
 	if (TBBUr.ApproveFlag==1) then begin
 		UpdatePRBUApproveFlag(TBBUr); //Edit***************************Sasha2,15:12 16.09.2014
 		PasteTBBUInVIFunc(TBBUr); //Edit by Victor 20.07.15	
-		CreateProjInvoice(TBBUr); // Edit by Victor 20.07.15	
-		UpdatePRBUOkFlag(TBBUr);	//Edit by Victor 20.07.15	
+		CreateProjInvoice(TBBUr); // Edit by Victor 20.07.15		
 	end;
+	
+	UpdatePRBUOkFlag(TBBUr);	//Edit by Victor 20.07.15	
 	
   SetTBBUAcceptanceFlag(TBBUr,TBBU2r,stat);
   TBBUVcRecordSaveAfter = res; 
@@ -606,6 +611,10 @@ begin
 	//end;
 	if(TBBUr.ApproveFlag!=TBBU2r.ApproveFlag)then begin
 		UpdatePRBUApproveFlag(TBBUr); //Edit***************************Sasha2,15:12 16.09.2014
+	end;
+	
+	if(TBBUr.AcceptanceStatus!=TBBU2r.AcceptanceStatus)then begin
+	 UpdatePRBUOkFlag(TBBUr); //Edit***************************Sasha2,13:20 22.07.2015
 	end;
 	
   switch (TBBUr.AcceptanceStatus) begin

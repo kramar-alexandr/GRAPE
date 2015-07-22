@@ -4483,7 +4483,7 @@ begin
 	RlCol(-220,-220,"Дата оконч.",EndDate,false);
   RlColKey(-155,-155,"Статус",StatMark,false,StatMark);
   RlCol(-115,-115,"Бюдж.утв.",BUOKFlag,false);
-  RlCol(-60,-60,"Б.подт.кл.",BUApproveFlag,false);
+  RlCol(-60,-60,"Б.утв.кл.",BUApproveFlag,false);
   SearchField("Найти");
   if (HasLimitedAccess) then begin
 //  if (HasLimitedAccess and HasTouchScreenDevice==false) then begin
