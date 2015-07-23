@@ -967,7 +967,8 @@ BEGIN
 			Actr.Comment = USetStr(31035) & PRr.Code & " (" & PRr.Name & ")" ;
 			Actr.FromFileName = "TBBUVc";
 			Actr.FromSerNr = TBBUr.PRCode;
-		
+			Actr.TodoFlag = 1; 		//Plan
+			
 		if(RecordInsert(Actr,true)) then begin 
 			//messagebox(0, "Created " & Actr.SerNr);
 			CreateRecordLink(TBBUr,CurrentCompany,Actr,CurrentCompany); 

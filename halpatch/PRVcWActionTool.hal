@@ -667,7 +667,7 @@ BEGIN
 		Actr.Comment = USetStr(31034) & PRp.Code & " (" & PRp.Name & ")" ;
 		Actr.FromFileName = "PRVc";
 		Actr.FromSerNr = PRp.Code;
-  	  	
+  	Actr.TodoFlag = 1; 		//Plan// Edit ************************** Thursday, 23 July 2015 09:24:28
   if(RecordInsert(Actr,true)) then begin 
   	CreateRecordLink(PRp,CurrentCompany,Actr,CurrentCompany); 
 		CreateRecordLink(Actr,CurrentCompany,PRp,CurrentCompany); 

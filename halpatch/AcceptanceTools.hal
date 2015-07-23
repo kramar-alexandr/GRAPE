@@ -2804,6 +2804,17 @@ begin
             RecordUpdate(oldTBBUr,TBBUr,true);
             SetAcceptanceTasksRejectedForAllLevels("TBBUVc",TBBUr.PRCode,bc1v,Actr,Acptr);
           end;
+          // Edit Start ---------------------------------------------- Edit Start
+	//Wednesday, 22 July 2015 17:47:01
+	
+          if (Actr.ActResult==Acptr.CancelledActType) then begin
+            TBBUr.AcceptanceStatus = kAcceptanceStateNotRequested;
+            RecordUpdate(oldTBBUr,TBBUr,true);
+            SetAcceptanceTasksRejectedForAllLevels("TBBUVc",TBBUr.PRCode,bc1v,Actr,Acptr);
+          end;
+          
+	// Edit End ---------------------------------------------- Edit End
+	
           if (Actr.ActResult==Acptr.AcceptedActType) then begin
             testf = AcceptanceTasksAcceptedForAllLevels("TBBUVc",TBBUr.PRCode,bc1v,Actr,Acptr);
             if (testf) then begin
@@ -3504,12 +3515,16 @@ begin
   Actr.FromFileName = FromFileName;
   Actr.FromSerNr = FromSerNr;
   found = true;
-  while (LoopKey("FromFileName",Actr,2,found)) begin
+  while (LoopBackKey("FromFileName",Actr,2,found)) begin// Edit ************************** Wednesday, 22 July 2015 17:14:39
     if (Actr.FromFileName!=FromFileName) then begin found = false; end;
     if (Actr.FromSerNr!=FromSerNr) then begin found = false; end;
     if (found) then begin
       testf = true;
-      if (Actr.ActResult==Acptr.CancelledActType) then begin testf = false; end;
+      if (Actr.ActResult==Acptr.CancelledActType) then begin testf = false;// Edit ************************** Wednesday, 22 July 2015 17:14:42
+      	if (Actr.OKFlag!=0) then begin 
+          goto LCancelApprovalRequestAllowed;
+        end;
+      end;
       if (Actr.ActType!=Acptr.AcceptanceActType) then begin testf = false; end;
       if (testf) then begin
         if (Actr.OKFlag!=0) then begin 
