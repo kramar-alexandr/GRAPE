@@ -449,7 +449,7 @@ begin
 	logtext(0,0);
 	if(PRr.FinishedDate!=PR2r.FinishedDate and nonblank(PR2r.FinishedDate))then begin// Edit ************************** Friday, 24 July 2015 10:21:23
 		logtext(0,1);
-		CreateCustomTask("SA","PRVc",PRr.Code,"MES " & PRr.Code & " Изменилась дата проекта","MES");
+		logtext(0,CreateCustomTask("SA","PRVc",PRr.Code,"MES " & PRr.Code & " Изменилась дата проекта","MES"));
 	end;
 	
   PRVcRecordUpdateAfter = res; 
