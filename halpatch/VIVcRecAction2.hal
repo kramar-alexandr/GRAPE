@@ -44,7 +44,114 @@ external function Boolean PastePayRecVI(record VIVc,string);
 external procedure GetFullCurncyRate (var string,Date,var val,var val,var val,var val,var val);
 external procedure GetSalesGroup(string,var string);
 external function Boolean UserCanInvalidateVI();
+external updating function LongInt GetDaysAmountFromPayDeal(date,string,string); //Edit***************************Sasha2,11:04 24.07.2015
 
+global//Edit***************************Sasha2,16:29 24.07.2015 {
+updating procedure VICreateNewAct(record VIVc VIr)
+begin
+record ActVc Actr,oldActr;
+record PRVc PRr;
+boolean TrHs,found;
+LongInt days;
+string 5 acttypev;
+	
+  days = GetDaysAmountFromPayDeal(VIr.DueDate,VIr.PayDeal,VIr.VECode);
+
+  if (AddDay(VIr.DueDate,days)>=CurrentDate) then begin	
+  
+  	PRr.Code = VIr.PRCode;
+  	ReadFirstMain(PRr,1,true);
+  	
+  	TrHs = true;
+  	found = false;
+  	acttypev = "OPAY5";
+	  
+  	Actr.ActType = acttypev;
+  	while(LoopKey("ActType",Actr,1,TrHs)) begin
+  		if ((StringToLongInt(Actr.FromSerNr)==VIr.SerNr) and (Actr.ActType == acttypev)) then begin
+  			RecordCopy(oldActr,Actr);
+  			Actr.TransDate = AddDay(VIr.DueDate,(days - 5));
+  			Actr.EndDate = AddDay(VIr.DueDate,days);  			
+  			Actr.MainPersons = PRr.Leader;
+  			Actr.CCPersons = PRr.Leader;
+  			Actr.Comment = USetStr(31037) &" "& VIr.SerNr;
+  			RecordUpdate(oldActr,Actr,true);
+  			TrHs = false;
+  			found = true;
+  		end;
+  	end; RESETLOOP(Actr);
+  	
+  	if (found==false) then begin
+  		RecordNew(Actr);
+  		Actr.SerNr = -1;
+  		Actr.SerNr = NextSerNr("ActVc",Actr.TransDate,-1,false,""); 
+  		Actr.PrioLevel = -1;		
+  		Actr.TodoFlag = 1; 		//Plan
+  		Actr.MainPersons = PRr.Leader;
+  		//Actr.Supervisor = PRr.Leader;
+  		Actr.CCPersons = PRr.Leader;
+  		Actr.TransDate = AddDay(VIr.DueDate,(days - 5));
+  		Actr.StartTime = "10:00:00";
+  		Actr.EndDate = AddDay(VIr.DueDate,days);
+  		Actr.Comment = USetStr(31037) &" "& VIr.SerNr;
+  		Actr.ActType = acttypev;
+  		Actr.PRCode = PRr.Code;
+  		Actr.FromSerNr = VIr.SerNr;
+  		Actr.CUCode = VIr.VECode;
+  		//Actr.Contact = PRr.Contact;
+  		Actr.CUName = VIr.VEName;
+  		Actr.CalTimeFlag = 1; 	//Calendar->Time
+  		Actr.AlarmType = 1; 	//Alarm->Message
+  		if(RecordStore(Actr,true)) then begin end;
+  	end;
+  	
+  	TrHs = true;
+  	found = false;
+  	acttypev = "OPAY1";
+	  
+	  Actr.ActType = acttypev;
+  	while(LoopKey("ActType",Actr,1,TrHs)) begin
+  		if ((StringToLongInt(Actr.FromSerNr)==VIr.SerNr) and (Actr.ActType == acttypev)) then begin
+  			RecordCopy(oldActr,Actr);
+  			Actr.TransDate = AddDay(VIr.DueDate,(days - 1));
+  			Actr.EndDate = AddDay(VIr.DueDate,days);  			
+  			Actr.MainPersons = PRr.Leader;
+  			Actr.CCPersons = PRr.Leader;
+  			Actr.Comment = USetStr(31037) &" "& VIr.SerNr;
+  			RecordUpdate(oldActr,Actr,true);
+  			TrHs = false;
+  			found = true;
+  		end;
+  	end; RESETLOOP(Actr);
+  	
+  	if (found==false) then begin
+  		RecordNew(Actr);
+  		Actr.SerNr = -1;
+  		Actr.SerNr = NextSerNr("ActVc",Actr.TransDate,-1,false,""); 
+  		Actr.PrioLevel = -1;		
+  		Actr.TodoFlag = 1; 		//Plan
+  		Actr.MainPersons = PRr.Leader;
+  		//Actr.Supervisor = PRr.Leader;
+  		Actr.CCPersons = PRr.Leader;
+  		Actr.TransDate = AddDay(VIr.DueDate,(days - 1));
+  		Actr.StartTime = "10:00:00";
+  		Actr.EndDate = AddDay(VIr.DueDate,days);
+  		Actr.Comment = USetStr(31037) &" "& VIr.SerNr;
+  		Actr.ActType = acttypev;
+  		Actr.PRCode = PRr.Code;
+  		Actr.FromSerNr = VIr.SerNr;
+  		Actr.CUCode = VIr.VECode;
+  		//Actr.Contact = PRr.Contact;
+  		Actr.CUName = VIr.VEName;
+  		Actr.CalTimeFlag = 1; 	//Calendar->Time
+  		Actr.AlarmType = 1; 	//Alarm->Message
+  		if(RecordStore(Actr,true)) then begin end;
+  	end;
+  	
+  end;
+  
+return;
+end;	 //Edit***************************Sasha2,16:29 24.07.2015 }
 
 procedure SetVIAcceptanceFlag(var record VIVc VIr,record VIVc prevVIr,LongInt stat)
 begin
@@ -544,6 +651,9 @@ BEGIN
       UpdateBatchTextFromVI(VIr,0);
     end;
     SetKPIsStatus("modPL",kKPIStatusInvalid);
+    if (NonBlankDate(VIr.DueDate)) then begin //Edit***************************Sasha2,18:11 17.12.2014 {
+  		VICreateNewAct(VIr);
+  	end; //Edit***************************Sasha2,18:11 17.12.2014 }
   end;
   VIVcRecordSaveAfter = res;
   RETURN;
@@ -678,6 +788,9 @@ BEGIN
       VIrsPrelBookingStats(VI2r,true);
     end;
     SetKPIsStatus("modPL",kKPIStatusInvalid);
+    if (NonBlankDate(VIr.DueDate) and VIr.OKFlag!=0) then begin //Edit***************************Sasha2,18:11 17.12.2014 {
+  		VICreateNewAct(Vir);
+  	end; //Edit***************************Sasha2,18:11 17.12.2014 }
   end;  
   if ((VIr.OKFlag!=0) and (VI2r.OKFlag!=0)) then begin
     if (VIr.InvoiceNr!=VI2r.InvoiceNr) then begin

@@ -97,6 +97,114 @@ external function Boolean EInvoiceWithPDFFileTest(string,string,var record EInvC
 external updating procedure RoyaltyIVRemoved(record IVVc);
 external function LongInt CountWorkingDays(Date,Date,string,string);
 external function Boolean GetPD(var record PDVc);
+external updating function LongInt GetDaysAmountFromPayDeal(date,string,string); //Edit***************************Sasha2,11:04 24.07.2015
+
+global//Edit***************************Sasha2,16:29 24.07.2015 {
+updating procedure IVCreateNewAct(record IVVc IVr)
+begin
+record ActVc Actr,oldActr;
+record PRVc PRr;
+boolean TrHs,found;
+LongInt days;
+string 5 acttypev;
+	
+  days = GetDaysAmountFromPayDeal(IVr.PayDate,IVr.PayDeal,IVr.CustCode);
+  	
+  if (AddDay(IVr.PayDate,days)>=CurrentDate) then begin	
+  
+  	PRr.Code = IVr.PRCode;
+  	ReadFirstMain(PRr,1,true);
+  	
+  	TrHs = true;
+  	found = false;
+  	acttypev = "IPAY5";
+	  
+  	Actr.ActType = acttypev;
+  	while(LoopKey("ActType",Actr,1,TrHs)) begin
+  		if ((StringToLongInt(Actr.FromSerNr)==IVr.SerNr) and (Actr.ActType == acttypev)) then begin
+  			RecordCopy(oldActr,Actr);
+  			Actr.TransDate = AddDay(IVr.PayDate,(days - 5));
+  			Actr.EndDate = AddDay(IVr.PayDate,days);  			
+  			Actr.MainPersons = PRr.Leader;
+  			Actr.CCPersons = PRr.Leader;
+  			Actr.Comment = USetStr(31037) &" "& IVr.SerNr;
+  			RecordUpdate(oldActr,Actr,true);
+  			TrHs = false;
+  			found = true;
+  		end;
+  	end; RESETLOOP(Actr);
+  	
+  	if (found==false) then begin
+  		RecordNew(Actr);
+  		Actr.SerNr = -1;
+  		Actr.SerNr = NextSerNr("ActVc",Actr.TransDate,-1,false,""); 
+  		Actr.PrioLevel = -1;		
+  		Actr.TodoFlag = 1; 		//Plan
+  		Actr.MainPersons = PRr.Leader;
+  		//Actr.Supervisor = PRr.Leader;
+  		Actr.CCPersons = PRr.Leader;
+  		Actr.TransDate = AddDay(IVr.PayDate,(days - 5));
+  		Actr.StartTime = "10:00:00";
+  		Actr.EndDate = AddDay(IVr.PayDate,days);
+  		Actr.Comment = USetStr(31037) &" "& IVr.SerNr;
+  		Actr.ActType = acttypev;
+  		Actr.PRCode = PRr.Code;
+  		Actr.FromSerNr = IVr.SerNr;
+  		Actr.CUCode = IVr.CustCode;
+  		//Actr.Contact = PRr.Contact;
+  		Actr.CUName = IVr.Addr0;
+  		Actr.CalTimeFlag = 1; 	//Calendar->Time
+  		Actr.AlarmType = 1; 	//Alarm->Message
+  		if(RecordStore(Actr,true)) then begin end;
+  	end;
+  	
+  	TrHs = true;
+  	found = false;
+  	acttypev = "IPAY1";
+	  
+	  Actr.ActType = acttypev;
+  	while(LoopKey("ActType",Actr,1,TrHs)) begin
+  		if ((StringToLongInt(Actr.FromSerNr)==IVr.SerNr) and (Actr.ActType == acttypev)) then begin
+  			RecordCopy(oldActr,Actr);
+  			Actr.TransDate = AddDay(IVr.PayDate,(days - 1));
+  			Actr.EndDate = AddDay(IVr.PayDate,days);  			
+  			Actr.MainPersons = PRr.Leader;
+  			Actr.CCPersons = PRr.Leader;
+  			Actr.Comment = USetStr(31037) &" "& IVr.SerNr;
+  			RecordUpdate(oldActr,Actr,true);
+  			TrHs = false;
+  			found = true;
+  		end;
+  	end; RESETLOOP(Actr);
+  	
+  	if (found==false) then begin
+  		RecordNew(Actr);
+  		Actr.SerNr = -1;
+  		Actr.SerNr = NextSerNr("ActVc",Actr.TransDate,-1,false,""); 
+  		Actr.PrioLevel = -1;		
+  		Actr.TodoFlag = 1; 		//Plan
+  		Actr.MainPersons = PRr.Leader;
+  		//Actr.Supervisor = PRr.Leader;
+  		Actr.CCPersons = PRr.Leader;
+  		Actr.TransDate = AddDay(IVr.PayDate,(days - 1));
+  		Actr.StartTime = "10:00:00";
+  		Actr.EndDate = AddDay(IVr.PayDate,days);
+  		Actr.Comment = USetStr(31037) &" "& IVr.SerNr;
+  		Actr.ActType = acttypev;
+  		Actr.PRCode = PRr.Code;
+  		Actr.FromSerNr = IVr.SerNr;
+  		Actr.CUCode = IVr.CustCode;
+  		//Actr.Contact = PRr.Contact;
+  		Actr.CUName = IVr.Addr0;
+  		Actr.CalTimeFlag = 1; 	//Calendar->Time
+  		Actr.AlarmType = 1; 	//Alarm->Message
+  		if(RecordStore(Actr,true)) then begin end;
+  	end;
+  	
+  end;
+  
+return;
+end;	 //Edit***************************Sasha2,16:29 24.07.2015 }
 
 procedure SetIVAcceptanceFlag(var record IVVc IVr,record IVVc prevIVr,LongInt stat)
 begin
@@ -633,8 +741,11 @@ BEGIN
 
   if (IVr.Invalid==0) then begin
   	if (NonBlankDate(IVr.PayDate)) then begin //Edit***************************Sasha2,18:11 17.12.2014 {
-	  UpdateVIPayDate(IVr.PRCode,IVr.PayDate);
-	end; //Edit***************************Sasha2,18:11 17.12.2014 }
+  	  UpdateVIPayDate(IVr.PRCode,IVr.PayDate);
+  	  if (IVr.OKFlag!=0) then begin
+  	    IVCreateNewAct(IVr); //Edit***************************Sasha2,17:03 24.07.2015
+  	  end;
+  	end; //Edit***************************Sasha2,18:11 17.12.2014 }
     if (IVr.OKFlag!=0) then begin
       IVUpdateItemHist(IVr);
       IVUpdateSerialNr(IVr,false,true);
@@ -1131,8 +1242,11 @@ BEGIN
   end;
   if ((IV2r.Invalid==0) and (IVr.Invalid==0)) then begin
   	if (IVr.PayDate!=IV2r.PayDate) then begin //Edit***************************Sasha2,18:11 17.12.2014 {
-		UpdateVIPayDate(IVr.PRCode,IVr.PayDate); 
-	end; //Edit***************************Sasha2,18:11 17.12.2014 }
+  		UpdateVIPayDate(IVr.PRCode,IVr.PayDate); 
+  	end; //Edit***************************Sasha2,18:11 17.12.2014 }
+  	if (NonBlankDate(IVr.PayDate) and IVr.OKFlag!=0) then begin //Edit***************************Sasha2,18:11 17.12.2014 {
+  		IVCreateNewAct(IVr);
+  	end; //Edit***************************Sasha2,18:11 17.12.2014 }
     if (IVr.OrderNr!=-1) then begin
       UpdateOrderFromInv(IVr,true,IV2r,true);
     end;

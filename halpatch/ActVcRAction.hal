@@ -417,6 +417,54 @@ LCheckMultipleIndexField:;
   return;
 end;
 
+
+//Edit***************************Sasha2,11:39 24.07.2015 {
+function string 20 GetPRCodeFromDocument(string fromfilename,string fromserNr)
+begin
+  string 20 res;
+  record ORVc ORr; 
+  record IVVc IVr; 
+  record VIVc VIr;
+  record SHVc SHr;
+  record SDVc SDr; 
+  
+    res = "";
+    switch (fromfilename) begin
+      case "TBBVc":
+        res = fromserNr;
+      case "PRVc":
+        res = fromserNr;
+      case "ORVc":
+        ORr.SerNr = StringToLongInt(fromserNr);
+        if(ReadFirstMain(ORr,1,true))then begin
+        	res = ORr.PRCode;
+        end;
+      case "IVVc":
+        IVr.SerNr = StringToLongInt(fromserNr);
+        if(ReadFirstMain(IVr,1,true))then begin
+        	res = IVr.PRCode;
+        end;
+      case "VIVc":
+        VIr.SerNr = StringToLongInt(fromserNr);
+        if(ReadFirstMain(VIr,1,true))then begin
+        	res = VIr.PRCode;
+        end;
+      case "SDVc":
+        SDr.SerNr = StringToLongInt(fromserNr);
+        if(ReadFirstMain(SDr,1,true))then begin
+        	res = SDr.PRCode;
+        end;
+      case "SHVc":
+        SHr.SerNr = StringToLongInt(fromserNr);
+        if(ReadFirstMain(SHr,1,true))then begin
+        	res = SHr.PRCode;
+        end;
+    end;
+    
+    GetPRCodeFromDocument = res;
+  return;
+end; //Edit***************************Sasha2,11:39 24.07.2015 }
+
 global
 updating function LongInt ActVcRecordCheck(var record ActVc Actr,record ActVc Act2r,LongInt stat,LongInt long4)
 BEGIN
@@ -496,9 +544,7 @@ BEGIN
   end;
   acttypgrf = false;
   if (blank(Actr.PRCode)) then begin //Edit***************************Sasha2,15:35 20.07.2015 {
-    if (Actr.FromFileName=="TBBUVc" and NonBlank(Actr.FromSerNr)) then begin
-      Actr.PRCode = Actr.FromSerNr;
-    end;
+    Actr.PRCode = GetPRCodeFromDocument(Actr.FromFileName,Actr.FromSerNr);
   end; //Edit***************************Sasha2,15:35 20.07.2015 }
   if (nonblank(Actr.PRCode)) then begin
     PRr.Code = Actr.PRCode;
@@ -1290,10 +1336,8 @@ BEGIN
   Actr.CreationDate = CurrentDate;
   Actr.LastChangedDate = CurrentDate;
   if (blank(Actr.PRCode)) then begin //Edit***************************Sasha2,15:35 20.07.2015 {
-    if (Actr.FromFileName=="TBBUVc" and NonBlank(Actr.FromSerNr)) then begin
-      Actr.PRCode = Actr.FromSerNr;
-    end;
-  end; //Edit***************************Sasha2,15:35 20.07.2015 }17:17 20.07.2015
+    Actr.PRCode = GetPRCodeFromDocument(Actr.FromFileName,Actr.FromSerNr);
+  end; //Edit***************************Sasha2,15:35 20.07.2015 }
   ActVcRecordSave = res;
   RETURN;
 END;
@@ -1452,9 +1496,7 @@ BEGIN
     end;
   end;
   if (blank(Actr.PRCode)) then begin //Edit***************************Sasha2,15:35 20.07.2015 {
-    if (Actr.FromFileName=="TBBUVc" and NonBlank(Actr.FromSerNr)) then begin
-      Actr.PRCode = Actr.FromSerNr;
-    end;
+    Actr.PRCode = GetPRCodeFromDocument(Actr.FromFileName,Actr.FromSerNr);
   end; //Edit***************************Sasha2,15:35 20.07.2015 }
   ActVcRecordUpdate = res;
   RETURN;
