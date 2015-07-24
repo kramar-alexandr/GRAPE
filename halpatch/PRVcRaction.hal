@@ -20,6 +20,7 @@ remote procedure IVVc_PasteInvDate(var record IVVc,record LocalMachineBlock,var 
 external updating procedure CreatePRAct(record PRVc);
 external function Boolean CreateCustomTask(string,string,string,string,string);
 
+SetLangMode(LangRussian,"RUS",0);
 
 global
 function LongInt PRVcRecordInIndex(record PRVc PRr,string indexname)
@@ -445,8 +446,10 @@ begin
   	UpdateInvDates(DateDiff(PRr.FinishedDate,PR2r.FinishedDate),PRr.Code);
   end; //Edit***************************Sasha2,11:07 30.12.2014 }
 	
+	logtext(0,0);
 	if(PRr.FinishedDate!=PR2r.FinishedDate and nonblank(PR2r.FinishedDate))then begin// Edit ************************** Friday, 24 July 2015 10:21:23
-		CreateCustomTask("SA","PRVc",PRr.Code,"Изменилась дата документа","MES");
+		logtext(0,1);
+		CreateCustomTask("SA","PRVc",PRr.Code,"MES " & PRr.Code & " Изменилась дата проекта","MES");
 	end;
 	
   PRVcRecordUpdateAfter = res; 
