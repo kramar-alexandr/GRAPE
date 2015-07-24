@@ -449,7 +449,7 @@ begin
 			  
 			  payday = true;
   
-				switch(getDateid(AddDay(PRr.EndDate,pdays)))begin
+				switch(getDateid(AddDay(PRr.EndDate,pdays))) begin
 					case 1: if(CUr.Monday!=0) then begin payday = false;end;
 					case 2: if(CUr.Tuesday!=0) then begin  payday = false;end;
 					case 3: if(CUr.Wednesday!=0) then begin payday = false;end;
@@ -465,7 +465,7 @@ begin
 						testf = !payday;
 					end;
 	
-					while(testf)begin
+					while(testf) begin
 						i=i+1;
 						if(PDr.DayType==1)then begin
 						datedif = CountWorkingDays(AddDay(PRr.EndDate,1),AddDay(PRr.EndDate,pdays + i),PRr.CustCode,country);
