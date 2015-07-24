@@ -17,6 +17,7 @@ remote procedure PasteTBBUInVIFunc(record TBBUVc);
 external function LongInt CountWorkingDays(Date,Date,string,string); //Edit***************************Sasha2,11:05 12.12.2014
 external function LongInt DateDiff(Date,Date); //Edit by Victor 23.12.14
 external updating procedure CreateTBBUAct(record TBBUVc);
+external updating function Boolean CreateCustomTask(string,string,string,string,string);
 
 // Edit Start ---------------------------------------------- Edit Start
 	//Friday, 12 September 2014 16:24:32
@@ -600,6 +601,7 @@ global
 updating function LongInt TBBUVcRecordUpdateAfter(var record TBBUVc TBBUr,record TBBUVc TBBU2r,LongInt stat,LongInt long4)
 begin
   LongInt res;
+  boolean f;
   val bc1v;
 	
 	if(TBBUr.ApproveFlag==1 and TBBU2r.ApproveFlag==0)then begin	//Edit by Victor 20.07.15	
@@ -627,6 +629,9 @@ begin
       if (TBBU2r.AcceptanceStatus==kAcceptanceStatePending) then begin
         CancelApprovalRequestActivities(kAcceptanceTBBU,"TBBUVc",TBBUr.PRCode,"");
       end;
+  end;
+  if (TBBUr.ApproveFlag==1) then begin
+	f = CreateCustomTask("KOSTYRKYN,LARISA,SALIVON,NDREW,GLADKIY","TBBUVc",TBBUr.PRCode,"CLApr " & TBBUr.PRCode & " " & USetStr(31036),"CLApr");
   end;
 
   TBBUVcRecordUpdateAfter = res; 

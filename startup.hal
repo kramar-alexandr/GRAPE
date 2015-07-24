@@ -47,6 +47,7 @@ begin
 	SString(31033,"Выписать акт по проекту");	//Edit******************Dima 29.12.2014
 	SString(31034,"Чат проекта ");	//Edit by Victor 20.7.15
 	SString(31035,"Чат бюджета ");	//Edit by Victor 20.7.15
+	SString(31036,"Утверждено клиентом");	//Edit---------------Vitalii 10:33 24.07.2015
   
   StrSetBegin(3); /* Try to keep them in alphabetical order */
   StrSetText(AllowAddingINtoRet,"Добавлять товары в возвраты");
