@@ -19,6 +19,7 @@ external function LongInt DateDiff(Date,Date); //Edit***************************
 remote procedure IVVc_PasteInvDate(var record IVVc,record LocalMachineBlock,var Integer,var Integer); //Edit***************************Sasha2,12:00 30.12.2014
 external updating procedure CreatePRAct(record PRVc);
 external function Boolean CreateCustomTask(string,string,string,string,string);
+external updating function LongInt GetDaysAmountFromPayDeal(date,string,string); //Edit***************************Sasha2,11:04 24.07.2015
 
 SetLangMode(LangRussian,"RUS",0);
 
