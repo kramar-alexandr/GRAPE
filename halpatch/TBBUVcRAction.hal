@@ -631,7 +631,7 @@ begin
       end;
   end;
   if (TBBUr.ApproveFlag==1) then begin
-	f = CreateCustomTask("KOSTYRKYN,LARISA,SALIVON,NDREW,GLADKIY","TBBUVc",TBBUr.PRCode,"CLApr " & TBBUr.PRCode & " " & USetStr(31036),"CLApr");
+	f = CreateCustomTask("KOSTYRKYN,LARISA,SALIVON,NDREW,GLADKIY","TBBUVc",TBBUr.PRCode,"CLAPR " & TBBUr.PRCode & " " & USetStr(31036),"CLAPR");
   end;
 
   TBBUVcRecordUpdateAfter = res; 
