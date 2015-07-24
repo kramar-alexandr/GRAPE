@@ -18,6 +18,8 @@ forward updating procedure PRCreateNewAct(record PRVc);
 external function LongInt DateDiff(Date,Date); //Edit***************************Sasha2,11:11 30.12.2014
 remote procedure IVVc_PasteInvDate(var record IVVc,record LocalMachineBlock,var Integer,var Integer); //Edit***************************Sasha2,12:00 30.12.2014
 external updating procedure CreatePRAct(record PRVc);
+external function Boolean CreateCustomTask(string,string,string,string);
+
 
 global
 function LongInt PRVcRecordInIndex(record PRVc PRr,string indexname)
@@ -442,7 +444,11 @@ begin
   if (PRr.FinishedDate!=PR2r.FinishedDate) then begin //Edit***************************Sasha2,11:07 30.12.2014 {
   	UpdateInvDates(DateDiff(PRr.FinishedDate,PR2r.FinishedDate),PRr.Code);
   end; //Edit***************************Sasha2,11:07 30.12.2014 }
-
+	
+	if(PRr.FinishedDate!=PR2r.FinishedDate and nonblank(PR2r.FinishedDate))then begin// Edit ************************** Friday, 24 July 2015 10:21:23
+		CreateCustomTask("SA","PRVc",PRr.Code,"Изменилась дата документа");
+	end;
+	
   PRVcRecordUpdateAfter = res; 
   return;
 end;
