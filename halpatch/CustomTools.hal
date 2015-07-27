@@ -209,7 +209,7 @@ begin
 				if firstf then begin
 					firstf = false;
 				end else begin
-					AddTextToArea(" ",tempArea);
+					AddTextToArea(",",tempArea);
 				end;
 				emailf = true;
 				AddTextToArea(Userr.emailAddr,tempArea);
