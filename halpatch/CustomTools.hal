@@ -191,7 +191,7 @@ begin
 	area tempArea;
 	integer pos;
 	
-	fouldername = "forMail";
+	fouldername = "/secure/doc/hansa/forMail";
 	if !DirExists(fouldername) then begin
 		CreateFolder(fouldername);
 	end;
