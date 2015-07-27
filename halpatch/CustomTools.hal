@@ -230,7 +230,7 @@ begin
 	end;
 	WriteAreaToFile(tempArea,fouldername & "/B" & Actr.SerNr,0);
 	if emailf then begin
-		RunProgram("mutt","-s < /" & fouldername & "/S" & Actr.SerNr & " -- < /" & fouldername & "/U" & Actr.SerNr & " < /" & fouldername & "/B" & Actr.SerNr);
+		RunProgram("/secure/doc/hansa/sendmail.sh",Actr.SerNr);
 	end;
 	return;
 end;
