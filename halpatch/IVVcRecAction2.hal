@@ -155,7 +155,10 @@ string 5 acttypev;
   		Actr.CUName = IVr.Addr0;
   		Actr.CalTimeFlag = 1; 	//Calendar->Time
   		Actr.AlarmType = 1; 	//Alarm->Message
-  		if(RecordStore(Actr,true)) then begin end;
+  		if(RecordStore(Actr,true)) then begin
+  		  CreateRecordLink(Actr,CurrentCompany,IVr,CurrentCompany);
+        CreateRecordLink(IVr,CurrentCompany,Actr,CurrentCompany);
+  		end;
   	end;
   	
   	TrHs = true;
@@ -198,7 +201,10 @@ string 5 acttypev;
   		Actr.CUName = IVr.Addr0;
   		Actr.CalTimeFlag = 1; 	//Calendar->Time
   		Actr.AlarmType = 1; 	//Alarm->Message
-  		if(RecordStore(Actr,true)) then begin end;
+  		if(RecordStore(Actr,true)) then begin
+  		  CreateRecordLink(Actr,CurrentCompany,IVr,CurrentCompany);
+        CreateRecordLink(IVr,CurrentCompany,Actr,CurrentCompany);
+  		end;
   	end;
   	
   end;
