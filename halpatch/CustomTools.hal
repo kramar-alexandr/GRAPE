@@ -190,7 +190,10 @@ begin
 	string 5 nl;
 	area tempArea;
 	integer pos;
+	boolean emailf, firstf;
 	
+	emailf = false;
+	firstf = true;
 	fouldername = "/secure/doc/hansa/forMail";
 	if !DirExists(fouldername) then begin
 		CreateFolder(fouldername);
@@ -202,23 +205,33 @@ begin
 	while (nonblank(user)) begin
 		Userr.Code = user;
 		if (ReadFirstMain(Userr,1,true)) then begin
-			AddTextToArea(Userr.emailAddr & " ",tempArea);
+			if nonblank(Userr.emailAddr) then begin
+				if firstf then begin
+					firstf = false;
+				end else begin
+					AddTextToArea(" ",tempArea);
+				end;
+				emailf = true;
+				AddTextToArea(Userr.emailAddr,tempArea);
+			end;
 		end;
 		ExtractObj(users,pos,user);
 	end;
 	WriteAreaToFile(tempArea,fouldername & "/U" & Actr.SerNr,0);
 	SetAreaZeroSize(tempArea);
-	AddTextToArea(Actr.Comment,tempArea);
+	AddTextToArea(Chr(34) & Actr.Comment & Chr(34),tempArea);
 	WriteAreaToFile(tempArea,fouldername & "/S" & Actr.SerNr,0);
 	SetAreaZeroSize(tempArea);
-	AddTextToArea(Actr.Comment & nl,tempArea);
+	AddTextToArea(Actr.Comment,tempArea);
 	rwcnt = MatRowCnt(Actr);
 	for (i=0;i<rwcnt;i=i+1) begin
+		AddTextToArea(nl & Actrw.Text,tempArea);
 		MatRowGet(Actr,i,Actrw);
-		AddTextToArea(Actrw.Text & nl,tempArea);
 	end;
 	WriteAreaToFile(tempArea,fouldername & "/B" & Actr.SerNr,0);
-	RunProgram("mutt","-s < /" & fouldername & "/S" & Actr.SerNr & " -- < /" & fouldername & "/U" & Actr.SerNr & " < /" & fouldername & "/B" & Actr.SerNr);
+	if emailf then begin
+		RunProgram("mutt","-s < /" & fouldername & "/S" & Actr.SerNr & " -- < /" & fouldername & "/U" & Actr.SerNr & " < /" & fouldername & "/B" & Actr.SerNr);
+	end;
 	return;
 end;
 
