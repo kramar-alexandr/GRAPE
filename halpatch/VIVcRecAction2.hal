@@ -55,9 +55,9 @@ boolean TrHs,found;
 LongInt days;
 string 5 acttypev;
 	
-  days = GetDaysAmountFromPayDeal(VIr.DueDate,VIr.PayDeal,VIr.VECode);
+  //days = GetDaysAmountFromPayDeal(VIr.DueDate,VIr.PayDeal,VIr.VECode);
 
-  if (AddDay(VIr.DueDate,days)>=CurrentDate) then begin	
+  if (VIr.DueDate>=CurrentDate) then begin	
   
   	PRr.Code = VIr.PRCode;
   	ReadFirstMain(PRr,1,true);
@@ -70,8 +70,8 @@ string 5 acttypev;
   	while(LoopKey("ActType",Actr,1,TrHs)) begin
   		if ((StringToLongInt(Actr.FromSerNr)==VIr.SerNr) and (Actr.ActType == acttypev)) then begin
   			RecordCopy(oldActr,Actr);
-  			Actr.TransDate = AddDay(VIr.DueDate,(days - 5));
-  			Actr.EndDate = AddDay(VIr.DueDate,days);  			
+  			Actr.TransDate = AddDay(VIr.DueDate,- 5);
+  			Actr.EndDate = VIr.DueDate;  			
   			Actr.MainPersons = PRr.Leader;
   			Actr.CCPersons = PRr.Leader;
   			Actr.Comment = USetStr(31037) &" "& VIr.SerNr;
@@ -90,9 +90,9 @@ string 5 acttypev;
   		Actr.MainPersons = PRr.Leader;
   		//Actr.Supervisor = PRr.Leader;
   		Actr.CCPersons = PRr.Leader;
-  		Actr.TransDate = AddDay(VIr.DueDate,(days - 5));
+  		Actr.TransDate = AddDay(VIr.DueDate,- 5);
   		Actr.StartTime = "10:00:00";
-  		Actr.EndDate = AddDay(VIr.DueDate,days);
+  		Actr.EndDate = VIr.DueDate;
   		Actr.Comment = USetStr(31037) &" "& VIr.SerNr;
   		Actr.ActType = acttypev;
   		Actr.PRCode = PRr.Code;
@@ -113,8 +113,8 @@ string 5 acttypev;
   	while(LoopKey("ActType",Actr,1,TrHs)) begin
   		if ((StringToLongInt(Actr.FromSerNr)==VIr.SerNr) and (Actr.ActType == acttypev)) then begin
   			RecordCopy(oldActr,Actr);
-  			Actr.TransDate = AddDay(VIr.DueDate,(days - 1));
-  			Actr.EndDate = AddDay(VIr.DueDate,days);  			
+  			Actr.TransDate = AddDay(VIr.DueDate,- 1);
+  			Actr.EndDate = VIr.DueDate;  			
   			Actr.MainPersons = PRr.Leader;
   			Actr.CCPersons = PRr.Leader;
   			Actr.Comment = USetStr(31037) &" "& VIr.SerNr;
@@ -133,9 +133,9 @@ string 5 acttypev;
   		Actr.MainPersons = PRr.Leader;
   		//Actr.Supervisor = PRr.Leader;
   		Actr.CCPersons = PRr.Leader;
-  		Actr.TransDate = AddDay(VIr.DueDate,(days - 1));
+  		Actr.TransDate = AddDay(VIr.DueDate,- 1);
   		Actr.StartTime = "10:00:00";
-  		Actr.EndDate = AddDay(VIr.DueDate,days);
+  		Actr.EndDate = VIr.DueDate;
   		Actr.Comment = USetStr(31037) &" "& VIr.SerNr;
   		Actr.ActType = acttypev;
   		Actr.PRCode = PRr.Code;
@@ -759,7 +759,7 @@ BEGIN
   record APVc APr;
   record APVc oldAPr;
   val bc1v;  
-  
+ 
   if ((VIr.Invalid==0) and (VI2r.Invalid==0)) then begin
     if ((VIr.OKFlag!=0) and (VI2r.OKFlag==0)) then begin
       if (VI2r.PrelBook!=0) then begin

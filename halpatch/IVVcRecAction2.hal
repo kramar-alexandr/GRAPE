@@ -108,9 +108,9 @@ boolean TrHs,found;
 LongInt days;
 string 5 acttypev;
 	
-  days = GetDaysAmountFromPayDeal(IVr.PayDate,IVr.PayDeal,IVr.CustCode);
+  //days = GetDaysAmountFromPayDeal(IVr.PayDate,IVr.PayDeal,IVr.CustCode);
   	
-  if (AddDay(IVr.PayDate,days)>=CurrentDate) then begin	
+  if (IVr.PayDate>=CurrentDate) then begin	
   
   	PRr.Code = IVr.PRCode;
   	ReadFirstMain(PRr,1,true);
@@ -123,8 +123,8 @@ string 5 acttypev;
   	while(LoopKey("ActType",Actr,1,TrHs)) begin
   		if ((StringToLongInt(Actr.FromSerNr)==IVr.SerNr) and (Actr.ActType == acttypev)) then begin
   			RecordCopy(oldActr,Actr);
-  			Actr.TransDate = AddDay(IVr.PayDate,(days - 5));
-  			Actr.EndDate = AddDay(IVr.PayDate,days);  			
+  			Actr.TransDate = AddDay(IVr.PayDate, - 5);
+  			Actr.EndDate = IVr.PayDate;  			
   			Actr.MainPersons = PRr.Leader;
   			Actr.CCPersons = PRr.Leader;
   			Actr.Comment = USetStr(31037) &" "& IVr.SerNr;
@@ -143,9 +143,9 @@ string 5 acttypev;
   		Actr.MainPersons = PRr.Leader;
   		//Actr.Supervisor = PRr.Leader;
   		Actr.CCPersons = PRr.Leader;
-  		Actr.TransDate = AddDay(IVr.PayDate,(days - 5));
+  		Actr.TransDate = AddDay(IVr.PayDate,- 5);
   		Actr.StartTime = "10:00:00";
-  		Actr.EndDate = AddDay(IVr.PayDate,days);
+  		Actr.EndDate = IVr.PayDate;
   		Actr.Comment = USetStr(31037) &" "& IVr.SerNr;
   		Actr.ActType = acttypev;
   		Actr.PRCode = PRr.Code;
@@ -166,8 +166,8 @@ string 5 acttypev;
   	while(LoopKey("ActType",Actr,1,TrHs)) begin
   		if ((StringToLongInt(Actr.FromSerNr)==IVr.SerNr) and (Actr.ActType == acttypev)) then begin
   			RecordCopy(oldActr,Actr);
-  			Actr.TransDate = AddDay(IVr.PayDate,(days - 1));
-  			Actr.EndDate = AddDay(IVr.PayDate,days);  			
+  			Actr.TransDate = AddDay(IVr.PayDate,- 1);
+  			Actr.EndDate = IVr.PayDate;  			
   			Actr.MainPersons = PRr.Leader;
   			Actr.CCPersons = PRr.Leader;
   			Actr.Comment = USetStr(31037) &" "& IVr.SerNr;
@@ -186,9 +186,9 @@ string 5 acttypev;
   		Actr.MainPersons = PRr.Leader;
   		//Actr.Supervisor = PRr.Leader;
   		Actr.CCPersons = PRr.Leader;
-  		Actr.TransDate = AddDay(IVr.PayDate,(days - 1));
+  		Actr.TransDate = AddDay(IVr.PayDate, - 1);
   		Actr.StartTime = "10:00:00";
-  		Actr.EndDate = AddDay(IVr.PayDate,days);
+  		Actr.EndDate = IVr.PayDate;
   		Actr.Comment = USetStr(31037) &" "& IVr.SerNr;
   		Actr.ActType = acttypev;
   		Actr.PRCode = PRr.Code;
@@ -487,7 +487,7 @@ global
 updating procedure UpdateVIPayDate(string projcode,date payd)
 begin
   record IVVc IVr;
-  record VIVc VIr;
+  record VIVc VIr,oldVIr;
   boolean TrHs,testf;
   date foundD;
   array LongInt visernrs;
@@ -562,7 +562,7 @@ begin
 	LDateFound:;
 	
 	VIr.PRCode = projcode;
-  	TrHs = true;
+  TrHs = true;
 	while (loopkey("PRCodeDueDate",VIr,1,TrHs)) begin
 		testf = true;
 		if (VIr.PRCode!=projcode) then begin testf = false; TrHs = false; end;
@@ -573,13 +573,14 @@ begin
 			arcnt = arcnt + 1;
 		end;
 	end;
-	
+
 	if (arcnt>0) then begin
 		for (i=0;i<arcnt;i=i+1) begin
 			VIr.SerNr = visernrs[i];
 			if (ReadFirstMain(VIr,1,true)) then begin
+			  RecordCopy(oldVIr,VIr); 
 				VIr.DueDate = foundD;
-				RECORDSTORE(VIr,true);
+				RECORDUPDATE(oldVIr,VIr,true);
 			end;
 		end;
 	end;
