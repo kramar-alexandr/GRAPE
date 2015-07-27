@@ -447,10 +447,8 @@ begin
   	UpdateInvDates(DateDiff(PRr.FinishedDate,PR2r.FinishedDate),PRr.Code);
   end; //Edit***************************Sasha2,11:07 30.12.2014 }
 	
-	logtext(0,0);
 	if(PRr.FinishedDate!=PR2r.FinishedDate and nonblank(PR2r.FinishedDate))then begin// Edit ************************** Friday, 24 July 2015 10:21:23
-		logtext(0,1);
-		logtext(0,CreateCustomTask("SA","PRVc",PRr.Code,"MES " & PRr.Code & " Изменилась дата проекта","MES"));
+		CreateCustomTask("KOSTYRKYN","PRVc",PRr.Code,"MES " & PRr.Code & " Изменилась дата проекта","MES");
 	end;
 	
   PRVcRecordUpdateAfter = res; 
