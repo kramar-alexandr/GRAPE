@@ -448,7 +448,7 @@ begin
   end; //Edit***************************Sasha2,11:07 30.12.2014 }
 	
 	if(PRr.FinishedDate!=PR2r.FinishedDate and nonblank(PR2r.FinishedDate))then begin// Edit ************************** Friday, 24 July 2015 10:21:23
-		CreateCustomTask("KOSTYRKYN","PRVc",PRr.Code,"MES " & PRr.Code & " Изменилась дата проекта","MES");
+		CreateCustomTask("LAW","PRVc",PRr.Code,"MES " & PRr.Code & " Изменилась дата проекта","MES");
 	end;
 	
   PRVcRecordUpdateAfter = res; 
@@ -1254,7 +1254,10 @@ string 5 acttypev;
   		Actr.CUName = PRr.CustName;
   		Actr.CalTimeFlag = 1; 	//Calendar->Time
   		Actr.AlarmType = 1; 	//Alarm->Message
-  		if(RecordStore(Actr,true)) then begin end;
+  		if(RecordStore(Actr,true)) then begin 
+  			CreateRecordLink(Actr,CurrentCompany,PRr,CurrentCompany);
+        CreateRecordLink(PRr,CurrentCompany,Actr,CurrentCompany);
+  		end;
   	end;
   end;
 
