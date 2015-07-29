@@ -605,14 +605,20 @@ BEGIN
   
   GetWindowRecord(wn,TBBUr);
   
+  PRr.Code = TBBUr.PRCode;
+  ReadFirstMain(PRr,1,true);
+  
+  if (NonBlank(PRr.MotherCode)) then begin //Edit***************************Sasha2,13:50 29.07.2015 {
+    res = false;
+    goto LTBBUDClassApproveFlagButtonAction;
+  end; //Edit***************************Sasha2,13:50 29.07.2015 }
+  
   if (WindowState(wn)==Rs_normal) then begin
     if (TBBUr.ApproveFlag!=0) then begin
       res = false;
       if (UserCanAction("AllowTakeOutApproveFlagAllBudget",false)) then begin
         res = true;
       end else begin 
-      	PRr.Code = TBBUr.PRCode;
-      	ReadFirstMain(PRr,1,true);
       	if (UserCanAction("AllowTakeOutApproveFlagOnlyProjectBudget",false) and PRr.Leader==CurrentUser) then begin
       		res = true;
       	end;
@@ -630,8 +636,8 @@ BEGIN
   	res = false;
 		//Edit by Victor 20.07.15
 		if (UserCanAction("AllowPutApproveFlagAllBudget",false) and TBBUr.AcceptanceStatus == kAcceptanceStateApproved) then begin
-			PRr.Code = TBBUr.PRCode;
-			if(ReadfirstMain(PRr, 1, true))then begin
+
+			if(NonBlank(PRr.Code))then begin
 			//Edit---------------Vitalii 10:03 29.07.2015
 				//if(nonblank(PRr.FinishedDate))then begin
 					res = true;
@@ -642,8 +648,9 @@ BEGIN
 			end;
 		end;
 		
-		PRr.Code = TBBUr.PRCode;
-		ReadFirstMain(PRr,1,true);
+
+		
+		
 		if (UserCanAction("AllowPutApproveFlagOnlyProjectBudget",false) and PRr.Leader==CurrentUser and TBBUr.AcceptanceStatus == kAcceptanceStateApproved) then begin
 		//Edit---------------Vitalii 10:03 29.07.2015
 			//if(nonblank(PRr.FinishedDate))then begin
@@ -655,6 +662,7 @@ BEGIN
 		end;
   end; 
     
+ LTBBUDClassApproveFlagButtonAction:;
   TBBUDClassApproveFlagButtonAction = res;
   RETURN; 
 END; //Edit***************************Sasha2,13:49 16.09.2014 }
@@ -1769,16 +1777,20 @@ begin
   	if (MRTBBUr.MinReb>0 and TBBUr.GPTotPercent<MRTBBUr.MinReb) then begin
   		if (!UserCanAction("AllowSaveBudgetWithUnacceptableProfitORSellSum",false)) then begin
   			RecordCheckError(31021,"",-1,"GPTotPercent");      
-      		return;
+      		goto LTBBUSendforAcceptanceTBBUDsm;
   		end;
   	end;
   	if (MRTBBUr.MinSellSum>0 and TBBUr.TotSum<MRTBBUr.MinSellSum) then begin
   		if (!UserCanAction("AllowSaveBudgetWithUnacceptableProfitORSellSum",false)) then begin
   			RecordCheckError(31023,"",-1,"TotSum");      
-      		return;
+      		goto LTBBUSendforAcceptanceTBBUDsm;
   		end;
   	end;
   end; //Edit***************************Sasha2,17:45 07.10.2014 }
+  if (NonBlank(PRr.MotherCode)) then begin //Edit***************************Sasha2,13:32 29.07.2015 {
+    MessageBox(0,"Запрещено. Проект бюджета не является старшим");      
+    goto LTBBUSendforAcceptanceTBBUDsm;
+  end; //Edit***************************Sasha2,13:32 29.07.2015 }
   TBBUr.AcceptanceBy = acceptanceby;
   TBBUr.AcceptanceFYI = acceptancefyi;
   switch (TBBUr.AcceptanceStatus) begin
