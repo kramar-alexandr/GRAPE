@@ -632,24 +632,26 @@ BEGIN
 		if (UserCanAction("AllowPutApproveFlagAllBudget",false) and TBBUr.AcceptanceStatus == kAcceptanceStateApproved) then begin
 			PRr.Code = TBBUr.PRCode;
 			if(ReadfirstMain(PRr, 1, true))then begin
-				if(nonblank(PRr.FinishedDate))then begin
+			//Edit---------------Vitalii 10:03 29.07.2015
+				//if(nonblank(PRr.FinishedDate))then begin
 					res = true;
-				end else begin
-					res = false;
-					messagebox(0,"Не известна дата завершения проекта!");
-				end;
+				//end else begin
+				//	res = false;
+				//	messagebox(0,"Не известна дата завершения проекта!");
+				//end;
 			end;
 		end;
 		
 		PRr.Code = TBBUr.PRCode;
 		ReadFirstMain(PRr,1,true);
 		if (UserCanAction("AllowPutApproveFlagOnlyProjectBudget",false) and PRr.Leader==CurrentUser and TBBUr.AcceptanceStatus == kAcceptanceStateApproved) then begin
-			if(nonblank(PRr.FinishedDate))then begin
+		//Edit---------------Vitalii 10:03 29.07.2015
+			//if(nonblank(PRr.FinishedDate))then begin
 				res = true;
-			end else begin
-				res = false;
-				messagebox(0,"Не известна дата завершения проекта!");
-			end;
+			//end else begin
+			//	res = false;
+			//	messagebox(0,"Не известна дата завершения проекта!");
+			//end;
 		end;
   end; 
     
@@ -1660,7 +1662,10 @@ global //Edit***************************Sasha2,13:02 20.07.2015 {
 updating procedure BackToRevisionStatusTBBUDsm()
 BEGIN
   record TBBUVc TBBUr;
+  record ActVc Actr;
+  record AcceptanceRulesVc ARr;
   Integer wn;
+  boolean testf;
   
   wn = CurWindow;
   if (WindowState(wn)==0) then begin//Rs_normal
@@ -1668,7 +1673,28 @@ BEGIN
     if (UserCanAction("AllowSetBackToRevision",false)==true or TBBUr.PRLeader==CurrentUser) then begin
       if (TBBUr.AcceptanceStatus==kAcceptanceStateApproved) then begin
         TBBUr.AcceptanceStatus = kAcceptanceStateNotRequested;
+		//Edit---------------Vitalii 14:21 29.07.2015
+		TBBUr.ApproveFlag = 0;
+		ARr.Register = kAcceptanceTBBU;
+		if (ReadFirstMain(ARr,1,true)) then begin
+			resetloop(Actr);
+			Actr.FromFileName = "TBBUVc";
+			Actr.FromSerNr = TBBUr.PRCode;
+			while (LoopKey("FromFileName",Actr,2,true)) begin // перенести в ремот проц
+				//messagebox(0,Actr.SerNr);
+				testf = true;
+				if ((Actr.FromFileName<>"TBBUVc") and (Actr.OKFlag<>0) and (Actr.ActType<>ARr.AcceptanceActType) and (Actr.FromSerNr<>TBBUr.PRCode)) then begin
+					testf = false;
+				end;
+				if (testf) then begin
+					Actr.OKFlag = 1;
+					Actr.ActResult = ARr.CancelledActType;
+					RECORDSTORE(Actr,true);
+				end;
+			end;
+		end;
         RECORDSTORE(TBBUr,true);
+		//messagebox(0,"RECORDSTORE(TBBUr,true);");
         PutWindowRecord(wn,TBBUr);
       end;
     end;
