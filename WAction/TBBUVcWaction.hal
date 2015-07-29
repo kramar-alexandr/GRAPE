@@ -1682,7 +1682,6 @@ BEGIN
 		TBBUr.ApproveFlag = 0;
 		BTRSChangeRelatedActVc(TBBUr);
         RECORDSTORE(TBBUr,true);
-		//messagebox(0,"RECORDSTORE(TBBUr,true);");
         PutWindowRecord(wn,TBBUr);
       end;
     end;

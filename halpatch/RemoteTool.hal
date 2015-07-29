@@ -407,7 +407,6 @@ begin
 		Actr.FromFileName = "TBBUVc";
 		Actr.FromSerNr = TBBUr.PRCode;
 		while (LoopKey("FromFileName",Actr,2,true)) begin
-			messagebox(0,Actr.SerNr);
 			testf = true;
 			if ((Actr.FromFileName<>"TBBUVc") and (Actr.OKFlag<>0) and (Actr.ActType<>ARr.AcceptanceActType) and (Actr.FromSerNr<>TBBUr.PRCode)) then begin
 				testf = false;
