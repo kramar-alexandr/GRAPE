@@ -393,3 +393,31 @@ begin
 	logtext(0,matrowcnt(TBBUMainr));
 	return;
 end;
+
+global 
+updating procedure BTRSChangeRelatedActVc(record TBBUVc TBBUr)
+begin
+	record ActVc Actr;
+	record AcceptanceRulesVc ARr;
+	boolean testf;
+
+	ARr.Register = kAcceptanceTBBU;
+	if (ReadFirstMain(ARr,1,true)) then begin
+		resetloop(Actr);
+		Actr.FromFileName = "TBBUVc";
+		Actr.FromSerNr = TBBUr.PRCode;
+		while (LoopKey("FromFileName",Actr,2,true)) begin
+			messagebox(0,Actr.SerNr);
+			testf = true;
+			if ((Actr.FromFileName<>"TBBUVc") and (Actr.OKFlag<>0) and (Actr.ActType<>ARr.AcceptanceActType) and (Actr.FromSerNr<>TBBUr.PRCode)) then begin
+				testf = false;
+			end;
+			if (testf) then begin
+				Actr.OKFlag = 1;
+				Actr.ActResult = ARr.CancelledActType;
+				RECORDSTORE(Actr,true);
+			end;
+		end;
+	end;
+	return;
+end;
