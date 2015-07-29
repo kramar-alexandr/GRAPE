@@ -4172,7 +4172,7 @@ begin
   h=100; h2=h+140; v=6;
   EditField(h,v,70,"Клиент",Normal ,CustCode,false,CUSClass);
   EditField(h2,v,-40,"Название",ViewOnly,CustName,false,0);
-  EditField(h,v+=20,70,"Контракт №",Normal,ORCONr,false,""); //Edit***************************Sasha2,16:05 14.04.2015
+  EditField(h,v+=20,70,"Контракт №",Normal,ORCONr,false,ORCOSClass); //Edit***************************Sasha2,16:05 14.04.2015
   EditField(h,v+=20,300,"Конт. лицо",Normal,Contact,false,ContactSClass);
   if (HasObjects) then begin
     EditField(h,v+=20,300,"Объекты",Normal ,Objects,false,ObjSClass);
@@ -5653,5 +5653,24 @@ begin
     DataListCell(1,-95,-1,1,AdjLeft,"Timestamp","Временная метка",M4Str); 
     DataListCell(1,23,-1,11,AdjLeft,"Task","Задача",M4Str);
   end;
+  EndWindow;
+end;
+
+window ORCOSClass:1
+  wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
+begin
+  WindowBegin("Выберите контракт",ORCOSClass,CGslist,-);
+  SpawnClass(ORCODClass);
+  SetWRect(64,80,709,320);
+  Sizeable(-1,-1,0,0);
+  UseView(ORCOVc);
+  RecordList(4,17,-21,-39);
+  RlColKey(4,4,"Номер",SerNr,true,SerNr);
+  RlColKey(70,70,"O_K",OKFlag,false,OKFlag);
+  RlCol   (100,100,"Закрыт",Closed,false);
+  RlColKey(130,130, "Дата нач.",CODate,false,CODate); //Edit***************************Sasha2,10:09 23.04.2015
+  RlColKey(210,210,"Клиент",CustCode,false,CustCode);
+  RlColKey(300,300, "Наименов.",CustName,false,CustName);
+  SearchField("Найти");
   EndWindow;
 end;

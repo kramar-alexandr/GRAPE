@@ -180,8 +180,9 @@ begin
   RecordList(4,17,-21,-39);
   RlColKey(4,1, "Код",SerNr,false,SerNr);
   RlColKey(75,75,"Дата",TransDate,false,TransDate);
-  RlColKey(160,160, "Проект",PRCode,false,PRCode);
-  RlColKey(260,260, "Название проекта",PRName,false,PRName);
+  RlColKey(160,160,"Проект",PRCode,false,PRCode);
+  RlCol(260,260,"Номер акта",ADJNum,false);
+  RlColKey(360,360,"Название проекта",PRName,false,PRName);
   RlColKey(-120,-120,"Сума",Sum,false,Sum);
   
   SearchField("Найти");
@@ -230,7 +231,8 @@ begin
   RlColKey(4,1, "Код",SerNr,false,SerNr);
   RlColKey(75,75,"Дата",TransDate,false,TransDate);
   RlColKey(160,160, "Проект",PRCode,false,PRCode);
-  RlColKey(260,260, "Название проекта",PRName,false,PRName);
+  RlCol(260,260,"Номер соглашения",SANum,false);
+  RlColKey(360,360,"Название проекта",PRName,false,PRName);
   RlColKey(-120,-120,"Сума",Sum,false,Sum);
   
   SearchField("Найти");
@@ -277,7 +279,8 @@ begin
   RlColKey(4,1, "Код",SerNr,false,SerNr);
   RlColKey(75,75,"Дата",TransDate,false,TransDate);
   RlColKey(160,160, "Проект",PRCode,false,PRCode);
-  RlColKey(260,260, "Название проекта",PRName,false,PRName);
+  RlCol(260,260,"Номер соглашения",SANum,false);
+  RlColKey(360,360,"Название проекта",PRName,false,PRName);
   RlColKey(-120,-120,"Сума",Sum,false,Sum);
   
   SearchField("Найти");
@@ -323,8 +326,9 @@ begin
   RecordList(4,17,-21,-39);
   RlColKey(4,1, "Код",SerNr,false,SerNr);
   RlColKey(75,75,"Дата",TransDate,false,TransDate);
-  RlColKey(160,160, "Проект",PRCode,false,PRCode);
-  RlColKey(260,260, "Название проекта",PRName,false,PRName);
+  RlColKey(160,160,"Проект",PRCode,false,PRCode);
+  RlCol(260,260,"Номер акта",ADJNum,false);
+  RlColKey(360,360,"Название проекта",PRName,false,PRName);
   RlColKey(-120,-120,"Сума",Sum,false,Sum);
   
   SearchField("Найти");

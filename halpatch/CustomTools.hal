@@ -244,7 +244,8 @@ begin
   string 255 mailboxnr,mailboxname;
   Integer pos;
   Boolean storef;
-  record LTxtVc LTxtr;
+  record IVVc IVr;
+  record VIVc VIr;
   Integer i,rwcnt;
   string 255 tstr;
   transaction string 255 gAlarmVcSender;
@@ -267,7 +268,22 @@ begin
   Actr.FromFileName = fromfilename;
   Actr.FromSerNr = fromsernr;
   AcceptanceTaskCustomer(Actr);
- 
+  switch (Actr.FromFileName) begin
+    case "IVVc": 
+      IVr.SerNr = Actr.FromSerNr;
+      if (ReadFirstMain(IVr,1,true)) then begin
+		Actr.PRCode = IVr.PRCode;
+      end;
+    case "VIVc": 
+      VIr.SerNr = Actr.FromSerNr;
+      if (ReadFirstMain(VIr,1,true)) then begin
+		Actr.PRCode = VIr.PRCode;
+      end;
+    case "TBBUVc": 
+	  Actr.PRCode = fromsernr;
+    case "PRVc": 
+      Actr.PRCode = fromsernr;
+  end;
   Actr.SerNr = NextSerNr("ActVc",Actr.TransDate,-1,false,"");
   if (Actr.SerNr>0) then begin
     if (RecordStore(Actr,false)) then begin

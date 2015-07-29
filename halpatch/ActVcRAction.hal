@@ -427,10 +427,10 @@ begin
   record VIVc VIr;
   record SHVc SHr;
   record SDVc SDr; 
-  
+
     res = "";
     switch (fromfilename) begin
-      case "TBBVc":
+      case "TBBUVc":
         res = fromserNr;
       case "PRVc":
         res = fromserNr;
@@ -1336,8 +1336,9 @@ BEGIN
   Actr.CreationDate = CurrentDate;
   Actr.LastChangedDate = CurrentDate;
   if (blank(Actr.PRCode)) then begin //Edit***************************Sasha2,15:35 20.07.2015 {
-    Actr.PRCode = GetPRCodeFromDocument(Actr.FromFileName,Actr.FromSerNr);
+	Actr.PRCode = GetPRCodeFromDocument(Actr.FromFileName,Actr.FromSerNr);
   end; //Edit***************************Sasha2,15:35 20.07.2015 }
+  Actr.Comment = Actr.Comment & "----";
   ActVcRecordSave = res;
   RETURN;
 END;

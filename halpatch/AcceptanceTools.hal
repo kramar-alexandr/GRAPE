@@ -453,6 +453,8 @@ begin
   Boolean res;
   record ActVc Actr;
   record ActTypeVc ActTyper;
+  record IVVc IVr;
+  record VIVc VIr;
   string 255 mailboxnr,mailboxname;
   Integer pos;
   Boolean storef;
@@ -494,10 +496,19 @@ begin
     case "POVc": 
       Actr.Comment = AcceptanceTaskSubject(Subject,22411,fromsernr,22421,contact,22423,curamount,M4Val,curncy);
     case "IVVc": 
+      IVr.SerNr = Actr.FromSerNr;
+      if (ReadFirstMain(IVr,1,true)) then begin
+		Actr.PRCode = IVr.PRCode;
+      end;
       Actr.Comment = AcceptanceTaskSubject(Subject,22417,fromsernr,22422,contact,22423,curamount,M4Val,curncy);
-    case "TBBUVc": 
+    case "TBBUVc":
+	  Actr.PRCode = fromsernr;
       Actr.Comment = AcceptanceTaskSubject(Subject,22418,fromsernr,22422,contact,22423,curamount,M4Val,curncy);
     case "VIVc": 
+      VIr.SerNr = Actr.FromSerNr;
+      if (ReadFirstMain(VIr,1,true)) then begin
+		Actr.PRCode = VIr.PRCode;
+      end;
       Actr.Comment = AcceptanceTaskSubject(Subject,22411,fromsernr,22421,contact,22423,curamount,M4Val,curncy);
     case "ExpVc": 
       Actr.Comment = AcceptanceTaskSubject(Subject,22413,fromsernr,22420,contact,22423,curamount,M4Val,curncy);
