@@ -173,7 +173,7 @@ window ADJLClass:2
   wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer,android,iPad,iPhone")
 begin
   WindowBegin("Акты выполненных работ",ADJLClass,CGmlist,-);
-  SetWRect(20,80,850,298); 
+  SetWRect(20,80,950,298); 
   SpawnClass(ADJDClass);
   Sizeable(-1,-1,0,0);
   UseView(ADJVc);
@@ -182,7 +182,8 @@ begin
   RlColKey(75,75,"Дата",TransDate,false,TransDate);
   RlColKey(160,160,"Проект",PRCode,false,PRCode);
   RlCol(260,260,"Номер акта",ADJNum,false);
-  RlColKey(360,360,"Название проекта",PRName,false,PRName);
+  RlCol(360,360,"Код клиента",CustCode,false);
+  RlColKey(460,460,"Название проекта",PRName,false,PRName);
   RlColKey(-120,-120,"Сума",Sum,false,Sum);
   
   SearchField("Найти");
@@ -223,16 +224,17 @@ window SALClass:2
   wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer,android,iPad,iPhone")
 begin
   WindowBegin("Дополнительные соглашения",SALClass,CGmlist,-);
-  SetWRect(20,80,850,298); 
+  SetWRect(20,80,950,298); 
   SpawnClass(SADClass);
   Sizeable(-1,-1,0,0);
   UseView(SAVc);
   RecordList(4,17,-21,-39);
   RlColKey(4,1, "Код",SerNr,false,SerNr);
   RlColKey(75,75,"Дата",TransDate,false,TransDate);
-  RlColKey(160,160, "Проект",PRCode,false,PRCode);
+  RlColKey(160,160,"Проект",PRCode,false,PRCode);
   RlCol(260,260,"Номер соглашения",SANum,false);
-  RlColKey(360,360,"Название проекта",PRName,false,PRName);
+  RlCol(360,360,"Код клиента",CustCode,false);
+  RlColKey(460,460,"Название проекта",PRName,false,PRName);
   RlColKey(-120,-120,"Сума",Sum,false,Sum);
   
   SearchField("Найти");
@@ -271,7 +273,7 @@ window SAVILClass:2
   wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer,android,iPad,iPhone")
 begin
   WindowBegin("Дополнительные соглашения с подрядчиками",SAVILClass,CGmlist,-);
-  SetWRect(20,80,850,298); 
+  SetWRect(20,80,950,298); 
   SpawnClass(SAVIDClass);
   Sizeable(-1,-1,0,0);
   UseView(SAVIVc);
@@ -280,7 +282,8 @@ begin
   RlColKey(75,75,"Дата",TransDate,false,TransDate);
   RlColKey(160,160, "Проект",PRCode,false,PRCode);
   RlCol(260,260,"Номер соглашения",SANum,false);
-  RlColKey(360,360,"Название проекта",PRName,false,PRName);
+  RlCol(360,360,"Код подрядчика",VECode,false);
+  RlColKey(460,460,"Название проекта",PRName,false,PRName);
   RlColKey(-120,-120,"Сума",Sum,false,Sum);
   
   SearchField("Найти");
@@ -319,7 +322,7 @@ window ADJVILClass:2
   wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer,android,iPad,iPhone")
 begin
   WindowBegin("Акты выполненных работ с подрядчиками",ADJVILClass,CGmlist,-);
-  SetWRect(20,80,850,298); 
+  SetWRect(20,80,950,298); 
   SpawnClass(ADJVIDClass);
   Sizeable(-1,-1,0,0);
   UseView(ADJVIVc);
@@ -328,7 +331,8 @@ begin
   RlColKey(75,75,"Дата",TransDate,false,TransDate);
   RlColKey(160,160,"Проект",PRCode,false,PRCode);
   RlCol(260,260,"Номер акта",ADJNum,false);
-  RlColKey(360,360,"Название проекта",PRName,false,PRName);
+  RlCol(360,360,"Код подрядчика",VECode,false);
+  RlColKey(460,460,"Название проекта",PRName,false,PRName);
   RlColKey(-120,-120,"Сума",Sum,false,Sum);
   
   SearchField("Найти");

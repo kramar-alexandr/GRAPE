@@ -114,6 +114,117 @@ BEGIN
 END;
 
 global
+updating procedure CreateBriefLawyerDsm()
+BEGIN
+	record PRVc PRr;
+	record ActVc Actr;
+	record PDVc PDr;
+	record PRClassBlock PRClassRec;
+	row ActVc Actrw;
+	row PRClassBlock PRClassrw;
+	Integer wn,nwn,i,j,rwcnt;
+
+	wn = CurWindow;
+	if (WindowState(wn)==0) then begin//normal
+		GetWindowRecord(wn,PRr);
+		RecordNew(Actr);
+		ActVcRecordDefClient(Actr);
+		if (MakeActFromPR(PRr,Actr)) then begin
+			Actr.FromFileName = "PRVc";
+			Actr.PRCode = PRr.Code;
+			Actr.FromSerNr = PRr.Code;
+			Actr.Comment = "Создать дополнительное соглашение";
+			Actr.MainPersons = "LAW,LARISA,DA," & PRr.Leader;
+			Actr.ActType = "BRIEF";
+				i = 0;
+				Actrw.TextCode = "PRTYP";
+				if nonblank(PRr.PRClass) then begin
+					BlockLoad(PRClassRec);
+					rwcnt = MatRowCnt(PRClassRec);
+					for (j=0;j<rwcnt;j=j+1) begin
+						MatRowGet(PRClassRec,j,PRClassrw);
+						if (PRr.PRClass==PRClassrw.Code) then begin
+							Actrw.Text = PRClassrw.Comment2;
+						end;
+					end;
+				end else begin
+					Actrw.Text = "На согласовании";
+				end;
+				matrowput(Actr,i,Actrw);
+				i = i + 1;
+				Actrw.TextCode = "JDESC";
+				if nonblank(PRr.Desc0) then begin
+					Actrw.Text = PRr.Desc0;
+				end else begin
+					Actrw.Text = "На согласовании";
+				end;
+				matrowput(Actr,i,Actrw);
+				i = i + 1;
+				if nonblank(PRr.Desc1) then begin
+					Actrw.Text = PRr.Desc1;
+					matrowput(Actr,i,Actrw);
+					i = i + 1;
+				end;
+				if nonblank(PRr.Desc2) then begin
+					Actrw.Text = PRr.Desc2;
+					matrowput(Actr,i,Actrw);
+					i = i + 1;
+				end;
+				Actrw.TextCode = "DDATE";
+				if (nonblank(PRr.LaunchingDate) and nonblank(PRr.FinishedDate)) then begin
+					Actrw.Text = PRr.LaunchingDate & " - " PRr.FinishedDate;
+				end else begin
+					if (blank(PRr.LaunchingDate) and blank(PRr.FinishedDate)) then begin
+						Actrw.Text = "На согласовании";
+					end else begin
+						if nonblank(PRr.LaunchingDate) then begin
+							Actrw.Text = PRr.LaunchingDate;
+						end else begin
+							Actrw.Text = "На согласовании";
+						end;
+						if nonblank(PRr.FinishedDate) then begin
+							Actrw.Text = Actrw.Text & " - " PRr.FinishedDate;
+						end else begin
+							Actrw.Text = Actrw.Text & " - На согласовании";
+						end;
+					end;
+				end;
+				matrowput(Actr,i,Actrw);
+				i = i + 1;
+				Actrw.TextCode = "PAYM";
+				if nonblank(PRr.PayDeal) then begin
+					PDr.Code = PRr.PayDeal;
+					if (ReadFirstMain(PDr,1,true)) then begin
+						switch (PDr.DayType) begin
+							case 0: Actrw.Text = "Количество календарных дней - ";
+							case 1: Actrw.Text = "Количество рабочих дней - ";
+						end;
+						Actrw.Text = Actrw.Text & PDr.pdays;
+					end else begin
+						Actrw.Text = "На согласовании";
+					end;
+				end else begin
+					Actrw.Text = "На согласовании";
+				end;
+				matrowput(Actr,i,Actrw);
+				i = i + 1;
+				Actrw.TextCode = "CONTR";
+				if (PRr.ORCONr<>-1) then begin
+					Actrw.Text = PRr.ORCONr;
+				end else begin
+					Actrw.Text = "На согласовании";
+				end;
+				matrowput(Actr,i,Actrw);
+				i = i + 1;
+			RecordStore(Actr,false);
+			nwn = OpenWindow("ActDClass",1,0,"","",Actr);
+			SetRLink(wn,true);  
+		end;
+	end;
+	RETURN;
+END;
+
+global
 updating procedure PRVcCreateActivity()
 begin
   CreateActFromPRD;

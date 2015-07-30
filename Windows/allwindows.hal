@@ -4413,6 +4413,7 @@ begin
     SpecialMenu("Создать график проекта",' ',7,"CreatePRScheduleFromPRD");
     SpecialMenu("Открыть график проекта",' ',8,"OpenPRSchedulePRD");
   end;
+  SpecialMenu("Создать бриф юриста",'',4,"CreateBriefLawyerDsm");
   end;
   EndWindow;
 end;
@@ -5602,7 +5603,7 @@ begin
   WindowBegin("Контракт",ORCODClass,CGview,-);
   SetWRect(64,80,609,230);
   UseView(ORCOVc);
-  v = 10; vs = 20; h = 80; h2 = 210;
+  v = 10; vs = 20; h = 80; h2 = 230;
   EditField(h,v, 70,"Номер",Normal,SerNr,false,0);
   EditField(h2,v,70,"Дата начала",Normal,CODate,false,PasteCurDate);
   EditField(h2 + 180,v,70,"Дата заверш.",Normal,EndDate,false,PasteCurDate); //Edit***************************Sasha2,15:59 14.04.2015

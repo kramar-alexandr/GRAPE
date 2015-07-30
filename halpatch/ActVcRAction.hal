@@ -1338,7 +1338,7 @@ BEGIN
   if (blank(Actr.PRCode)) then begin //Edit***************************Sasha2,15:35 20.07.2015 {
 	Actr.PRCode = GetPRCodeFromDocument(Actr.FromFileName,Actr.FromSerNr);
   end; //Edit***************************Sasha2,15:35 20.07.2015 }
-  Actr.Comment = Actr.Comment & "----";
+  Actr.Comment = Actr.Comment;
   ActVcRecordSave = res;
   RETURN;
 END;
