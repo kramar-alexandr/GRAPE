@@ -77,6 +77,31 @@ Boolean TrHs,testf;
 
 return;
 end; //Edit***************************Sasha2,14:01 29.07.2015 }
+
+//Edit***************************Sasha2,14:01 29.07.2015 {	
+updating procedure UpdateDaughterTBBUAcceptanceStatus(record TBBUVc TBBUr)
+begin
+record TBBUVc TBBU2r;
+record PRVc PRr;
+Boolean TrHs,testf;
+	
+	TrHs = true;
+	PRr.MotherCode = TBBUr.PRCode;
+	while (LoopKey("MotherCode",PRr,1,TrHs)) begin
+	  testf = true;
+	  if (PRr.MotherCode!=TBBUr.PRCode) then begin TrHs = false; testf = false; end;
+	  if (testf) then begin
+	    TBBU2r.PRCode = PRr.Code;
+	    if (!ReadFirstMain(TBBU2r,1,true)) then begin testf = false; end;
+	  end;
+	  if (testf) then begin
+	    TBBU2r.AcceptanceStatus = TBBUr.AcceptanceStatus;
+	    RECORDSTORE(TBBU2r,true);
+	  end;
+	end;
+
+return;
+end; //Edit***************************Sasha2,14:01 29.07.2015 }
 	
 procedure SetTBBUAcceptanceFlag(var record TBBUVc TBBUr,record TBBUVc prevTBBUr,LongInt stat)
 begin
@@ -606,6 +631,7 @@ begin
 	end;
 	
 	UpdateDaughterTBBUApproveFlags(TBBUr); //Edit***************************Sasha2,14:24 29.07.2015
+	UpdateDaughterTBBUAcceptanceStatus(TBBUr); //Edit***************************Sasha2,14:24 29.07.2015
 	UpdatePRBUOkFlag(TBBUr);	//Edit by Victor 20.07.15	
 	
   SetTBBUAcceptanceFlag(TBBUr,TBBU2r,stat);
@@ -644,6 +670,7 @@ begin
 	
 	if(TBBUr.AcceptanceStatus!=TBBU2r.AcceptanceStatus)then begin
 	 UpdatePRBUOkFlag(TBBUr); //Edit***************************Sasha2,13:20 22.07.2015
+	 UpdateDaughterTBBUAcceptanceStatus(TBBUr); //Edit***************************Sasha2,14:26 29.07.2015
 	end;
 	
   switch (TBBUr.AcceptanceStatus) begin
