@@ -172,20 +172,20 @@ BEGIN
 				end;
 				Actrw.TextCode = "DDATE";
 				if (nonblank(PRr.LaunchingDate) and nonblank(PRr.FinishedDate)) then begin
-					Actrw.Text = PRr.LaunchingDate & " - " PRr.FinishedDate;
+					Actrw.Text = PRr.LaunchingDate & " - " & PRr.FinishedDate;
 				end else begin
-					if (blank(PRr.LaunchingDate) and blank(PRr.FinishedDate)) then begin
+					if (BlankDate(PRr.LaunchingDate) and BlankDate(PRr.FinishedDate)) then begin
 						Actrw.Text = "На согласовании";
 					end else begin
-						if nonblank(PRr.LaunchingDate) then begin
-							Actrw.Text = PRr.LaunchingDate;
-						end else begin
+						if BlankDate(PRr.LaunchingDate) then begin
 							Actrw.Text = "На согласовании";
-						end;
-						if nonblank(PRr.FinishedDate) then begin
-							Actrw.Text = Actrw.Text & " - " PRr.FinishedDate;
 						end else begin
+							Actrw.Text = PRr.LaunchingDate;
+						end;
+						if BlankDate(PRr.FinishedDate) then begin
 							Actrw.Text = Actrw.Text & " - На согласовании";
+						end else begin
+							Actrw.Text = Actrw.Text & " - " & PRr.FinishedDate;
 						end;
 					end;
 				end;
