@@ -1216,7 +1216,7 @@ string 5 acttypev;
 	if (AddDay(PRr.FinishedDate,days)>=CurrentDate) then begin
 	  TrHs = true;
   	found = false;
-  	morepersons = ",GLADKIY";
+  	morepersons = ",DA";
   	acttypev = "DOINV";
   	
   	Actr.ActType = acttypev;
