@@ -1669,7 +1669,7 @@ end;
 global //Edit***************************Sasha2,13:02 20.07.2015 {
 updating procedure BackToRevisionStatusTBBUDsm()
 BEGIN
-  record TBBUVc TBBUr;
+  record TBBUVc TBBUr,oldTBBUr;
   Integer wn;
   
   wn = CurWindow;
@@ -1677,13 +1677,18 @@ BEGIN
     GetWindowRecord(wn,TBBUr);
     if (UserCanAction("AllowSetBackToRevision",false)==true or TBBUr.PRLeader==CurrentUser) then begin
       if (TBBUr.AcceptanceStatus==kAcceptanceStateApproved) then begin
+        RecordCopy(oldTBBUr,TBBUr);
         TBBUr.AcceptanceStatus = kAcceptanceStateNotRequested;
-		//Edit---------------Vitalii 14:21 29.07.2015
-		TBBUr.ApproveFlag = 0;
-		BTRSChangeRelatedActVc(TBBUr);
-        RECORDSTORE(TBBUr,true);
+    		//Edit---------------Vitalii 14:21 29.07.2015
+    		TBBUr.ApproveFlag = 0;
+    		BTRSChangeRelatedActVc(TBBUr);
+        RecordUpdate(oldTBBUr,TBBUr,true);
         PutWindowRecord(wn,TBBUr);
+      end else begin
+        MessageBox(0,UsetStr(20803));
       end;
+    end else begin
+      MessageBox(0,UsetStr(13205));
     end;
   end else begin
     Beep;

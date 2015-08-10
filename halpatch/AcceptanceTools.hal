@@ -2656,6 +2656,7 @@ begin
   Boolean testf;
   val bc1v;
   record HMTravelLogVc HMTravelLogr,OLDTLogr;
+  record PRVc PRr; //Edit***************************Sasha2,10:42 10.08.2015
   
   switch (Actr.FromFileName) begin
     case "LeaveApplicationVc":
@@ -2804,7 +2805,9 @@ begin
     case "TBBUVc":
       TBBUr.PRCode = Actr.FromSerNr;
       if (ReadFirstMain(TBBUr,1,true)) then begin
-        if (ReadAcceptanceRules(kAcceptanceTBBU,TBBUr.CustCode,Acptr)) then begin
+        PRr.Code = TBBUr.PRCode; //Edit***************************Sasha2,10:42 10.08.2015
+        ReadFirstMain(PRr,1,true); //Edit***************************Sasha2,10:42 10.08.2015
+        if (blank(PRr.MotherCode) and ReadAcceptanceRules(kAcceptanceTBBU,TBBUr.CustCode,Acptr)) then begin //Edit***************************Sasha2,10:43 10.08.2015
           if (IsValidApprovalActType(Actr,Acptr)==false or TBBUr.AcceptanceStatus>=kAcceptanceStateApproved) then begin 
             goto LLSetLinkedRecordAcceptanceStatus;
           end;        
@@ -2830,7 +2833,7 @@ begin
             testf = AcceptanceTasksAcceptedForAllLevels("TBBUVc",TBBUr.PRCode,bc1v,Actr,Acptr);
             if (testf) then begin
               TBBUr.AcceptanceStatus = kAcceptanceStateApproved;
-              RecordUpdate(oldTBBUr,TBBUr,false);
+              RecordUpdate(oldTBBUr,TBBUr,true);
             end;
           end;
         end;
