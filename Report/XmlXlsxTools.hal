@@ -64,7 +64,7 @@ BEGIN
 END;
 
 global
-procedure CreateSheetsXLSX(integer qtyOfSheets,array string namesArray, string pathToXLSX, integer imagesQty)
+procedure CreateSheetsXLSX(integer qtyOfSheets,array string namesArray, string pathToXLSX, integer imagesQty, boolean showGrid)
 BEGIN
 	integer i,j,sameSheetNamesCounter,pos;
 	area tempArea;
@@ -141,8 +141,11 @@ BEGIN
 //---/xl/worksheets/sheet1 ... n.xml
 	for (i=0;i<qtyOfSheets;i=i+1) begin
 		SetAreaZeroSize(tempArea);
-		AddTextToArea("<?xml version=" & Chr(34) & "1.0" & Chr(34) & " encoding=" & Chr(34) & "UTF-8" & Chr(34) & " standalone=" & Chr(34) & "yes" & Chr(34) & "?><worksheet xmlns=" & Chr(34) & "http:" & Chr(47) & Chr(47) & "schemas.openxmlformats.org" & Chr(47) & "spreadsheetml" & Chr(47) & "2006" & Chr(47) & "main" & Chr(34) & " xmlns:r=" & Chr(34) & "http:" & Chr(47) & Chr(47) & "schemas.openxmlformats.org" & Chr(47) & "officeDocument" & Chr(47) & "2006" & Chr(47) & "relationships" & Chr(34) & " xmlns:mc=" & Chr(34) & "http:" & Chr(47) & Chr(47) & "schemas.openxmlformats.org" & Chr(47) & "markup-compatibility" & Chr(47) & "2006" & Chr(34) & " mc:Ignorable=" & Chr(34) & "x14ac" & Chr(34) & " xmlns:x14ac=" & Chr(34) & "http:" & Chr(47) & Chr(47) & "schemas.microsoft.com" & Chr(47) & "office" & Chr(47) & "spreadsheetml" & Chr(47) & "2009" & Chr(47) & "9" & Chr(47) & "ac" & Chr(34) & "><dimension ref=" & Chr(34) & "A1:AZ3000" & Chr(34) & Chr(47) & "><sheetViews><sheetView workbookViewId=" & Chr(34) & "0" & Chr(34) & Chr(47) & "><" & Chr(47) & "sheetViews><sheetFormatPr defaultRowHeight=" & Chr(34) & "15" & Chr(34) & " x14ac:dyDescent=" & Chr(34) & "0.25" & Chr(34) & Chr(47) & ">",tempArea);
-		WriteAreaToFile(tempArea,path & "/xl/worksheets/sheet" & i+1 & ".xml",0);
+		AddTextToArea("<?xml version=" & Chr(34) & "1.0" & Chr(34) & " encoding=" & Chr(34) & "UTF-8" & Chr(34) & " standalone=" & Chr(34) & "yes" & Chr(34) & "?><worksheet xmlns=" & Chr(34) & "http:" & Chr(47) & Chr(47) & "schemas.openxmlformats.org" & Chr(47) & "spreadsheetml" & Chr(47) & "2006" & Chr(47) & "main" & Chr(34) & " xmlns:r=" & Chr(34) & "http:" & Chr(47) & Chr(47) & "schemas.openxmlformats.org" & Chr(47) & "officeDocument" & Chr(47) & "2006" & Chr(47) & "relationships" & Chr(34) & " xmlns:mc=" & Chr(34) & "http:" & Chr(47) & Chr(47) & "schemas.openxmlformats.org" & Chr(47) & "markup-compatibility" & Chr(47) & "2006" & Chr(34) & " mc:Ignorable=" & Chr(34) & "x14ac" & Chr(34) & " xmlns:x14ac=" & Chr(34) & "http:" & Chr(47) & Chr(47) & "schemas.microsoft.com" & Chr(47) & "office" & Chr(47) & "spreadsheetml" & Chr(47) & "2009" & Chr(47) & "9" & Chr(47) & "ac" & Chr(34) & "><dimension ref=" & Chr(34) & "A1:AZ3000" & Chr(34) & Chr(47) & "><sheetViews><sheetView ",tempArea);
+		if !showGrid then begin
+			AddTextToArea("showGridLines=" & Chr(34) & "0" & Chr(34) & " ",tempArea);
+		end;
+		AddTextToArea("workbookViewId=" & Chr(34) & "0" & Chr(34) & Chr(47) & "><" & Chr(47) & "sheetViews><sheetFormatPr defaultRowHeight=" & Chr(34) & "15" & Chr(34) & " x14ac:dyDescent=" & Chr(34) & "0.25" & Chr(34) & Chr(47) & ">",tempArea);		WriteAreaToFile(tempArea,path & "/xl/worksheets/sheet" & i+1 & ".xml",0);
 	end;
 	RETURN;
 END;
@@ -161,14 +164,14 @@ BEGIN
 			switch (SheetName) begin
 				case "TOTAL":
 					CopyFile("tmp/" & reportName & "/drawing_TOTALsheet.xml",path & "/xl/drawings/drawing" & SheetNum & ".xml");
-					CopyFile("tmp/" & reportName & "/drawing_TOTALsheet.xml.rels",path & "/xl/drawings/_rels/drawing" & SheetNum & ".xml.rels");
 				case "Rate Card":
 					CopyFile("tmp/" & reportName & "/drawing_RCsheet.xml",path & "/xl/drawings/drawing" & SheetNum & ".xml");
-					CopyFile("tmp/" & reportName & "/drawing_RCsheet.xml.rels",path & "/xl/drawings/_rels/drawing" & SheetNum & ".xml.rels");
 				otherwise
 					CopyFile("tmp/" & reportName & "/drawing_samplesheet.xml",path & "/xl/drawings/drawing" & SheetNum & ".xml");
-					CopyFile("tmp/" & reportName & "/drawing_samplesheet.xml.rels",path & "/xl/drawings/_rels/drawing" & SheetNum & ".xml.rels");
 			end;
+			CopyFile("tmp/" & reportName & "/drawing.xml.rels",path & "/xl/drawings/_rels/drawing" & SheetNum & ".xml.rels");
+		//case:
+		//case:
 		//case:
 	end;
 //---/xl/media/image1 ... n.png
@@ -209,7 +212,7 @@ BEGIN
 	AddTextToArea("<cols>",tempArea);
 	i = 0;
 	while (sizeArray[i] <> 0) begin
-		tstr = ValToString(sizeArray[i]+0.71,M4Val,"",".",0);
+		tstr = ValToString(sizeArray[i],M4Val,"",".",0);
 		AddTextToArea("<col min=" & Chr(34) & i+1 & Chr(34) & " max=" & Chr(34) & i+1 & Chr(34) & " width=" & Chr(34) & tstr & Chr(34) & " customWidth=" & Chr(34) & "1" & Chr(34) & Chr(47) & ">",tempArea);
 		i = i + 1;
 	end;
@@ -243,13 +246,20 @@ BEGIN
 END;
 
 global
-procedure BeginRow(integer SheetNum, string pathToXLSX, integer RowNum)
+procedure BeginRow(integer SheetNum, string pathToXLSX, integer RowNum, boolean hidden, val height)
 BEGIN
 	area tempArea;
 	string 225 path;
 
 	path = PathCorrection(pathToXLSX);
-	AddTextToArea("<row r=" & Chr(34) & RowNum & Chr(34) & " x14ac:dyDescent=" & Chr(34) & "0.25" & Chr(34) & ">",tempArea);
+	AddTextToArea("<row r=" & Chr(34) & RowNum & Chr(34),tempArea);
+	if (height <> blankval) then begin
+		AddTextToArea(" ht=" & Chr(34) & height & Chr(34) & " customHeight=" & Chr(34) & "1" & Chr(34),tempArea);
+	end;
+	if (hidden) then begin
+		AddTextToArea(" hidden=" & Chr(34) & "1" & Chr(34) & " outlineLevel=" & Chr(34) & "1" & Chr(34),tempArea);
+	end;
+	AddTextToArea(">",tempArea);
 	WriteAreaToFile(tempArea,path & "/xl/worksheets/sheet" & SheetNum & ".xml",1);
 	RETURN;
 END;
