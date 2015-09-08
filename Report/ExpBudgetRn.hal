@@ -931,7 +931,7 @@ BEGIN
 	
 	ifDifferentCurrency = false;
 	if(nonblank(TBBUr.ClientCurncyCode) and (TBBUr.ClientCurncyCode != TBBUr.CurncyCode))then begin
-		ifDifferentCurrency = true;
+		//ifDifferentCurrency = true;
 	end;
 		
 	XmlXlsxWorkBegin(fileToSave,reportName);
@@ -1269,7 +1269,7 @@ BEGIN
 			switch (TBBUrw.stp) begin
 				case 18:
 					rowpass = true;
-					rownum = 5;
+					rownum = 6;
 					sheetnum = sheetnum + 1;
 					SetSheetsCols(sheetnum,sheetColls,fileToSave);
 					BeginSheetData(sheetnum,fileToSave);
@@ -1669,6 +1669,7 @@ BEGIN
 	style = 6;
 	BeginRow(sheetnum,fileToSave,rownum,false,blankval);
 		StringCell(sheetnum,fileToSave,colnum,rownum,style,"Директор",SharedStrings,numOfUniqueSharedStrings,numOfSharedStrings);
+		StringCell(sheetnum,fileToSave,colnum,rownum,style,"Гладкий Ю.Д.",SharedStrings,numOfUniqueSharedStrings,numOfSharedStrings);
 	EndRow(sheetnum,fileToSave,rownum);
 	colnum = 2;
 	rownum = rownum + 1;

@@ -161,14 +161,7 @@ BEGIN
 //---/xl/drawings/_rels/drawing1 ... n.xml.rels
 	switch (reportName) begin
 		case "ExpBudgetRn":
-			switch (SheetName) begin
-				case "TOTAL":
-					CopyFile("tmp/" & reportName & "/drawing_TOTALsheet.xml",path & "/xl/drawings/drawing" & SheetNum & ".xml");
-				case "Rate Card":
-					CopyFile("tmp/" & reportName & "/drawing_RCsheet.xml",path & "/xl/drawings/drawing" & SheetNum & ".xml");
-				otherwise
-					CopyFile("tmp/" & reportName & "/drawing_samplesheet.xml",path & "/xl/drawings/drawing" & SheetNum & ".xml");
-			end;
+			CopyFile("tmp/" & reportName & "/drawing.xml",path & "/xl/drawings/drawing" & SheetNum & ".xml");
 			CopyFile("tmp/" & reportName & "/drawing.xml.rels",path & "/xl/drawings/_rels/drawing" & SheetNum & ".xml.rels");
 		//case:
 		//case:
