@@ -229,6 +229,7 @@ begin
 		MatRowGet(Actr,i,Actrw);
 	end;
 	WriteAreaToFile(tempArea,fouldername & "/B" & Actr.SerNr,0);
+	logtext(0,"Create mail " & Actr.SerNr);// Edit ************************** Tuesday, 1 September 2015 17:05:29
 	if emailf then begin
 		RunProgram("/secure/doc/hansa/sendmail.sh",Actr.SerNr);
 	end;

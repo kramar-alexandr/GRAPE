@@ -232,7 +232,10 @@ BEGIN
   if (nonblankdate(TBBUr.TransDate)) then begin
     IVr.InvDate = TBBUr.TransDate; 
     IVr.TransDate = TBBUr.TransDate;
-  end;  
+  end else begin
+  	IVr.InvDate = currentdate; 
+    IVr.TransDate = currentdate;
+  end;
   if (PasteCustInInv(IVr)) then begin
   end;
   if (nonblank(PRr.PayDeal)) then begin

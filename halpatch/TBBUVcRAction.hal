@@ -56,7 +56,7 @@ end; //Edit***************************Sasha2,15:14 16.09.2014 }
 //Edit***************************Sasha2,14:01 29.07.2015 {	
 updating procedure UpdateDaughterTBBUApproveFlags(record TBBUVc TBBUr)
 begin
-record TBBUVc TBBU2r;
+record TBBUVc TBBU2r,oldTBBU2r;
 record PRVc PRr;
 Boolean TrHs,testf;
 	
@@ -70,8 +70,10 @@ Boolean TrHs,testf;
 	    if (!ReadFirstMain(TBBU2r,1,true)) then begin testf = false; end;
 	  end;
 	  if (testf) then begin
+	  	recordCopy(oldTBBU2r,TBBU2r);
 	    TBBU2r.ApproveFlag = TBBUr.ApproveFlag;
-	    RECORDSTORE(TBBU2r,true);
+	    recordupdate(oldTBBU2r,TBBU2r,true);
+	    //RECORDSTORE(TBBU2r,true);// Edit ************************** Friday, 4 September 2015 11:39:15
 	  end;
 	end;
 
@@ -464,6 +466,7 @@ begin
 	integer i,mtrw;
 	record PDVc PDr;
 	array string 20 invprc;
+	val prc;
 	array integer invday;
 	integer invcnt;
 	record InstallmentVc Installmentr;
@@ -487,6 +490,17 @@ begin
 		invcnt = 1;
 		invprc[0] = "100%";
 		invday[0] = 0;
+		mtrw = matrowcnt(PRr);
+		
+		prc = 100;
+		For(i=0;i<mtrw;i=i+1) begin
+	  	matrowget(PRr,i,PRrw);
+	  	if(nonblank(PRrw.ValStr))then begin
+	  		prc = prc - stringtoval(PRrw.ValStr,M4Val);
+	  	end;
+		end; 
+		invprc[0] = prc & "%";
+		
 		if(readfirstmain(PDr,1,true))then begin
 			if (PDr.DayType==1) then begin //Edit***************************Sasha2,13:09 08.12.2014 {
 			  	pdays = PDr.pdays;
@@ -684,7 +698,7 @@ begin
         CancelApprovalRequestActivities(kAcceptanceTBBU,"TBBUVc",TBBUr.PRCode,"");
       end;
   end;
-  if (TBBUr.ApproveFlag==1) then begin
+  if (TBBUr.ApproveFlag==1 and TBBU2r.ApproveFlag==0) then begin
 	f = CreateCustomTask("LAW,LARISA,SALIVON,NDREW,GLADKIY","TBBUVc",TBBUr.PRCode,"CLAPR " & TBBUr.PRCode & " " & USetStr(31036),"CLAPR");
   end;
 

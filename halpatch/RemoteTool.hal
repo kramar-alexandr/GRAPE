@@ -75,10 +75,12 @@ BEGIN
   date vipaydate;
   
   changedf = false;
-  if (ReadFirstMain(TBBUp,0,true)) then begin end;  
+ // if (ReadFirstMain(TBBUp,0,true)) then begin end;  
   PRr.Code = TBBUp.PRCode;
   if (ReadFirstMain(PRr,1,true)==false) then begin goto LPasteTBBUInVIFunc; end;
   if (PRr.Terminated!=0) then begin goto LPasteTBBUInVIFunc; end;
+	if (PRr.StopInvoicing==1)then begin goto LPasteTBBUInVIFunc; end;
+
   
   RecordCopy(oldTBBUp,TBBUp);
   
@@ -104,6 +106,7 @@ BEGIN
       	  end; 
       	  VIVc_PastePayDeal(VIr);
       	  VIr.BankAcc = VEr.AccCost;
+      	  VIr.Objects = VEr.VEObjects;
 		  		vectVIr[subcontrname] = VIr;
 		  		porownr[subcontrname] = 0;
 		  		if (blank(subcontrlist)) then begin
@@ -127,6 +130,7 @@ BEGIN
   
   pos = 0; 
   ExtractObj(subcontrlist,pos,subcontrname);
+  logtext(0,PRr.Code & " " & PRr.FinishedDate);
   while (nonblank(subcontrname)) begin
   	VIr = vectVIr[subcontrname];
   	if (NonBlankDate(PRr.FinishedDate)) then begin
