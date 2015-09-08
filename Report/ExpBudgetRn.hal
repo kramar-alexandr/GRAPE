@@ -1255,7 +1255,7 @@ BEGIN
 	qtyMergeCell = 0;
 	EndSheet(sheetnum,fileToSave,1);
 	
-	sheetColls[0] = 11;
+	sheetColls[0] = 11.140625;
 	sheetColls[1] = 51.140625;
 	sheetColls[2] = 49.7109375;
 	sheetColls[3] = 16.42578125;
@@ -1564,7 +1564,7 @@ BEGIN
 		end;
 	end;
 	//Rate Card
-	sheetColls[0] = 10.42578125;
+	sheetColls[0] = 11.140625;
 	sheetColls[1] = 31;
 	sheetColls[2] = 30.28515625;
 	sheetColls[3] = 51.140625;
