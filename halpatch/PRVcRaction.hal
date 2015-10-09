@@ -868,8 +868,68 @@ BEGIN
   Boolean TrHs,found; //Edit***************************Sasha2,12:44 21.10.2014
   Integer stopchildinv; //Edit***************************Sasha2,10:55 25.11.2014
   record UserVc Userr;
+  record ObjVc Objr;
+  integer pos;
+  string 100 obj,newobj;
+  boolean foundf,foundftype;
 
   res = 0;
+  
+  
+  obj = "";
+  pos = 0;
+  foundf = false;
+  foundftype = false;
+  ExtractObj(PRr.Objects,pos,obj);
+  while(nonblank(obj))begin
+  	if(nonblank(obj))then begin
+  		Objr.Code=obj;
+  		if(readfirstmain(Objr,1,true))then begin
+  			if(Objr.OTCode=="PRJ")then begin
+  				foundftype = true;
+  				if(blank(PRr.MotherCode))then begin
+  					if(Objr.Comment==PRr.Code)then begin
+  						foundf = true;
+  					end;
+  				end else begin
+  					if(Objr.Comment==PRr.MotherCode)then begin
+  						foundf = true;
+  					end;
+  				end;
+  			end;
+  		end;
+  	end;
+  	ExtractObj(PRr.Objects,pos,obj);
+  end;
+  
+  
+  
+  if(foundf==false)then begin
+  	if(blank(PRr.MotherCode))then begin
+  		Objr.Code=PRr.Code;
+  		if(!readfirstmain(Objr,1,true))then begin
+  			Objr.Code = PRr.Code;
+  			Objr.Comment = PRr.Code;
+  			Objr.OTCode = "PRJ";
+  			recordstore(Objr,true);
+  			PRr.Objects = Objr.Code;
+  		end else begin
+  			PRr.Objects = Objr.Code;
+  		end;
+  	end else begin
+  		Objr.Code=PRr.MotherCode;
+  		if(!readfirstmain(Objr,1,true))then begin
+  			Objr.Code = PRr.MotherCode;
+  			Objr.Comment = PRr.MotherCode;
+  			Objr.OTCode = "PRJ";
+  			recordstore(Objr,true);
+  			PRr.Objects = Objr.Code;
+  		end else begin
+  			PRr.Objects = Objr.Code;
+  		end;
+  	end;
+  end;
+  
   
   switch (ProgramType) begin
     case typTimeLog: smalldevicesf = true;

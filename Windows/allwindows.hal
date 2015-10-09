@@ -2907,7 +2907,7 @@ begin
     EditField(h2,v+=vs,50,"Группа продажи",Normal,SalesGroup,false,SalesGroupSClass);
   end;
   if (HasApprovals) then begin
-    ButtonFrame(h3=570,v=16,123,6,"Статус утверждения");
+    ButtonFrame(h3=570,v=16,153,6,"Статус утверждения");
     RadioButton(h3,v,kAcceptanceStateNotRequired,0,"Без утверждения",AcceptanceStatus);
     RadioButton(h3,v+=16,kAcceptanceStateNotStarted,0,"Создан",AcceptanceStatus);
     RadioButton(h3,v+=16,kAcceptanceStateNotRequested,0,"На доработку",AcceptanceStatus);
