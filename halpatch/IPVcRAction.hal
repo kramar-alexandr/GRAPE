@@ -34,6 +34,7 @@ external function Integer PMCheckType(string,var string,var string);
 external function Boolean Date2Test(string,Date,string,Integer);
 external function Boolean SerNrTestIPVc(LongInt,Date,var Boolean);
 external function Integer CashSerNumberTest(string,val,string,LongInt,var Boolean);
+external function string 100 AddObjectsToInvoice(record IVVc);		
 
 function Boolean CheckIfPrepaymentError(record ARPayVc ARPayr,row IPVc IPrw,Date td)
 BEGIN
@@ -854,6 +855,19 @@ we don't have to check pmobject since it goes to diffrent account then OPrw.Obje
         end;
     end;
   end;
+  
+  
+  for(i=0;i<rwcnt;i=i+1) begin			//Edit----------------------Dima  12.10.2015
+  	MatRowGet(IPp,i,IPrw);
+		if(nonblank(IPrw.InvoiceNr) and blank(IPrw.Objects)) then begin
+			IVr.SerNr = IPrw.InvoiceNr;
+			if (ReadFirstMain(IVr,1,true)) then begin
+				IPrw.Objects = AddObjectsToInvoice(IVr);
+				MatRowPut(IPp,i,IPrw);
+			end;
+		end;
+	end;  
+  
 LIPVcRecordCheck_GenTrans:;
   transf = false;
   if (IPp.OKFlag==1) then begin
