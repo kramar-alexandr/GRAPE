@@ -229,6 +229,7 @@ begin
   record CUVc CUr;
   record PRClassBlock PRClassb;
   row PRClassBlock PRClassrw;
+  row VIVc VIrw;
 	string 100 objects;
 	integer i,rwcnt;
 	
@@ -258,7 +259,16 @@ begin
 			end;
 			VIr.Objects = objects;
 		end;
-	end;  
+	end; 
+	
+	for(i=0;i<rwcnt;i=i+1) begin 
+		MatRowGet(VIr,i,VIrw);
+		if (nonblank(VIrw.Objects) or nonblank(VIrw.PRCode)) then begin
+			VIrw.Objects = "";
+			VIrw.PRCode = "";
+			MatRowPut(VIr,i,VIrw);
+		end;	
+	end;
 	
 AddObjectsToVInvoice = objects;
 return;
