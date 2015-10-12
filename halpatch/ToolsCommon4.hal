@@ -1469,3 +1469,15 @@ begin
   
   UserCanChangePendingRecord = res;
 end;
+
+global updating procedure DelAccVcMn(record RcVc RepSpec)
+begin
+record AccVc Accr;
+
+	while(loopmain(Accr,1,true))begin
+		recorddelete(Accr);
+		stepback(Accr);
+	end;
+
+return;
+end;
