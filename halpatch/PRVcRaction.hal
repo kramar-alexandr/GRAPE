@@ -911,8 +911,11 @@ BEGIN
   			Objr.Code = PRr.Code;
   			Objr.Comment = PRr.Code;
   			Objr.OTCode = "PRJ";
-  			recordstore(Objr,true);
-  			PRr.Objects = Objr.Code;
+  			if (RecordInsert(Objr,true)) then begin
+  				PRr.Objects = Objr.Code;
+  			end else begin
+					RecordCheckError(1290,"",-1,"Objects");  
+				end;
   		end else begin
   			PRr.Objects = Objr.Code;
   		end;
@@ -922,7 +925,11 @@ BEGIN
   			Objr.Code = PRr.MotherCode;
   			Objr.Comment = PRr.MotherCode;
   			Objr.OTCode = "PRJ";
-  			recordstore(Objr,true);
+  			if (RecordInsert(Objr,true)) then begin
+  				PRr.Objects = Objr.Code;
+  			end else begin
+					RecordCheckError(1290,"",-1,"Objects");  
+				end;
   			PRr.Objects = Objr.Code;
   		end else begin
   			PRr.Objects = Objr.Code;

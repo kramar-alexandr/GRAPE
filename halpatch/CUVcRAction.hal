@@ -680,7 +680,7 @@ begin
 				Objr.Code = CUr.Code;
 				Objr.OTCode = "CUST";
 				Objr.Comment = CUr.Name;
-				RecordStore(Objr,true);
+				RecordInsert(Objr,true);
 				CUr.Objects = Objr.Code;
 			end;
 		end;
@@ -694,7 +694,7 @@ begin
 				Objr.Code = CUr.Code;
 				Objr.OTCode = "SUPP";
 				Objr.Comment = CUr.Name;
-				RecordStore(Objr,true);
+				RecordInsert(Objr,true);
 				CUr.VEObjects = Objr.Code;
 			end;
 		end;

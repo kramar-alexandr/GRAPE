@@ -414,3 +414,47 @@ begin
 	
 return;
 end;
+
+
+global updating procedure UpdateObjectsInPaymentDocumentsMn()		//Edit----------------------Dima  12.10.2015
+begin
+	record PRVc PRr, oldPRr;
+	record IVVc IVr, oldIVr;
+	record VIVc VIr, oldVIr;
+	record IPVc IPr, oldIPr;
+	record OPVc OPr, oldOPr;
+	record CUVc CUr, oldCUr;
+	
+	While(LoopMain(PRr,1,true)) begin
+		RecordCopy(oldPRr,PRr);
+  	RecordUpdate(oldPRr,PRr,true);
+	end;
+	
+	While(LoopMain(CUr,1,true)) begin
+		RecordCopy(oldCUr,CUr);
+  	RecordUpdate(oldCUr,CUr,true);
+	end;	
+	
+	While(LoopMain(IVr,1,true)) begin
+		RecordCopy(oldIVr,IVr);
+  	RecordUpdate(oldIVr,IVr,true);
+	end;
+	
+	While(LoopMain(VIr,1,true)) begin
+		RecordCopy(oldVIr,VIr);
+  	RecordUpdate(oldVIr,VIr,true);
+	end;
+	
+	While(LoopMain(IPr,1,true)) begin
+		RecordCopy(oldIPr,IPr);
+  	RecordUpdate(oldIPr,IPr,true);
+	end;
+	
+	While(LoopMain(OPr,1,true)) begin
+		RecordCopy(oldOPr,OPr);
+  	RecordUpdate(oldOPr,OPr,true);
+	end;				
+  
+end;
+
+
