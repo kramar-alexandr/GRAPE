@@ -1127,6 +1127,7 @@ LIPVcRecordCheck_GenTrans:;
       AddTTrans_IPVc(gTRp,IPp);
     end;
   end;
+/*  
 //EditBegin***********************Vitalii 16:22 15.09.2014
 	if NonBlank(IPp.PayMode) then begin
 		rwcnt = MatRowCnt(IPp);
@@ -1144,6 +1145,7 @@ LIPVcRecordCheck_GenTrans:;
 		end;
 	end;
 //EditEnd***********************Vitalii 16:22 15.09.2014
+*/
 LIPVcRecordCheck:;
   if (res!=0) then begin
     IPp.SerNr = oldnr;
