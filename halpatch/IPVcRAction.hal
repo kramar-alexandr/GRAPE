@@ -78,6 +78,52 @@ BEGIN
   RETURN;
 END;
 
+
+global function string 100 AddObjectsFromIPVc(record ORVc ORr)		//Edit----------------------Dima  15.10.2015
+begin
+  record ObjVc Objr;
+  record PRVc PRr;
+  record CUVc CUr;
+  record PRClassBlock PRClassb;
+  row PRClassBlock PRClassrw;
+	string 100 objects;
+	integer i,rwcnt;
+	
+	BlockLoad(PRClassb);
+  
+  if (nonblank(ORr.PRCode)) then begin
+			CUr.Code = ORr.CustCode;
+			if (ReadFirstMain(CUr,1,true)) then begin
+				if (CUr.CUType!=0) then begin
+					objects = CUr.Objects; 
+				end;			
+			end;
+			PRr.Code = ORr.PRCode;
+			if (ReadFirstMain(PRr,1,true)) then begin
+				if (nonblank(PRr.Objects)) then begin
+					objects = objects & "," & PRr.Objects;
+				end;
+				rwcnt = MatRowCnt(PRClassb);
+				for(i=0;i<rwcnt;i=i+1) begin
+					MatRowGet(PRClassb,i,PRClassrw);
+					if (PRClassrw.Code==PRr.PRClass) then begin
+						Objr.Code = PRClassrw.DefObject;
+						if (ReadFirstMain(Objr,1,true)) then begin
+							objects = objects & "," & PRClassrw.DefObject;
+						end;
+						rwcnt = i;
+					end;	
+				end;
+			end;
+
+	end;
+	 
+AddObjectsFromIPVc = objects;	
+return;	 
+end;
+
+
+
 global
 updating function LongInt IPVcRecordCheck(var record IPVc IPp,record IPVc IP2p,LongInt stat,LongInt long4)
 BEGIN
@@ -855,7 +901,23 @@ we don't have to check pmobject since it goes to diffrent account then OPrw.Obje
         end;
     end;
   end;
-  
+
+  for(i=0;i<rwcnt;i=i+1) begin			//Edit----------------------Dima  15.10.2015
+  	MatRowGet(IPp,i,IPrw);
+		if(nonblank(IPrw.CUPNr)) then begin
+			if (IPrw.CUPNr != IPrw.OrderNr) then begin
+           RecordCheckError(31039,"",i,"OrderNr");      
+           res = -1; 
+           goto LIPVcRecordCheck;
+			end;			
+			ORp.SerNr = IPrw.OrderNr;
+			if (ReadFirstMain(ORp,1,true) and blank(IPrw.Objects)) then begin
+				IPrw.Objects = AddObjectsFromIPVc(ORp);
+				MatRowPut(IPp,i,IPrw);
+			end;
+		end;
+	end;  
+
   
   for(i=0;i<rwcnt;i=i+1) begin			//Edit----------------------Dima  12.10.2015
   	MatRowGet(IPp,i,IPrw);

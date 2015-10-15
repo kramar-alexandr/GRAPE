@@ -146,6 +146,59 @@ BEGIN
   RETURN;
 END;
 
+
+global function string 100 AddObjectsFromOPVc(record POVc POr)		//Edit----------------------Dima  15.10.2015
+begin
+  record ObjVc Objr;
+  record PRVc PRr;
+  record CUVc CUr;
+  record PRClassBlock PRClassb;
+  row PRClassBlock PRClassrw;
+	string 100 objects;
+	integer i,rwcnt;
+	
+	BlockLoad(PRClassb);
+  
+  if (nonblank(POr.PRCode)) then begin
+			CUr.Code = POr.VECode;
+			if (ReadFirstMain(CUr,1,true)) then begin
+				if (CUr.VEType!=0) then begin
+					objects = CUr.VEObjects; 
+				end;			
+			end;
+			PRr.Code = POr.PRCode;
+			if (ReadFirstMain(PRr,1,true)) then begin
+				CUr.Code = PRr.CustCode;
+				if (ReadFirstMain(CUr,1,true)) then begin
+					if (CUr.CUType!=0) then begin
+						objects = objects & "," & CUr.Objects; 
+					end;			
+				end;				
+				if (nonblank(PRr.Objects)) then begin
+					objects = objects & "," & PRr.Objects;
+				end;
+				rwcnt = MatRowCnt(PRClassb);
+				for(i=0;i<rwcnt;i=i+1) begin
+					MatRowGet(PRClassb,i,PRClassrw);
+					if (PRClassrw.Code==PRr.PRClass) then begin
+						Objr.Code = PRClassrw.DefObject;
+						if (ReadFirstMain(Objr,1,true)) then begin
+							objects = objects & "," & PRClassrw.DefObject;
+						end;
+						rwcnt = i;
+					end;	
+				end;
+			end;
+
+	end;
+	 
+AddObjectsFromOPVc = objects;	
+return;	 
+end;
+
+
+
+
 global
 updating function LongInt ValidatePaymentRecord(record OPVc OPp,record OPVc OP2p,LongInt stat,LongInt long4,Boolean disperrf)
 BEGIN
@@ -1027,6 +1080,25 @@ L11:;
     end;
   end;
 //  if ((OPp.DoneFlag!=0) or (OPp.OrderedFlag!=0) or (OPp.RejectedFlag!=0)) then begin
+
+
+
+
+  for(i=0;i<rwcnt;i=i+1) begin			//Edit----------------------Dima  15.10.2015
+  	MatRowGet(OPp,i,OPrw);
+		if(nonblank(OPrw.PrepayNr)) then begin
+			if (OPrw.PrepayNr != OPrw.OrderNr) then begin
+           RecordCheckError(31039,"",i,"OrderNr");      
+           res = -1; 
+           goto LOPVcRecordCheck;
+			end;			
+			POr.SerNr = OPrw.OrderNr;
+			if (ReadFirstMain(POr,1,true) and blank(OPrw.Objects)) then begin
+				OPrw.Objects = AddObjectsFromOPVc(POr);
+				MatRowPut(OPp,i,OPrw);
+			end;
+		end;
+	end;  
 
 
   for(i=0;i<rwcnt;i=i+1) begin			//Edit----------------------Dima  12.10.2015
