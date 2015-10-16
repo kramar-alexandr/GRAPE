@@ -15,6 +15,7 @@ external procedure VIGetRate(var record VIVc); //Edit***************************
 external procedure UpdateVIPayDate(string,date); //Edit***************************Sasha2,13:57 20.02.2015
 external procedure TBBUVc_PasteTypeName_Rebate(record TBBUVc,integer,var row TBBUVc); //Edit***************************Sasha2,18:23 29.04.2015
 external procedure RecalcTBBURebate(var record TBBUVc); //Edit***************************Sasha2,9:37 02.06.2015
+external procedure ExtractObjWithSeparator(string,string,Boolean,var Integer,var string);	//Edit----------------------Dima  15.10.2015
 
 SetLangMode(LangRussian,"RUS",0);
 
@@ -67,12 +68,14 @@ BEGIN
   integer i,rwcnt,rownr;
   vector Integer porownr;
   string 50 subcontrname;
-  string 255 subcontrlist,vewarn;
+  string 355 subcontrlist,subcontrlist2,vewarn;
   Integer pos;
   val bal;
   vector LongInt viserns;
   Boolean changedf;
   date vipaydate;
+  vector boolean subContractors;
+  array string 100 subcontrarray;
   
   changedf = false;
  // if (ReadFirstMain(TBBUp,0,true)) then begin end;  
@@ -91,7 +94,8 @@ BEGIN
 		INr.Code = TBBUrw.ArtCode;
 		subcontrname = TBBUrw.SubContractor; 
 		if (ReadFirstMain(INr,1,true)) then begin
-		  	if (!SetInSet2(subcontrname,subcontrlist)) then begin
+				if (!subContractors[subcontrname]) then begin
+		  	//if (!SetInSet2(subcontrname,subcontrlist)) then begin
 		  		RecordNew(VIr);
 		  		VIr.VECode = TBBUrw.SubContractor;
 		  		if (subcontrname!="nosubcontr") then begin
@@ -109,30 +113,34 @@ BEGIN
       	  VIr.Objects = VEr.VEObjects;
 		  		vectVIr[subcontrname] = VIr;
 		  		porownr[subcontrname] = 0;
-		  		if (blank(subcontrlist)) then begin
-		  			subcontrlist = subcontrname;
-		  		end else begin
-		  			subcontrlist = subcontrlist & "," & subcontrname;
-		  		end;
+		  	//	if (blank(subcontrlist)) then begin
+		  	//		subcontrlist = subcontrname;
+		  	//	end else begin
+		  	//		subcontrlist = subcontrlist & "," & subcontrname;
+		  	//	end;
 		  	end;
 			VIr = vectVIr[subcontrname];
 			rownr = porownr[subcontrname];
 	    PutOnVIRow(VIr,VIrw,rownr,TBBUrw,TBBUp,VEr.VEVATCode,VIr.ExportFlag);
 	    porownr[subcontrname] = rownr;
 	    vectVIr[subcontrname] = VIr;
-    end;
+    end else begin																					//Edit----------------------Dima  16.10.2015
+			subcontrarray[subcontrarray.length] = subcontrname;
+			subContractors[subcontrname] = true;
+		end;
 	end;
   end;
   
   if (blank(subcontrlist)) then begin
   	goto LPasteTBBUInVIFunc;
   end;
-  
-  pos = 0; 
-  ExtractObj(subcontrlist,pos,subcontrname);
-  logtext(0,PRr.Code & " " & PRr.FinishedDate);
-  while (nonblank(subcontrname)) begin
-  	VIr = vectVIr[subcontrname];
+
+
+  logtext(0,PRr.Code & " " & PRr.FinishedDate);  
+  for(i=0;i<subcontrarray.length;i=i+1)  begin		
+ // while (nonblank(subcontrname)) begin 									//Edit----------------------Dima  16.10.2015
+//  	VIr = vectVIr[subcontrname];
+		VIr = vectVIr[subcontrarray[i]];
   	if (NonBlankDate(PRr.FinishedDate)) then begin
   	  VIr.InvDate = PRr.FinishedDate;
   	end;
@@ -173,8 +181,10 @@ BEGIN
 	    end;
 	  end;
 	
-  	ExtractObj(subcontrlist,pos,subcontrname);
+  	//ExtractObj(subcontrlist,pos,subcontrname);
+  	//ExtractObjWithSeparator(";",subcontrlist,false,pos,subcontrname);	//Edit----------------------Dima  15.10.2015
   end;
+
   
   for (i=0;i<rwcnt;i=i+1) begin
   	MatRowGet(TBBUp,i,TBBUrw);

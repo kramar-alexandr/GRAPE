@@ -408,7 +408,7 @@ begin
 		if(oldTBBUr.OKFlag == 0) then begin
 			recordCopy(TBBUr, oldTBBUr);		
 			TBBUr.OKFlag = 1;
-			RecordUpdate(oldTBBUr,TBBUr,true)
+			RecordUpdate(oldTBBUr,TBBUr,true);
 		end;
 	end;	   
 	
@@ -458,3 +458,101 @@ begin
 end;
 
 
+global updating procedure ApproveByCompaniesAllTBBUMn()		//Edit----------------------Dima  15.10.2015
+begin
+	record TBBUVc TBBUr, oldTBBUr;
+	
+	while(loopmain(oldTBBUr,1,true)) begin
+		if (oldTBBUr.AcceptanceStatus < kAcceptanceStateApproved) then begin
+			RecordCopy(TBBUr, oldTBBUr);		
+			TBBUr.AcceptanceStatus = kAcceptanceStateApproved;
+			RecordUpdate(oldTBBUr,TBBUr,true);
+		end;
+	end;	   
+	
+return;
+end;
+
+global updating procedure ApproveByClientAllTBBUMn()		//Edit----------------------Dima  15.10.2015
+begin
+	record TBBUVc TBBUr, oldTBBUr;
+	record PRVc PRr;
+	
+	while(loopmain(TBBUr,1,true)) begin
+  	PRr.Code = TBBUr.PRCode;
+  	if (ReadFirstMain(PRr,1,true)) then begin
+			if (TBBUr.ApproveFlag == 0  and Blank(PRr.MotherCode)) then begin
+				RecordCopy(oldTBBUr, TBBUr);		
+				TBBUr.ApproveFlag = 1;
+				RecordUpdate(oldTBBUr,TBBUr,true);
+			end;	
+		end;
+	end;	   
+	
+return;
+end;
+
+
+global
+function Boolean FindSubString( string Search, string Source )	//Edit----------------------Dima  16.10.2015
+begin
+	integer i,length,lengthSource,diff;
+	string 150 temp,str,inStr;
+	boolean res;
+	
+	res=false;
+	length=len(Search);
+	lengthSource=len(Source);
+	diff=lengthSource-length;
+
+	str=UpperCase(Search);   
+	inStr=UpperCase(Source);		
+	if (diff<0) then begin
+	goto	breakFunction;
+	end;
+	
+	for(i=0;i<=diff;i=i+1) begin
+	 temp=mid(inStr,i,length);
+	 if(temp==str) then begin
+	 	res = true;
+	 	goto breakFunction;
+	 end;	
+	end;
+
+	breakFunction:; // goto
+	FindSubString=res;
+return;  
+end;
+
+
+global updating procedure FixIncorrecObjectMn()	//Edit----------------------Dima  16.10.2015
+begin	
+record CUvc CUr;
+record ObjVc Objr;
+boolean save;
+
+	While(LoopMain(Objr,1,true)) begin
+		if (FindSubString(".",Objr.Code)) then begin
+			RecordDelete(OBjr);
+			StepBack(Objr);
+		end;
+ 	end;
+ 	
+	While(LoopMain(CUr,1,true)) begin
+		save = false;
+		if (FindSubString(".",CUr.Objects)) then begin
+			CUr.Objects = "";
+			save = true;
+		end;
+		if (FindSubString(".",CUr.VEObjects)) then begin
+			CUr.VEObjects = "";
+			save = true;
+		end;
+		if (save) then begin
+			RecordStore(CUr,true);
+		end;
+ 	end; 	
+ 	
+ 	UpdateObjectsInPaymentDocumentsMn;
+ 	 
+end;
