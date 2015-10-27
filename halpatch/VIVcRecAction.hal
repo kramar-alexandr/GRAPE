@@ -236,7 +236,7 @@ begin
 	BlockLoad(PRClassb);
   
   if (nonblank(VIr.PRCode)) then begin
-		if (blank(VIr.Objects)) then begin
+		//if (blank(VIr.Objects)) then begin
 			CUr.Code = VIr.VECode;
 			if (ReadFirstMain(CUr,1,true)) then begin
 				objects = CUr.VEObjects; 
@@ -258,7 +258,7 @@ begin
 				end;
 			end;
 			VIr.Objects = objects;
-		end;
+		//end;
 	end; 
 	
 	for(i=0;i<rwcnt;i=i+1) begin 

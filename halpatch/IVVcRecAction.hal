@@ -260,7 +260,7 @@ begin
 	BlockLoad(PRClassb);
   
   if (nonblank(IVr.PRCode)) then begin
-		if (blank(IVr.Objects)) then begin
+		//if (blank(IVr.Objects)) then begin
 			CUr.Code = IVr.CustCode;
 			if (ReadFirstMain(CUr,1,true)) then begin
 				objects = CUr.Objects; 
@@ -282,7 +282,7 @@ begin
 					end;	
 				end;
 			end;
-		end;
+		//end;
 
 	end;
 	 
