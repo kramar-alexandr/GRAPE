@@ -911,7 +911,7 @@ we don't have to check pmobject since it goes to diffrent account then OPrw.Obje
            goto LIPVcRecordCheck;
 			end;			
 			ORp.SerNr = IPrw.OrderNr;
-			if (ReadFirstMain(ORp,1,true) and blank(IPrw.Objects)) then begin
+			if (ReadFirstMain(ORp,1,true)) then begin
 				IPrw.Objects = AddObjectsFromIPVc(ORp);
 				MatRowPut(IPp,i,IPrw);
 			end;
@@ -921,7 +921,7 @@ we don't have to check pmobject since it goes to diffrent account then OPrw.Obje
   
   for(i=0;i<rwcnt;i=i+1) begin			//Edit----------------------Dima  12.10.2015
   	MatRowGet(IPp,i,IPrw);
-		if(nonblank(IPrw.InvoiceNr) and blank(IPrw.Objects)) then begin
+		if(nonblank(IPrw.InvoiceNr)) then begin
 			IVr.SerNr = IPrw.InvoiceNr;
 			if (ReadFirstMain(IVr,1,true)) then begin
 				IPrw.Objects = AddObjectsToInvoice(IVr);

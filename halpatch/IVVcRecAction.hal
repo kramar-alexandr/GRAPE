@@ -1694,7 +1694,7 @@ LkInvoiceTypeCash:;
     end;
   end; 
   
-  if (res==0 and blank (IVp.Objects)) then begin		//Edit----------------------Dima  12.10.2015
+  if (res==0) then begin		//Edit----------------------Dima  12.10.2015
 	  IVp.Objects = AddObjectsToInvoice(IVp);
   end;
   

@@ -1093,7 +1093,7 @@ L11:;
            goto LOPVcRecordCheck;
 			end;			
 			POr.SerNr = OPrw.OrderNr;
-			if (ReadFirstMain(POr,1,true) and blank(OPrw.Objects)) then begin
+			if (ReadFirstMain(POr,1,true)) then begin
 				OPrw.Objects = AddObjectsFromOPVc(POr);
 				MatRowPut(OPp,i,OPrw);
 			end;
@@ -1103,7 +1103,7 @@ L11:;
 
   for(i=0;i<rwcnt;i=i+1) begin			//Edit----------------------Dima  12.10.2015
   	MatRowGet(OPp,i,OPrw);
-		if(nonblank(OPrw.VISerNr) and blank(OPrw.Objects)) then begin
+		if(nonblank(OPrw.VISerNr)) then begin
 			VIr.SerNr = OPrw.VISerNr;
 			if (ReadFirstMain(VIr,1,true)) then begin
 				OPrw.Objects = VIr.Objects;

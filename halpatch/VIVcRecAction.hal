@@ -1188,7 +1188,7 @@ Invoice may hapen in locked period they say
     end;
   end;
   
-  if (res == 0 and blank(VIp.Objects)) then begin	//Edit----------------------Dima  12.10.2015
+  if (res == 0) then begin	//Edit----------------------Dima  12.10.2015
 	  VIp.Objects = AddObjectsToVInvoice(VIp);
 	end;
   
