@@ -165,10 +165,17 @@ begin
   integer datedif,i,pdays;
   string 20 country;
   boolean payday, testf;
-  Date curdate;
+  Date curdate,pivotdate; //Edit***************************Sasha2,11:38 28.10.2015
   
   i = 0;
   BlockLoad(ARAb);
+  
+  if (ARAb.DueDateBasedOnServDelDate==0) then begin //Edit***************************Sasha2,11:14 28.10.2015 {
+  	pivotdate = IVp.InvDate;
+  end else begin
+    pivotdate = IVp.ServiceDelDate;
+  end; //Edit***************************Sasha2,11:14 28.10.2015 }
+  
   PDr.Code = IVp.PayDeal;
   if (GetPD(PDr)) then begin end;
   
@@ -179,11 +186,14 @@ begin
 		country = "UA";
 	end;
 			
-  pdays = IVp.pdays;
-  datedif = CountWorkingDays(IVp.InvDate,AddDay(IVp.InvDate,IVp.pdays),IVp.CustCode,country);
+  //pdays = IVp.pdays; //Edit***************************Sasha2,15:52 28.10.2015
+  pdays = PDr.pdays; //Edit***************************Sasha2,15:52 28.10.2015
+  IVp.pdays = PDr.pdays; //Edit***************************Sasha2,15:55 28.10.2015
+  
+  datedif = CountWorkingDays(pivotdate,AddDay(pivotdate,IVp.pdays),IVp.CustCode,country);
 	payday = true;
   	
-	switch(getDateid(AddDay(IVp.InvDate,pdays)))begin
+	switch(getDateid(AddDay(pivotdate,pdays)))begin
 		case 1: if(CUr.Monday!=0) then begin payday = false;end;
 		case 2: if(CUr.Tuesday!=0) then begin  payday = false;end;
 		case 3: if(CUr.Wednesday!=0) then begin payday = false;end;
@@ -200,16 +210,16 @@ begin
 			testf = !payday;
 		end;
 	
-		while(testf)begin
+		while(testf) begin
 			i=i+1;
 			if(PDr.DayType==1)then begin
-			datedif = CountWorkingDays(AddDay(IVp.InvDate,1),AddDay(IVp.InvDate,pdays + i),IVp.CustCode,country);
+			datedif = CountWorkingDays(AddDay(pivotdate,1),AddDay(pivotdate,pdays + i),IVp.CustCode,country);
 			end else begin
-				datedif = datediff(AddDay(IVp.InvDate,pdays + i), AddDay(IVp.InvDate,1));
+				datedif = datediff(AddDay(pivotdate,pdays + i), AddDay(pivotdate,1));
 			end;
-			//curdate = AddDay(IVp.InvDate,pdays);
+			//curdate = AddDay(pivotdate,pdays);
 			payday = true;
-			switch(getDateid(AddDay(IVp.InvDate,pdays + i-1)))begin
+			switch(getDateid(AddDay(pivotdate,pdays + i-1))) begin
 				case 1: if(CUr.Monday!=0) then begin payday = false;end;
 				case 2: if(CUr.Tuesday!=0) then begin  payday = false;end;
 				case 3: if(CUr.Wednesday!=0) then begin payday = false;end;
@@ -230,36 +240,36 @@ begin
 	    
   if (IVp.pdays!=-1) then begin
     if (ARAb.DueDateBasedOnServDelDate==0) then begin
-    	IVp.PayDate = AddDay(IVp.InvDate,pdays);	//Edit by Victor 22.09.14 IVp.pdays -> pdays
+    	IVp.PayDate = AddDay(pivotdate,pdays);	//Edit by Victor 22.09.14 IVp.pdays -> pdays
     end else begin
-      IVp.PayDate = AddDay(IVp.ServiceDelDate,pdays);	//Edit by Victor 22.09.14 IVp.pdays -> pdays
+      IVp.PayDate = AddDay(pivotdate,pdays);	//Edit by Victor 22.09.14 IVp.pdays -> pdays
     end;
   end else begin
-    IVp.PayDate = IVp.InvDate;
+    IVp.PayDate = pivotdate;
   end; 
    
   if (PDr.PDType==4) then begin
-    IVp.PayDate = IVp.InvDate;
-    td = IVp.InvDate;
+    IVp.PayDate = pivotdate;
+    td = pivotdate;
     td = AddMonth(td,1);
     if (IVp.pdays==0) then begin td = AddMonth(td,1); end;
     td = AddDay(td,-GetDay(td) + 1);//1
     if (IVp.InvType<kInvoiceTypeInterest) then begin IVp.InvType = kInvoiceTypeNormal; end;
-    restdays = DateDiff(td,IVp.InvDate);
+    restdays = DateDiff(td,pivotdate);
     if (IVp.pdays>=0) then begin restdays = restdays -1; end;
     IVp.pdays = IVp.pdays + restdays;
     if (IVp.pdays!=-1) then begin
       if (ARAb.DueDateBasedOnServDelDate==0) then begin
-        IVp.PayDate = AddDay(IVp.InvDate,IVp.pdays);
+        IVp.PayDate = AddDay(pivotdate,IVp.pdays);
       end else begin
-        IVp.PayDate = AddDay(IVp.ServiceDelDate,IVp.pdays);
+        IVp.PayDate = AddDay(pivotdate,IVp.pdays);
       end;
     end else begin
-      IVp.PayDate = IVp.InvDate;
+      IVp.PayDate = pivotdate;
     end;
   end;
   if (PDr.PDType==6) then begin
-    IVp.PayDate = FindDueDateInAccPeriod(IVp.InvDate);
+    IVp.PayDate = FindDueDateInAccPeriod(pivotdate);
     if (PDr.pdays>0) then begin
       IVp.PayDate = AddDay(IVp.PayDate,PDr.pdays);
     end;
@@ -272,7 +282,7 @@ begin
         if (ARAb.DueDateBasedOnServDelDate==0) then begin
           IVp.PayDate = AddDay(IVp.PayDate,restdays);
         end else begin
-          IVp.PayDate = AddDay(IVp.ServiceDelDate,restdays);
+          IVp.PayDate = AddDay(pivotdate,restdays);
         end;
       end;
     end;

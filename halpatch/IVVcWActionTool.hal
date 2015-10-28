@@ -66,6 +66,7 @@ external function Boolean GetItemPriceDiscount3(string,val,var record INVc,strin
 external function Boolean INVc_AllowSales(record INVc,var LongInt);
 external function LongInt CountWorkingDays(Date,Date,string,string);
 external function Boolean GetPD(var record PDVc);
+external procedure IVVc_CalculatePayDate(var record IVVc); //Edit***************************Sasha2,15:22 28.10.2015
 
 global
 function Integer VATCalcRule(string VATCode)
@@ -1408,109 +1409,10 @@ BEGIN
   end;
   BlockLoad(OSb);
   BlockLoad(Accb);
-  if (GetPayDealType(IVp.PayDeal,pdays)==4) then begin
-    IVp.pdays = pdays;
-    IVp.PayDate = IVp.InvDate;
-    td = IVp.InvDate;
-    td = AddMonth(td,1);
-    if (IVp.pdays==0) then begin td = AddMonth(td,1); end;
-    td = AddDay(td,-GetDay(td)+1);
-    restdays = DateDiff(td,IVp.InvDate);
-    if (IVp.pdays>=0) then begin restdays = restdays -1; end;
-    IVp.pdays = IVp.pdays + restdays;
-    if (Accb.DueDateBasedOnServDelDate==0) then begin
-      IVp.PayDate = AddDay(IVp.InvDate,IVp.pdays);
-    end else begin
-      IVp.PayDate = AddDay(IVp.ServiceDelDate,IVp.pdays);
-    end;
-  end else begin
-    pdays = IVp.pdays;
-    if (pdays<0) then begin pdays = 0; end;
-    if (GetPayDealType(IVp.PayDeal,pdays)==6) then begin
-      IVp.PayDate = FindDueDateInAccPeriod(IVp.InvDate);
-      if (pdays>0) then begin
-        IVp.PayDate = AddDay(IVp.PayDate,pdays);
-      end;
-    end else begin
-      //pdays = IVp.pdays;  Think it's not correct Sasha2
-      PDr.Code = IVp.PayDeal; //Edit***************************Sasha2,13:09 08.12.2014 {
-  	  if (GetPD(PDr)) then begin end;
-      if (PDr.DayType==1) then begin 
-		datedif = DateDiff(IVp.InvDate,AddDay(IVp.InvDate,pdays));
-		
-		CUr.Code = IVp.CustCode;
-		if(readfirstmain(CUr,1,true))then begin
-			country = CUr.CountryCode;
-		end else begin
-			country = "UA";
-		end;
-		datedif = CountWorkingDays(IVp.InvDate,AddDay(IVp.InvDate,pdays),IVp.CustCode,country);// Edit ************************** Thursday, 18 September 2014 11:32:46
+  
+  
+  IVVc_CalculatePayDate(IVp); //Edit***************************Sasha2,16:13 28.10.2015
 
-		payday = true;
-  	
-		switch(getDateid(AddDay(IVp.InvDate,pdays)))begin
-			case 1: if(CUr.Monday!=0) then begin payday = false;end;
-			case 2: if(CUr.Tuesday!=0) then begin  payday = false;end;
-			case 3: if(CUr.Wednesday!=0) then begin payday = false;end;
-			case 4: if(CUr.Thursday!=0) then begin payday = false;end;
-			case 5: if(CUr.Friday!=0) then begin payday = false;end;
-			case 6: if(CUr.Saturday!=0) then begin payday = false;end;
-			case 7: if(CUr.Sunday!=0) then begin payday = false;end;
-		end;
-	
-	
-		if(datedif>0 and (datedif<pdays or !payday))then begin
-			testf = (datedif<pdays or !payday);
-			if(!testf)then begin 
-				testf = !payday;
-			end;
-
-			while(testf)begin
-				i=i+1;
-				if(PDr.DayType==1)then begin
-				datedif = CountWorkingDays(AddDay(IVp.InvDate,1),AddDay(IVp.InvDate,pdays + i),IVp.CustCode,country);
-				end else begin
-					datedif = datediff(AddDay(IVp.InvDate,pdays + i), AddDay(IVp.InvDate,1));
-				end;
-				//curdate = AddDay(IVp.InvDate,pdays);
-				payday = true;
-				switch(getDateid(AddDay(IVp.InvDate,pdays + i-1)))begin
-					case 1: if(CUr.Monday!=0) then begin payday = false;end;
-					case 2: if(CUr.Tuesday!=0) then begin  payday = false;end;
-					case 3: if(CUr.Wednesday!=0) then begin payday = false;end;
-					case 4: if(CUr.Thursday!=0) then begin payday = false;end;
-					case 5: if(CUr.Friday!=0) then begin payday = false;end;
-					case 6: if(CUr.Saturday!=0) then begin payday = false;end;
-					case 7: if(CUr.Sunday!=0) then begin payday = false;end;
-				end;
-				
-				testf = datedif<pdays;
-				if(!testf)then begin 
-					testf = !payday;
-				end;
-			end;
-			pdays = pdays + i - 1;
-		end;
-
-		/*if(datedif>0 and datedif<pdays)then begin
-			while(datedif<pdays) begin
-				i=i+1;
-				datedif = CountWorkingDays(AddDay(IVp.InvDate,1),AddDay(IVp.InvDate,pdays + i),IVp.CustCode,country);// Edit ************************** Thursday, 18 September 2014 11:53:15
-			end;
-			pdays = pdays + i - 1;
-		end;*/
-	  end; //Edit***************************Sasha2,13:09 08.12.2014 }
-	  
-	  IVp.pdays = pdays; //Edit***************************Sasha2,10:51 12.12.2014
-			
-      if (pdays<0) then begin pdays = 0; end;
-      if (Accb.DueDateBasedOnServDelDate==0) then begin
-        IVp.PayDate = AddDay(IVp.InvDate,pdays);
-      end else begin
-        IVp.PayDate = AddDay(IVp.ServiceDelDate,pdays);
-      end;
-    end;
-  end;
   if (OSb.SetTransDateToServDelDate==0) then begin
     IVp.TransDate = IVp.InvDate;
   end else begin

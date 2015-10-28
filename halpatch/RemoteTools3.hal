@@ -32,6 +32,7 @@ external procedure GetMailFormattingSettings(record MailVc,var record ConfVc);
 external function LongInt CountWorkingDays(Date,Date,string,string);
 external function Boolean GetPD(var record PDVc);
 external function LongInt DateDiff(Date,Date); //Edit by Victor 19.14.12
+external procedure IVVc_CalculatePayDate(var record IVVc); //Edit***************************Sasha2,15:22 28.10.2015
 
 global
 procedure PasteInvInEDIInv(var record EDIIVVc EDIIVp,record IVVc IVp)
@@ -704,6 +705,7 @@ BEGIN
 	record PDVc PDr;
 	boolean payday, testf; //Edit by Victor 19.12.14
   Date curdate;	//Edit by Victor 19.12.14
+  date pivotdate; //Edit***************************Sasha2,11:41 28.10.2015
 	
 	res = 0;
 	PDr.Code = PRp.PayDeal;
@@ -715,14 +717,21 @@ BEGIN
   IVp.InvType = kInvoiceTypeNormal;
   IVp.PRCode = PRp.Code;
   IVp.LangCode = PRp.LangCode;
-
   
-  if(nonblank(PDr.Installment)) then begin	//Edit by Victor 23.12.14
+  if (ARAb.DueDateBasedOnServDelDate==0) then begin //Edit***************************Sasha2,11:14 28.10.2015 {
+  	pivotdate = IVp.InvDate;
+  end else begin
+    pivotdate = IVp.ServiceDelDate;
+  end; //Edit***************************Sasha2,11:14 28.10.2015 }
+
+  //What for the code in /**/ quotes is needed??? //Edit***************************Sasha2,14:59 28.10.2015
+  /*if(nonblank(PDr.Installment)) then begin	//Edit by Victor 23.12.14
    	IVp.InvDate = curdate;	//date from PRp matrix	//Edit by Victor 23.12.14
   end else begin
-  	IVp.InvDate = PRp.FinishedDate;	//Edit by Victor 23.12.14
-  end;
-  IVp.TransDate = CurrentDate;
+  	IVp.InvDate = PRp.EndDate;	//Edit by Victor 23.12.14
+  end;*/
+  
+  IVp.TransDate = IVp.InvDate; //Edit***************************Sasha2,14:53 28.10.2015
 //Edit***********************Vitalii 17:06 04.09.2014
 	TBBUr.PRCode = PRp.Code;
 	ReadFirstMain(TBBUr,1,true);
@@ -762,86 +771,8 @@ BEGIN
     IVp.PayDeal = PRp.PayDeal;
   end;
  	
-  PDr.Code = IVp.PayDeal;
-  if (GetPD(PDr)) then begin end;
-  IVp.pdays = PDr.pdays;
-  pdays = IVp.pdays;
-  
-  if (PDr.DayType==1) then begin //Edit***************************Sasha2,13:09 08.12.2014 {
-  	CUr.Code = IVp.CustCode;	//******** Edit by Victor 23.09.14 {
-	if(readfirstmain(CUr,1,true))then begin
-		country = CUr.CountryCode;
-	end else begin
-		country = "UA";
-	end;
-  	datedif = CountWorkingDays(IVp.InvDate,AddDay(IVp.InvDate,IVp.pdays),IVp.CustCode,country);
-	
-	payday = true;
-  
-	switch(getDateid(AddDay(IVp.InvDate,pdays))) begin
-		case 1: if(CUr.Monday!=0) then begin payday = false;end;
-		case 2: if(CUr.Tuesday!=0) then begin  payday = false;end;
-		case 3: if(CUr.Wednesday!=0) then begin payday = false;end;
-		case 4: if(CUr.Thursday!=0) then begin payday = false;end;
-		case 5: if(CUr.Friday!=0) then begin payday = false;end;
-		case 6: if(CUr.Saturday!=0) then begin payday = false;end;
-		case 7: if(CUr.Sunday!=0) then begin payday = false;end;
-	end;
-  
-	
-	if(datedif>0 and (datedif<pdays or !payday))then begin
-			testf = (datedif<pdays or !payday);
-		if(!testf)then begin 
-			testf = !payday;
-		end;
-	
-		while(testf)begin
-			i=i+1;
-			if(PDr.DayType==1)then begin
-			datedif = CountWorkingDays(AddDay(IVp.InvDate,1),AddDay(IVp.InvDate,pdays + i),IVp.CustCode,country);
-			end else begin
-				datedif = datediff(AddDay(IVp.InvDate,pdays + i), AddDay(IVp.InvDate,1));
-			end;
-			//curdate = AddDay(IVp.InvDate,pdays);
-			payday = true;
-			switch(getDateid(AddDay(IVp.InvDate,pdays + i-1))) begin
-				case 1: if(CUr.Monday!=0) then begin payday = false;end;
-				case 2: if(CUr.Tuesday!=0) then begin  payday = false;end;
-				case 3: if(CUr.Wednesday!=0) then begin payday = false;end;
-				case 4: if(CUr.Thursday!=0) then begin payday = false;end;
-				case 5: if(CUr.Friday!=0) then begin payday = false;end;
-				case 6: if(CUr.Saturday!=0) then begin payday = false;end;
-				case 7: if(CUr.Sunday!=0) then begin payday = false;end;
-			end;
-			testf = datedif<pdays;
-			if(!testf)then begin 
-				testf = !payday;
-			end;
-		end;
-		pdays = pdays + i - 1;
-	end;
-	
-	/*if(datedif>0 and datedif<pdays)then begin
-		while(datedif<pdays) begin
-			i=i+1;
-			datedif = CountWorkingDays(AddDay(IVp.InvDate,1),AddDay(IVp.InvDate,pdays + i),IVp.CustCode,country);
-		end;
-		pdays = pdays + i - 1;
-	end;*/
-	IVp.pdays = pdays;
-  end; //Edit***************************Sasha2,13:09 08.12.2014 }
-
-  if (pdays<0) then begin pdays = 0; end;	//******* Edit by Victor 23.09.14 }
-	    
-  if (IVp.pdays!=-1) then begin
-    if (ARAb.DueDateBasedOnServDelDate==0) then begin
-    	IVp.PayDate = AddDay(IVp.InvDate,pdays);	
-    end else begin
-      IVp.PayDate = AddDay(IVp.ServiceDelDate,pdays);	
-    end;
-  end else begin
-    IVp.PayDate = IVp.InvDate;
-  end; //******* Edit by Victor 29.09.14 }
+ 	IVVc_CalculatePayDate(IVp); //Edit***************************Sasha2,16:19 28.10.2015
+ 
     
   if (nonblank(PRp.CustOrdNr)) then begin
     IVp.CustOrdNr = PRp.CustOrdNr;
@@ -1231,15 +1162,15 @@ BEGIN
       if (prrw.RowType!=0) then begin testf = false; end;
       if(prrw.InvNr>-1)then begin testf = false; end;
 			
-		if(prrw.InvNr>-1)then begin
-			IVr.SerNr = prrw.InvNr;
-			if(readfirstmain(IVr,1,true))then begin
-				totinvoiced = totinvoiced + IVr.Sum4;
-			end;
-		end;
-		if(totinvoiced>=TBBUr.TotSum)then begin
-			testf = false;
-		end;
+  		if(prrw.InvNr>-1)then begin
+  			IVr.SerNr = prrw.InvNr;
+  			if(readfirstmain(IVr,1,true))then begin
+  				totinvoiced = totinvoiced + IVr.Sum4;
+  			end;
+  		end;
+  		if(totinvoiced>=TBBUr.TotSum)then begin
+  			testf = false;
+  		end;
 			
       if (testf) then begin
         switch (prrw.InvFlag) begin
@@ -1259,7 +1190,14 @@ BEGIN
 				IVr.PayDate = prrw.PlanDate;
 				IVr.PayDeal = lPRr.PayDeal;*/
 				res = 1;
-				IVr.InvDate = prrw.PlanDate;
+				if (NonBlankDate(prrw.PlanDate)) then begin //Edit***************************Sasha2,14:40 28.10.2015
+          IVr.InvDate = prrw.PlanDate;
+        end else begin
+          IVr.InvDate = PRp.EndDate;
+          prrw.PlanDate = IVr.InvDate;
+        end;  
+				IVr.TransDate = IVr.InvDate; 
+				IVr.ServiceDelDate = PRp.FinishedDate;//Edit***************************Sasha2,14:17 28.10.2015
 				IVr.SalesMan = lPRr.Leader;
 				res = ProInvHead(IVr,lPRr);
 				if (res!=0) then begin

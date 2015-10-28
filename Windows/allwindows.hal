@@ -3008,7 +3008,7 @@ if (HasTouchScreenLook==false) then begin
   EditField(h1,v+=vs,25,"Условия оплаты",Normal,PayDeal,false,PDSClass);//PDMSClass);
   EditField(h1,v+=vs,82,"Дата оплаты",Normal,PayDate,false,PasteCurDate);
   EditField(h1,v+=vs,82,"Дата операции",Normal,TransDate,false,PasteCurDate);
-  EditField(h1,v+=vs,82,"Дата оказ. услуги",Normal,ServiceDelDate,false,PasteCurDate);  
+  EditField(h1,v+=vs,82,"Дата завершения",Normal,ServiceDelDate,false,PasteCurDate);  
   CheckBox(h2-90,v=vm,0,"Автом-ски не пересчитывать дату сч/ф",DoNotRecalcDate); //Edit***************************Sasha2,10:31 30.12.2014
   EditField(h2,v+=vs,135,"Ответственный",Normal,OurContact,false,0); //Edit***************************Sasha2,10:33 30.12.2014
   EditField(h2,v+=vs,135,"Внимание",Normal,ClientContact,false,ContactSClass);
