@@ -1,0 +1,39 @@
+SetLangMode(LangRussian,"RUS",0);
+
+
+global procedure ExpPricesRn(record RcVc RepSpec)	//Edit----------------------Dima  29.10.2015
+begin
+record PLVc PLr;
+record INVc INr;
+vector string 200 namesRU,namesENG;
+
+	While(LoopMain(INr,1,true)) begin
+		namesRU[INr.Code] = INr.Name;
+		namesENG[INr.Code] = INr.AlternativeCode;	
+	end;
+	
+	StartReportNoHeaderJob("Список цен");
+	
+	
+	startformat(15);
+		outstring(20,0,"Прайс-лист",false);
+		outstring(70,0,"Код",false);
+		outstring(150,0,"Цена",false);
+		outstring(200,0,"Наименование",false);
+		outstring(350,0,"Наименование",false);
+	EndFormat;	
+	EndFormat;	
+			
+	While(LoopMain(PLr,1,true)) begin
+		startformat(15);
+			outstring(20,0,PLr.PLCode,false);
+			outstring(70,0,PLr.ArtCode,false);
+			outstring(150,0,PLr.ExVatPrice,false);
+			outstring(200,0,namesRU[PLr.ArtCode],false);
+			outstring(350,0,namesENG[PLr.ArtCode],false);
+		EndFormat;
+	end;
+
+	EndJob;
+
+end;

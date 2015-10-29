@@ -469,6 +469,17 @@ begin
 end;
 
 
+
+window ExpPricesRClass:1
+  wtag("language","RUS"), wtag("product","*"), wtag("device","computer")
+begin
+  real h,h1,h2,v,vm,vs;
+  WindowBegin("Ћпределите отчет по ценам",ExpPricesRClass,CGRcW,RcType);
+  SetWRect(20,80,400,270);
+  EndWindow;
+end;
+
+
 /*
 //Edit---------------Vitalii 11:14 25.06.2015
 window ExportBudgetRClass:1
