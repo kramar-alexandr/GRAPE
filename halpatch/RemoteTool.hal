@@ -76,7 +76,7 @@ BEGIN
   date vipaydate;
   vector boolean subContractors;
   array string 100 subcontrarray;
-  
+
   changedf = false;
  // if (ReadFirstMain(TBBUp,0,true)) then begin end;  
   PRr.Code = TBBUp.PRCode;
@@ -118,25 +118,30 @@ BEGIN
 		  	//	end else begin
 		  	//		subcontrlist = subcontrlist & "," & subcontrname;
 		  	//	end;
+		  		subcontrarray[subcontrarray.length] = subcontrname;		//Edit----------------------Dima  05.11.2015
+					subContractors[subcontrname] = true;									//Edit----------------------Dima  05.11.2015
 		  	end;
 			VIr = vectVIr[subcontrname];
 			rownr = porownr[subcontrname];
 	    PutOnVIRow(VIr,VIrw,rownr,TBBUrw,TBBUp,VEr.VEVATCode,VIr.ExportFlag);
 	    porownr[subcontrname] = rownr;
 	    vectVIr[subcontrname] = VIr;
-    end else begin																					//Edit----------------------Dima  16.10.2015
-			subcontrarray[subcontrarray.length] = subcontrname;
-			subContractors[subcontrname] = true;
 		end;
 	end;
   end;
-  
+
+/*  //Edit----------------------Dima  05.11.2015
   if (blank(subcontrlist)) then begin
   	goto LPasteTBBUInVIFunc;
   end;
+*/ 
 
 
-  logtext(0,PRr.Code & " " & PRr.FinishedDate);  
+  
+  if (subcontrarray.length == 0) then begin	//Edit----------------------Dima  05.11.2015
+  	goto LPasteTBBUInVIFunc;
+  end;
+ 
   for(i=0;i<subcontrarray.length;i=i+1)  begin		
  // while (nonblank(subcontrname)) begin 									//Edit----------------------Dima  16.10.2015
 //  	VIr = vectVIr[subcontrname];
