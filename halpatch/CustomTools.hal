@@ -7,6 +7,7 @@ external function LongInt CountWorkingDays(Date,Date,string,string); //Edit*****
 external function LongInt DateDiff(Date,Date); //Edit***************************Sasha2,18:24 23.07.2015
 external procedure ExtractObj(string,var Integer,var string);//Edit---------------Vitalii 11:50 27.07.2015
 external procedure IVVc_CalculatePayDate(var record IVVc); //Edit***************************Sasha2,9:36 29.10.2015
+external procedure PasteTBBUInVIFunc(record TBBUVc);
 
 global //Edit***************************Sasha2,18:03 23.07.2015 {
 updating function LongInt GetDaysAmountFromPayDeal(date FromDate,string PayD,string customer)
@@ -587,3 +588,72 @@ record IVVc IVr,oldIVr;
 	end;
  	 
 end; //Edit***************************Sasha2,9:37 29.10.2015 }
+
+ 
+
+global
+function Boolean FindSubString( string Search, string Source )	//Edit----------------------Dima  06.11.2015
+begin
+	integer i,length,lengthSource,diff;
+	string 150 temp,str,inStr;
+	boolean res;
+	
+	res=false;
+	length=len(Search);
+	lengthSource=len(Source);
+	diff=lengthSource-length;
+
+	str=UpperCase(Search);   
+	inStr=UpperCase(Source);		
+	if (diff<0) then begin
+	goto	breakFunction;
+	end;
+	
+	for(i=0;i<=diff;i=i+1) begin
+	 temp=mid(inStr,i,length);
+	 if(temp==str) then begin
+	 	res = true;
+	 	goto breakFunction;
+	 end;	
+	end;
+
+	breakFunction:; // goto
+	FindSubString=res;
+return;  
+end; 
+  
+
+
+global updating procedure RecalculateVInvoicesMn()	//Edit----------------------Dima  16.10.2015
+begin	
+record TBBUVc TBBUr;
+record PRVc PRr;
+record VIVc VIr;
+boolean TrHs,foundVI;
+
+	While(LoopMain(TBBUr,1,true)) begin
+  	PRr.Code = TBBUr.PRCode;
+  	if(ReadFirstMain(PRr,1,true)) then begin
+  		if (blank(PRr.MotherCode)) then begin
+  			if (TBBUr.ApproveFlag!=0) then begin
+  				TrHs = true;
+  				foundVI = false;
+  				VIr.SerNr = 1;  				
+  				While (LoopMain (VIr,1,TrHs)) begin
+						if (FindSubString(PRr.Code,VIr.PRCode)) then begin
+							foundVI = true;
+							TrHs = false;
+						end;
+					end;
+					ResetLoop(VIr);										
+					if (!foundVI) then begin
+						PasteTBBUInVIFunc(TBBUr);
+						LogText(0,"create VInvoice for " & TBBUr.PRCode);
+					end;						
+				end;	
+			end;
+  	end;
+
+	end;	
+ 	 
+end;

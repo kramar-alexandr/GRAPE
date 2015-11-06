@@ -135,8 +135,6 @@ BEGIN
   	goto LPasteTBBUInVIFunc;
   end;
 */ 
-
-
   
   if (subcontrarray.length == 0) then begin	//Edit----------------------Dima  05.11.2015
   	goto LPasteTBBUInVIFunc;
@@ -148,6 +146,10 @@ BEGIN
 		VIr = vectVIr[subcontrarray[i]];
   	if (NonBlankDate(PRr.FinishedDate)) then begin
   	  VIr.InvDate = PRr.FinishedDate;
+  	  VIr.TransDate = PRr.FinishedDate;
+  	end else begin 
+   	  VIr.InvDate = CurrentDate;
+  	  VIr.TransDate = CurrentDate; 	
   	end;
 	  VIr.PRCode = TBBUp.PRCode;
 	  VIr.Comment = TBBUp.Comment;
