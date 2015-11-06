@@ -634,8 +634,9 @@ boolean TrHs,foundVI;
 	While(LoopMain(TBBUr,1,true)) begin
   	PRr.Code = TBBUr.PRCode;
   	if(ReadFirstMain(PRr,1,true)) then begin
-  		if (blank(PRr.MotherCode)) then begin
-  			if (TBBUr.ApproveFlag!=0) then begin
+  		//if (blank(PRr.MotherCode)) then begin
+  			if (TBBUr.ApproveFlag!=0 and PRr.StopInvoicing==0) then begin
+  				/*
   				TrHs = true;
   				foundVI = false;
   				VIr.SerNr = 1;  				
@@ -645,15 +646,22 @@ boolean TrHs,foundVI;
 							TrHs = false;
 						end;
 					end;
-					ResetLoop(VIr);										
-					if (!foundVI) then begin
+					ResetLoop(VIr);	
+					
+					*/									
+					//if (!foundVI) then begin
 						PasteTBBUInVIFunc(TBBUr);
 						LogText(0,"create VInvoice for " & TBBUr.PRCode);
-					end;						
+					//end;						
 				end;	
-			end;
+			//end;
   	end;
 
 	end;	
  	 
 end;
+
+
+
+
+
