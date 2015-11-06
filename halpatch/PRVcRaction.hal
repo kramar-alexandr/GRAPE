@@ -881,7 +881,7 @@ BEGIN
   foundf = false;
   foundftype = false;
   ExtractObj(PRr.Objects,pos,obj);
-  while(nonblank(obj))begin
+  while(nonblank(obj)) begin
   	if(nonblank(obj))then begin
   		Objr.Code=obj;
   		if(readfirstmain(Objr,1,true))then begin
@@ -935,7 +935,13 @@ BEGIN
   			PRr.Objects = Objr.Code;
   		end;
   	end;
-  end;
+  end else begin //Edit***************************Sasha2,11:18 06.11.2015 {
+    if(blank(PRr.MotherCode))then begin
+      PRr.Objects = PRr.Code;
+    end else begin
+      PRr.Objects = PRr.MotherCode;
+    end;
+  end; //Edit***************************Sasha2,11:18 06.11.2015 }
   
   
   switch (ProgramType) begin
