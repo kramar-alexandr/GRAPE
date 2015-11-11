@@ -1253,6 +1253,12 @@ LVIVcRecordCheck_GenTrans:;
     end;
   end;
 L99VIVcRecordCheck:;
+
+  PRr.Code = VIp.PRCode;									//Edit----------------------Dima  11.11.2015
+  if(ReadfirstMain(PRr,1,true))then begin
+  	VIp.Comment = PRr.Name;
+  end;	
+
   if (res!=0) then begin
     VIp.SerNr = oldnr;
   end;
