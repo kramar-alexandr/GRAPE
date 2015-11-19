@@ -514,7 +514,7 @@ begin
       if (TBBUrw.stp==1) then begin
         TBBUDchrsum(TBBUp,i,true,GenOptRec.UseDiscount);
       end; 
-      if (TBBUrw.stp==23) then begin 
+      if (TBBUrw.stp>=23 and TBBUrw.stp<=25) then begin 
         CalcTBBUVcCurrencyPriceAndSum(TBBUp,TBBUrw,TBBUrw.SumCost,TBBUrw.Sum,TBBUrw.Sum,(TBBUrw.Sum!=0));
         MatRowPut(TBBUp,i,TBBUrw); 
       end;
