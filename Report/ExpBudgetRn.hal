@@ -889,6 +889,8 @@ BEGIN
 	integer numOfUniqueSharedStrings,numOfSharedStrings,qtyMergeCell;
 	string 16 reportName;
 	boolean rowpass;
+	record PRClassBlock PRClassRec; //Edit***************************Sasha2,16:28 19.11.2015
+	row PRClassBlock PRClassrw; //Edit***************************Sasha2,16:29 19.11.2015
 	
 	setexportcodepage("UTF-8");
 	
@@ -911,6 +913,27 @@ BEGIN
 	changed = false;
 	TBBUr.PRCode = RepSpec.f1;
 	ReadFirstMain(TBBUr,1,true);
+	
+	matrowget(TBBUr,0,TBBUrw); //Edit***************************Sasha2,14:02 19.11.2015 {
+	if (TBBUrw.stp!=18) then begin
+	  BlockLoad(PRClassRec);
+	  ClearRow(TBBUr,TBBUrw,18);
+	  PRr.Code = TBBUr.PRCode;
+		ReadFirstMain(PRr,1,true);
+	  TBBUrw.PRCode = PRr.Code;
+	  TBBUrw.Spec = PRr.Name;
+	  TBBUrw.PRName = PRr.CustName;
+	  mtrw = MatRowCnt(PRClassRec);
+	  for (i=0;i<mtrw;i=i+1) begin
+			MatRowGet(PRClassRec,i,PRClassrw);
+			if(PRr.PRClass == PRClassrw.Code)then begin
+				TBBUrw.TypeName  = PRClassrw.Comment & "--" & PRClassrw.Comment2;
+				i = mtrw;
+			end;
+		end;
+	  TBBUrw.IdentQuant = 1;
+	  MatRowInsert(TBBUr,0,TBBUrw);
+	end; //Edit***************************Sasha2,14:02 19.11.2015 }
 	
 	sheetNames[qtyOfSheets] = "TOTAL";
 	qtyOfSheets = qtyOfSheets + 1;
