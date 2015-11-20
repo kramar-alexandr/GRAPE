@@ -335,13 +335,12 @@ BEGIN
   	      costv = blankval;
       	end;
       	if (TBBUrw.stp==9) then begin
-      		logtext(0,"TBBUrw.stp " & TBBUrw.Sum & " " & subtotv & " " & TBBUrw.Cost & " " & costv);
-      	  if (blankval!=subtotv) or (blankval!=costv) then begin
+      	  //if (TBBUrw.Sum!=subtotv) or (TBBUrw.Cost!=costv) or (TBBUrw.ClientSum!=subtotv_cur) then begin
   	        TBBUrw.Sum = subtotv;
   	        TBBUrw.ClientSum = subtotv_cur; //Edit***************************Sasha2,17:49 27.02.2015
   	        TBBUrw.Cost = costv;
   	        MatRowPut(TBBUp,i,TBBUrw);
-  	      end;
+  	      //end;
   	      subtotv = blankval;
   	      subtotv_cur = blankval; //Edit***************************Sasha2,17:49 27.02.2015
   	      costv = blankval;

@@ -2807,7 +2807,7 @@ begin
       if (ReadFirstMain(TBBUr,1,true)) then begin
         PRr.Code = TBBUr.PRCode; //Edit***************************Sasha2,10:42 10.08.2015
         ReadFirstMain(PRr,1,true); //Edit***************************Sasha2,10:42 10.08.2015
-        if (blank(PRr.MotherCode) and ReadAcceptanceRules(kAcceptanceTBBU,TBBUr.CustCode,Acptr)) then begin //Edit***************************Sasha2,10:43 10.08.2015
+        if (/*blank(PRr.MotherCode) and*/ ReadAcceptanceRules(kAcceptanceTBBU,TBBUr.CustCode,Acptr)) then begin //Edit***************************Sasha2,10:43 10.08.2015
           if (IsValidApprovalActType(Actr,Acptr)==false or TBBUr.AcceptanceStatus>=kAcceptanceStateApproved) then begin 
             goto LLSetLinkedRecordAcceptanceStatus;
           end;        
