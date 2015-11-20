@@ -18,6 +18,7 @@ external function LongInt CountWorkingDays(Date,Date,string,string); //Edit*****
 external function LongInt DateDiff(Date,Date); //Edit by Victor 23.12.14
 external updating procedure CreateTBBUAct(record TBBUVc);
 external updating function Boolean CreateCustomTask(string,string,string,string,string);
+external function boolean CheckBudgetForEditing(record TBBUVc);//Edit----------------------Dima  19.11.2015
 
 // Edit Start ---------------------------------------------- Edit Start
 	//Friday, 12 September 2014 16:24:32
@@ -711,17 +712,32 @@ function LongInt TBBUVcRecordRemoveTest(var record TBBUVc TBBUr,record TBBUVc TB
 begin
   LongInt res;
   record DBLockBlock DBLockRec;
+  record PRVc PRr;
 
   res = 1;
   BlockLoad(DBLockRec);
   if (TBBUr.TransDate<DBLockRec.DeleteBeforeDate) then begin
     goto LTBBUVcRecordRemoveTest;
   end;
+  
+  PRr.Code = TBBUr.PRCode;
+  if (ReadFirstMain(PRr,1,true)) then begin		//Edit----------------------Dima  20.11.2015
+		if (nonblank(PRr.MotherCode)) then begin
+			if (CheckBudgetForEditing(TBBUr)==false) then begin
+    		res = 0;
+    		MessageBox(31040,"");    		
+    		goto LTBBUVcRecordRemoveTest;
+			end;
+		end;
+	end;  
+  
   if (AcceptanceActivityExists(kAcceptanceTBBU,"TBBUVc",TBBUr.PRCode,TBBUr.CustCode)) then begin
-    if (long3>0) then begin MessageBox(22408,""); end;
+    if (long3>0  ) then begin MessageBox(22408,""); end;		//Edit----------------------Dima  19.11.2015
     res = 0;
     goto LTBBUVcRecordRemoveTest;
   end;  
+  
+  
 LTBBUVcRecordRemoveTest:;
   TBBUVcRecordRemoveTest = res; 
   return;

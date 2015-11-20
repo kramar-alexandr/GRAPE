@@ -982,3 +982,45 @@ BEGIN
   
   RETURN;
 END;
+
+
+global function boolean CheckBudgetForEditing(record TBBUVc TBBUr)		//Edit----------------------Dima  19.11.2015
+ begin
+	boolean res,TrHs;
+	record PRVc PRr,PR2r;
+	record TBBUVc TBBU2r;
+	array string 30 projects;
+	res = true;
+	
+	PRr.Code = TBBUr.PRCode;
+	if (ReadFirstMain(PRr,1,true)) then begin
+		//check mother project's budget
+		if (nonblank(PRr.MotherCode)) then begin
+			TBBU2r.PRCode = PRr.MotherCode;
+			if (ReadFirstMain(TBBU2r,1,true)) then begin
+				res = false;
+				goto LCheckBudgetForEditing;
+			end;
+		end else begin
+		//check daughter projects' budget
+			TrHs = true;
+			PR2r.MotherCode = PRr.Code;
+			
+			While(LoopKey("MotherCode",PR2r,1,TrHs)) begin
+				if(PR2r.MotherCode != PRr.Code) then begin TrHs = false; end;
+				if (TrHs) then begin
+					TBBU2r.PRCode = PR2r.Code;
+					if (ReadFirstMain(TBBU2r,1,true)) then begin
+						res = false;
+						goto LCheckBudgetForEditing;
+					end;					
+				end;
+			end;
+		
+		end;
+	end;	
+
+ LCheckBudgetForEditing:;
+ CheckBudgetForEditing = res;
+return;
+end;
