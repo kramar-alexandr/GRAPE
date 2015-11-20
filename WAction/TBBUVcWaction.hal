@@ -826,9 +826,17 @@ BEGIN
   GetWindowRecord(wn,TBBU2r);
   
   if (WindowState(wn)==Rs_normal or WindowState(wn)==Rs_update) then begin
+  	if(rownr>=1)then begin
   	MatRowGet(TBBUr,rownr,TBBUrw);
-  	if (TBBUrw.stp != 23) then begin
-  		if (CheckBudgetForEditing(TBBUr)==false) then begin	//Edit----------------------Dima  19.11.2015
+			if (TBBUrw.stp != 23) then begin
+				if (CheckBudgetForEditing(TBBUr)==false and changed>0) then begin	//Edit----------------------Dima  19.11.2015
+					res = false;
+					MessageBox(31040,"");
+					goto LTBBUDClassActiveEditField;
+				end;
+			end;
+		end else begin
+			if (CheckBudgetForEditing(TBBUr)==false and changed>0) then begin	//Edit----------------------Dima  19.11.2015
 				res = false;
 				MessageBox(31040,"");
 				goto LTBBUDClassActiveEditField;

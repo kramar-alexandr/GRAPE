@@ -731,11 +731,13 @@ begin
 		end;
 	end;  
   
-  if (AcceptanceActivityExists(kAcceptanceTBBU,"TBBUVc",TBBUr.PRCode,TBBUr.CustCode)) then begin
-    if (long3>0  ) then begin MessageBox(22408,""); end;		//Edit----------------------Dima  19.11.2015
-    res = 0;
-    goto LTBBUVcRecordRemoveTest;
-  end;  
+  if(TBBUr.AcceptanceStatus==kAcceptanceStateRejected or TBBUr.AcceptanceStatus==kAcceptanceStateApproved or TBBUr.AcceptanceStatus==kAcceptanceStatePending)then begin
+		if (AcceptanceActivityExists(kAcceptanceTBBU,"TBBUVc",TBBUr.PRCode,TBBUr.CustCode)) then begin
+			if (long3>0  ) then begin MessageBox(22408,""); end;		//Edit----------------------Dima  19.11.2015
+			res = 0;
+			goto LTBBUVcRecordRemoveTest;
+		end;  
+  end;
   
   
 LTBBUVcRecordRemoveTest:;
