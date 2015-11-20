@@ -1771,10 +1771,10 @@ begin
   		end;
   	end;
   end; //Edit***************************Sasha2,17:45 07.10.2014 }
-  if (NonBlank(PRr.MotherCode)) then begin //Edit***************************Sasha2,13:32 29.07.2015 {
+  /*if (NonBlank(PRr.MotherCode)) then begin //Edit***************************Sasha2,13:32 29.07.2015 {
     MessageBox(0,"Запрещено. Проект бюджета не является старшим");
     goto LTBBUSendforAcceptanceTBBUDsm;
-  end; //Edit***************************Sasha2,13:32 29.07.2015 }
+  end;*/ //Edit***************************Sasha2,13:32 29.07.2015 }
   TBBUr.AcceptanceBy = acceptanceby;
   TBBUr.AcceptanceFYI = acceptancefyi;
   switch (TBBUr.AcceptanceStatus) begin
