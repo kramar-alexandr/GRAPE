@@ -954,7 +954,7 @@ BEGIN
 	
 	ifDifferentCurrency = false;
 	if(nonblank(TBBUr.ClientCurncyCode) and (TBBUr.ClientCurncyCode != TBBUr.CurncyCode))then begin
-		//ifDifferentCurrency = true;
+		ifDifferentCurrency = true;
 	end;
 		
 	XmlXlsxWorkBegin(fileToSave,reportName);
@@ -1492,6 +1492,7 @@ BEGIN
 						NumericCell(sheetnum,fileToSave,colnum,rownum,style,TBBUrw.Sum);
 						if (ifDifferentCurrency) then begin
 							NumericCell(sheetnum,fileToSave,colnum,rownum,style,TBBUrw.ClientSum);
+							logtext(0,"TBBUrw.ClientSum " & TBBUrw.ClientSum);
 						end;
 					EndRow(sheetnum,fileToSave,rownum);
 					tot = tot + TBBUrw.Sum;
