@@ -24,6 +24,7 @@ external function Boolean CheckProjectManager(record PRVc);
 external function Boolean HasContactClassification();
 external function Boolean HasMultiCurrency();
 external function Boolean IsEnterprise();
+remote updating procedure CreateProjInvoice(var record TBBUVc);//Edit-------------------Vitalii 14:13 23.11.2015
 remote function Integer ClonePRD(String , record RcVc);	//Edit by Victor 12.12.14
 
 procedure dummy() //##ii
@@ -422,18 +423,26 @@ BEGIN
   Integer wn,nwn;
   record PRVc PRr;
   record IVVc IVr;
+  record TBBUVc TBBUr;
   record RcVc RepSpec;
   Integer r;
 
   wn = CurWindow;
   if (WindowState(wn)==0) then begin//Rs_normal
-    GetWindowRecord(wn,PRr);
+    //Edit-------------------Vitalii 14:11 23.11.2015
+	/*GetWindowRecord(wn,PRr);
     r = RecordAction_raProDownPay(RepSpec,IVr,PRr);
     switch (r) begin
       case -1: Beep;
       case 0: nwn = OpenWindow("IVDClass",1,0,"","",IVr);
       otherwise MessageBox(r,"");
-    end;
+    end;*/
+	GetWindowRecord(wn,PRr);
+	TBBUr.PRCode = PRr.Code;
+	ReadFIrstMain(TBBUr,1,true);
+	if (TBBUr.ApproveFlag==1) then begin
+		CreateProjInvoice(TBBUr);
+	end;
   end else begin
     Beep;
   end;
