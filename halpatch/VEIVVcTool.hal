@@ -360,6 +360,15 @@ LVICalcEReb:;
   RETURN;
 END;
 
+global
+procedure VIVc_PasteEndJobDate(var record VIVc VIp)
+BEGIN
+  
+  VICalcEReb(VIp); 
+
+  RETURN;
+END;
+
 updating function Integer PasteVEIVInVI(record VEIVVc VEIVr,var record VIVc VIp)
 BEGIN
   record EInvoiceBlock EInvoiceRec;

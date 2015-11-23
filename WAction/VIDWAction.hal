@@ -38,7 +38,7 @@ external function string 20 FindWithHoldAcc(string,string);
 external function Boolean IsDigit(string);
 external function Boolean IsCapitalLetter(string);
 external function Boolean UserCanChangePendingRecord(Integer);
-remote procedure VICalcEReb(record VIVc); //Edit***************************Sasha2,18:00 23.11.2015
+remote procedure VIVc_PasteEndJobDate(var record VIVc); //Edit***************************Sasha2,18:00 23.11.2015
 
 function Boolean VIDClassFrRateEFAfter(Integer wn,Boolean changedf)
 begin
@@ -191,7 +191,7 @@ begin
 
   if (changedf!=0) then begin  
     GetWindowRecord(wn,VIr);
-    VICalcEReb(VIr);    
+    VIVc_PasteEndJobDate(VIr);    
     PutWindowRecord(wn,VIr);
     res = true;
   end;
