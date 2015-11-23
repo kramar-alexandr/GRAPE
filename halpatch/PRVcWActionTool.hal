@@ -621,8 +621,8 @@ begin
   TBBUr.PRCode = PRr.Code;
   if (ReadFirstMain(TBBUr,1,true)==false) then begin
     RecordNew(TBBUr);
-  	if (NonBlankDate(PRr.EndDate)) then begin
-  		TBBUr.TransDate = PRr.EndDate;
+  	if (NonBlankDate(PRr.StartDate)) then begin
+  		TBBUr.TransDate = PRr.StartDate;
   	end else begin
   		TBBUr.TransDate = CurrentDate;
   	end;
