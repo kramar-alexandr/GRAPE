@@ -144,9 +144,9 @@ BEGIN
  // while (nonblank(subcontrname)) begin 									//Edit----------------------Dima  16.10.2015
 //  	VIr = vectVIr[subcontrname];
 		VIr = vectVIr[subcontrarray[i]];
-  	if (NonBlankDate(PRr.FinishedDate)) then begin
-  	  VIr.InvDate = PRr.FinishedDate;
-  	  VIr.TransDate = PRr.FinishedDate;
+  	if (NonBlankDate(PRr.EndDate)) then begin
+  	  VIr.InvDate = PRr.EndDate;
+  	  VIr.TransDate = PRr.EndDate;
   	end else begin 
    	  VIr.InvDate = CurrentDate;
   	  VIr.TransDate = CurrentDate; 	

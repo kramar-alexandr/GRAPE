@@ -355,7 +355,7 @@ BEGIN
   end;
 LVICalcEReb:;
 	
-	AddDay(VIp.DueDate,2);// Edit ************************** Monday, 23 November 2015 17:49:14
+	VIp.DueDate = AddDay(VIp.DueDate,2);// Edit ************************** Monday, 23 November 2015 17:49:14
 	
   RETURN;
 END;
