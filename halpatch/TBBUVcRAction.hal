@@ -173,6 +173,7 @@ BEGIN
   string 255 tstr;
       
   TBBUr.SalesMan = CurrentUser;
+  TBBUr.ApproveFlag = 0;
   GetSalesGroup(TBBUr.SalesMan,tstr);
   TBBUr.SalesGroup = tstr;
   rwcnt = MatRowCnt(TBBUr);
