@@ -26,6 +26,7 @@ external function Boolean HasMultiCurrency();
 external function Boolean IsEnterprise();
 remote updating procedure CreateProjInvoice(var record TBBUVc);//Edit-------------------Vitalii 14:13 23.11.2015
 remote function Integer ClonePRD(String , record RcVc);	//Edit by Victor 12.12.14
+remote procedure PasteTBBUInVIFunc(record TBBUVc);// Edit ************************** Monday, 23 November 2015 17:15:16
 
 procedure dummy() //##ii
 begin //##ii
@@ -442,6 +443,7 @@ BEGIN
 	ReadFIrstMain(TBBUr,1,true);
 	if (TBBUr.ApproveFlag==1) then begin
 		CreateProjInvoice(TBBUr);
+		PasteTBBUInVIFunc(TBBUr);// Edit ************************** Monday, 23 November 2015 17:14:53
 	end;
   end else begin
     Beep;
