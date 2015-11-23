@@ -1046,7 +1046,7 @@ BEGIN
 			StringCell(sheetnum,fileToSave,colnum,rownum,style,"Дата",SharedStrings,numOfUniqueSharedStrings,numOfSharedStrings);
 			style = 65;
 			mergeCell[qtyMergeCell] = GetStringCellNum(colnum,rownum);
-			StringCell(sheetnum,fileToSave,colnum,rownum,style,TBBUr.TransDate,SharedStrings,numOfUniqueSharedStrings,numOfSharedStrings);
+			StringCell(sheetnum,fileToSave,colnum,rownum,style,currentdate,SharedStrings,numOfUniqueSharedStrings,numOfSharedStrings);
 			if (ifDifferentCurrency) then begin
 				qtyOfEmpStr = 3;
 			end else begin
@@ -1381,7 +1381,7 @@ BEGIN
 						StringCell(sheetnum,fileToSave,colnum,rownum,style,"Дата",SharedStrings,numOfUniqueSharedStrings,numOfSharedStrings);
 						style = 65;
 						mergeCell[qtyMergeCell] = GetStringCellNum(colnum,rownum);
-						StringCell(sheetnum,fileToSave,colnum,rownum,style,TBBUr.TransDate,SharedStrings,numOfUniqueSharedStrings,numOfSharedStrings);
+						StringCell(sheetnum,fileToSave,colnum,rownum,style,currentdate,SharedStrings,numOfUniqueSharedStrings,numOfSharedStrings);
 						if (ifDifferentCurrency) then begin
 							qtyOfEmpStr = 3;
 						end else begin
