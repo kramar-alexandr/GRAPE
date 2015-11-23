@@ -169,14 +169,15 @@ begin
 		outstring(tab11,0,"Форма оплаты",false);
 	endformat;
 	Gray_Divider(0,1);
-	deb = 0;
 	IVr.PRCode = PRr.Code;
 	TrHs = true;
 	totdeb = 0;
+	totcl = 0;
 	RESETLOOP(IVr);
 	while (loopkey("PRCodePayDate",IVr,1,TrHs)) begin
 		if (IVr.PRCode != PRr.Code) then begin TrHs = false; end;
 		if (TrHs) then begin
+			deb = 0;
 			if (IVr.CurncyCode != PRr.CurncyCode) then begin
 				CurValToOtherCur(IVr.InvDate,IVr.CurncyCode,IVr.Sum4,PRr.CurncyCode,deb,DefaultCurRoundOff);
 			end else begin
@@ -199,6 +200,7 @@ begin
 				for (i=0;i<mtrw;i=i+1) begin
 					matrowget(IPr,i,IPrw);
 					if (IPrw.InvoiceNr == IVr.SerNr) then begin
+						cl = 0;
 						if (IPrw.RecCurncy != PRr.CurncyCode) then begin
 							CurValToOtherCur(IPr.TransDate,IPrw.RecCurncy,IPrw.RecVal,PRr.CurncyCode,cl,DefaultCurRoundOff);
 						end else begin
@@ -241,6 +243,7 @@ begin
 				ORr.SerNr = IPrw.OrderNr;
 				if readfirstmain(ORr,1,true) then begin
 					if (ORr.PRCode == PRr.Code) then begin
+						cl = 0;
 						if (IPrw.RecCurncy != PRr.CurncyCode) then begin
 							CurValToOtherCur(IPr.TransDate,IPrw.RecCurncy,IPrw.RecVal,PRr.CurncyCode,cl,DefaultCurRoundOff);
 						end else begin
@@ -275,11 +278,11 @@ begin
 			if (TrHs3) then begin
 				IVr.PRCode = PR2r.Code;
 				TrHs = true;
-				totdeb = 0;
 				RESETLOOP(IVr);
 				while (loopkey("PRCodePayDate",IVr,1,TrHs)) begin
 					if (IVr.PRCode != PR2r.Code) then begin TrHs = false; end;
 					if (TrHs) then begin
+						deb = 0;
 						if (IVr.CurncyCode != PRr.CurncyCode) then begin
 							CurValToOtherCur(IVr.InvDate,IVr.CurncyCode,IVr.Sum4,PRr.CurncyCode,deb,DefaultCurRoundOff);
 						end else begin
@@ -302,6 +305,7 @@ begin
 							for (i=0;i<mtrw;i=i+1) begin
 								matrowget(IPr,i,IPrw);
 								if (IPrw.InvoiceNr == IVr.SerNr) then begin
+									cl = 0;
 									if (IPrw.RecCurncy != PRr.CurncyCode) then begin
 										CurValToOtherCur(IPr.TransDate,IPrw.RecCurncy,IPrw.RecVal,PRr.CurncyCode,cl,DefaultCurRoundOff);
 									end else begin
@@ -344,6 +348,7 @@ begin
 							ORr.SerNr = IPrw.OrderNr;
 							if readfirstmain(ORr,1,true) then begin
 								if (ORr.PRCode == PR2r.Code) then begin
+									cl = 0;
 									if (IPrw.RecCurncy != PRr.CurncyCode) then begin
 										CurValToOtherCur(IPr.TransDate,IPrw.RecCurncy,IPrw.RecVal,PRr.CurncyCode,cl,DefaultCurRoundOff);
 									end else begin
@@ -409,10 +414,13 @@ begin
 	Gray_Divider(0,1);
 	VIr.PRCode = PRr.Code;
 	TrHs = true;
+	totcred = 0;
+	totsup = 0;
 	RESETLOOP(VIr);
 	while (loopkey("PRCodeDueDate",VIr,1,TrHs)) begin
 		if (VIr.PRCode != PRr.Code) then begin TrHs = false; end;
 		if (TrHs) then begin
+			cred = 0;
 			if (VIr.CurncyCode != PRr.CurncyCode) then begin
 				CurValToOtherCur(VIr.InvDate,VIr.CurncyCode,VIr.PayVal,PRr.CurncyCode,cred,DefaultCurRoundOff);
 			end else begin
@@ -435,6 +443,7 @@ begin
 				for (i=0;i<mtrw;i=i+1) begin
 					matrowget(OPr,i,OPrw);
 					if(OPrw.VISerNr==VIr.SerNr)then begin
+						sup = 0;
 						if (OPrw.RecCurncy != PRr.CurncyCode) then begin
 							CurValToOtherCur(OPr.TransDate,OPrw.RecCurncy,OPrw.RecVal,PRr.CurncyCode,sup,DefaultCurRoundOff);
 						end else begin
@@ -477,6 +486,7 @@ begin
 				ORr.SerNr = OPrw.OrderNr;
 				if readfirstmain(ORr,1,true) then begin
 					if (ORr.PRCode == PRr.Code) then begin
+						sup = 0;
 						if (OPrw.RecCurncy != PRr.CurncyCode) then begin
 							CurValToOtherCur(OPr.TransDate,OPrw.RecCurncy,OPrw.RecVal,PRr.CurncyCode,sup,DefaultCurRoundOff);
 						end else begin
@@ -515,6 +525,7 @@ begin
 				while (loopkey("PRCodeDueDate",VIr,1,TrHs)) begin
 					if (VIr.PRCode != PR2r.Code) then begin TrHs = false; end;
 					if (TrHs) then begin
+						cred = 0;
 						if (VIr.CurncyCode != PRr.CurncyCode) then begin
 							CurValToOtherCur(VIr.InvDate,VIr.CurncyCode,VIr.PayVal,PRr.CurncyCode,cred,DefaultCurRoundOff);
 						end else begin
@@ -537,6 +548,7 @@ begin
 							for (i=0;i<mtrw;i=i+1) begin
 								matrowget(OPr,i,OPrw);
 								if(OPrw.VISerNr==VIr.SerNr)then begin
+									sup = 0;
 									if (OPrw.RecCurncy != PRr.CurncyCode) then begin
 										CurValToOtherCur(OPr.TransDate,OPrw.RecCurncy,OPrw.RecVal,PRr.CurncyCode,sup,DefaultCurRoundOff);
 									end else begin
@@ -579,6 +591,7 @@ begin
 							ORr.SerNr = OPrw.OrderNr;
 							if readfirstmain(ORr,1,true) then begin
 								if (ORr.PRCode == PR2r.Code) then begin
+									sup = 0;
 									if (OPrw.RecCurncy != PRr.CurncyCode) then begin
 										CurValToOtherCur(OPr.TransDate,OPrw.RecCurncy,OPrw.RecVal,PRr.CurncyCode,sup,DefaultCurRoundOff);
 									end else begin
