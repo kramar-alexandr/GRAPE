@@ -1214,87 +1214,110 @@ BEGIN
 				StringCell(sheetnum,fileToSave,colnum,rownum,style,stp23ClientSum,SharedStrings,numOfUniqueSharedStrings,numOfSharedStrings);
 			EndRow(sheetnum,fileToSave,rownum);
 		end;*/
-		colnum = 2;
-		BeginRow(sheetnum,fileToSave,rownum,false,blankval);
-			style = 53;
-			mergeCell[qtyMergeCell] = GetStringCellNum(colnum,rownum);
-			StringCell(sheetnum,fileToSave,colnum,rownum,style,"ИТОГО без скидки:",SharedStrings,numOfUniqueSharedStrings,numOfSharedStrings);
-			style = 54;
-			qtyOfEmpStr = 2;
-			EmptyCell(sheetnum,fileToSave,colnum,rownum,style,qtyOfEmpStr);
-			mergeCell[qtyMergeCell] = mergeCell[qtyMergeCell] & ":" & GetStringCellNum(colnum-1,rownum);
-			qtyMergeCell = qtyMergeCell + 1;
-			if (ifDifferentCurrency) then begin
-				style = 36;
-				NumericCell(sheetnum,fileToSave,colnum,rownum,style,TBBUr.TotSum - TBBUr.TotRebate);
-				style = 31;
-				NumericCell(sheetnum,fileToSave,colnum,rownum,style,TBBUr.ClientTotSum - totReb24Cur);
-			end else begin
-				style = 31;
-				NumericCell(sheetnum,fileToSave,colnum,rownum,style,TBBUr.TotSum - TBBUr.TotRebate);
-			end;
-		EndRow(sheetnum,fileToSave,rownum);
-		colnum = 2;
-		BeginRow(sheetnum,fileToSave,rownum,false,blankval);
-			if (TBBUr.TotRebate < 0) then begin
-				style = 55;
+		if (TBBUr.TotRebate != 0) then begin
+			colnum = 2;
+			BeginRow(sheetnum,fileToSave,rownum,false,blankval);
+				style = 53;
 				mergeCell[qtyMergeCell] = GetStringCellNum(colnum,rownum);
-				StringCell(sheetnum,fileToSave,colnum,rownum,style,"Скидка/Агентская комиссия:",SharedStrings,numOfUniqueSharedStrings,numOfSharedStrings);
-				style = 56;
+				StringCell(sheetnum,fileToSave,colnum,rownum,style,"ИТОГО без скидки:",SharedStrings,numOfUniqueSharedStrings,numOfSharedStrings);
+				style = 54;
 				qtyOfEmpStr = 2;
 				EmptyCell(sheetnum,fileToSave,colnum,rownum,style,qtyOfEmpStr);
 				mergeCell[qtyMergeCell] = mergeCell[qtyMergeCell] & ":" & GetStringCellNum(colnum-1,rownum);
 				qtyMergeCell = qtyMergeCell + 1;
 				if (ifDifferentCurrency) then begin
-					style = 25;
-					NumericCell(sheetnum,fileToSave,colnum,rownum,style,TBBUr.TotRebate);
-					style = 32;
-					NumericCell(sheetnum,fileToSave,colnum,rownum,style,totReb24Cur);
+					style = 36;
+					NumericCell(sheetnum,fileToSave,colnum,rownum,style,TBBUr.TotSum - TBBUr.TotRebate);
+					style = 31;
+					NumericCell(sheetnum,fileToSave,colnum,rownum,style,TBBUr.ClientTotSum - totReb24Cur);
 				end else begin
-					style = 32;
-					NumericCell(sheetnum,fileToSave,colnum,rownum,style,TBBUr.TotRebate);
+					style = 31;
+					NumericCell(sheetnum,fileToSave,colnum,rownum,style,TBBUr.TotSum - TBBUr.TotRebate);
 				end;
-			end else begin
-				style = 64;
+			EndRow(sheetnum,fileToSave,rownum);
+			colnum = 2;
+			BeginRow(sheetnum,fileToSave,rownum,false,blankval);
+				if (TBBUr.TotRebate < 0) then begin
+					style = 55;
+					mergeCell[qtyMergeCell] = GetStringCellNum(colnum,rownum);
+					StringCell(sheetnum,fileToSave,colnum,rownum,style,"Скидка/Агентская комиссия:",SharedStrings,numOfUniqueSharedStrings,numOfSharedStrings);
+					style = 56;
+					qtyOfEmpStr = 2;
+					EmptyCell(sheetnum,fileToSave,colnum,rownum,style,qtyOfEmpStr);
+					mergeCell[qtyMergeCell] = mergeCell[qtyMergeCell] & ":" & GetStringCellNum(colnum-1,rownum);
+					qtyMergeCell = qtyMergeCell + 1;
+					if (ifDifferentCurrency) then begin
+						style = 25;
+						NumericCell(sheetnum,fileToSave,colnum,rownum,style,TBBUr.TotRebate);
+						style = 32;
+						NumericCell(sheetnum,fileToSave,colnum,rownum,style,totReb24Cur);
+					end else begin
+						style = 32;
+						NumericCell(sheetnum,fileToSave,colnum,rownum,style,TBBUr.TotRebate);
+					end;
+				end else begin
+					style = 64;
+					mergeCell[qtyMergeCell] = GetStringCellNum(colnum,rownum);
+					StringCell(sheetnum,fileToSave,colnum,rownum,style,"Скидка/Агентская комиссия:",SharedStrings,numOfUniqueSharedStrings,numOfSharedStrings);
+					style = 65;
+					qtyOfEmpStr = 2;
+					EmptyCell(sheetnum,fileToSave,colnum,rownum,style,qtyOfEmpStr);
+					mergeCell[qtyMergeCell] = mergeCell[qtyMergeCell] & ":" & GetStringCellNum(colnum-1,rownum);
+					qtyMergeCell = qtyMergeCell + 1;
+					if (ifDifferentCurrency) then begin
+						style = 18;
+						NumericCell(sheetnum,fileToSave,colnum,rownum,style,TBBUr.TotRebate);
+						style = 19;
+						NumericCell(sheetnum,fileToSave,colnum,rownum,style,totReb24Cur);
+					end else begin
+						style = 19;
+						NumericCell(sheetnum,fileToSave,colnum,rownum,style,TBBUr.TotRebate);
+					end;
+				end;
+			EndRow(sheetnum,fileToSave,rownum);
+			
+			colnum = 2;
+			BeginRow(sheetnum,fileToSave,rownum,false,blankval);
+				style = 57;
 				mergeCell[qtyMergeCell] = GetStringCellNum(colnum,rownum);
-				StringCell(sheetnum,fileToSave,colnum,rownum,style,"Скидка/Агентская комиссия:",SharedStrings,numOfUniqueSharedStrings,numOfSharedStrings);
-				style = 65;
+				StringCell(sheetnum,fileToSave,colnum,rownum,style,"ИТОГО со скидкой:",SharedStrings,numOfUniqueSharedStrings,numOfSharedStrings);
+				style = 58;
 				qtyOfEmpStr = 2;
 				EmptyCell(sheetnum,fileToSave,colnum,rownum,style,qtyOfEmpStr);
 				mergeCell[qtyMergeCell] = mergeCell[qtyMergeCell] & ":" & GetStringCellNum(colnum-1,rownum);
 				qtyMergeCell = qtyMergeCell + 1;
 				if (ifDifferentCurrency) then begin
 					style = 18;
-					NumericCell(sheetnum,fileToSave,colnum,rownum,style,TBBUr.TotRebate);
-					style = 19;
-					NumericCell(sheetnum,fileToSave,colnum,rownum,style,totReb24Cur);
+					NumericCell(sheetnum,fileToSave,colnum,rownum,style,TBBUr.TotSum);
+					style = 33;
+					NumericCell(sheetnum,fileToSave,colnum,rownum,style,TBBUr.ClientTotSum);
 				end else begin
-					style = 19;
-					NumericCell(sheetnum,fileToSave,colnum,rownum,style,TBBUr.TotRebate);
+					style = 33;
+					NumericCell(sheetnum,fileToSave,colnum,rownum,style,TBBUr.TotSum);
 				end;
-			end;
-		EndRow(sheetnum,fileToSave,rownum);
-		
-		colnum = 2;
-		BeginRow(sheetnum,fileToSave,rownum,false,blankval);
-			style = 57;
-			mergeCell[qtyMergeCell] = GetStringCellNum(colnum,rownum);
-			StringCell(sheetnum,fileToSave,colnum,rownum,style,"ИТОГО со скидкой:",SharedStrings,numOfUniqueSharedStrings,numOfSharedStrings);
-			style = 58;
-			qtyOfEmpStr = 2;
-			EmptyCell(sheetnum,fileToSave,colnum,rownum,style,qtyOfEmpStr);
-			mergeCell[qtyMergeCell] = mergeCell[qtyMergeCell] & ":" & GetStringCellNum(colnum-1,rownum);
-			qtyMergeCell = qtyMergeCell + 1;
-			if (ifDifferentCurrency) then begin
-				style = 18;
-				NumericCell(sheetnum,fileToSave,colnum,rownum,style,TBBUr.TotSum);
-				style = 33;
-				NumericCell(sheetnum,fileToSave,colnum,rownum,style,TBBUr.ClientTotSum);
-			end else begin
-				style = 33;
-				NumericCell(sheetnum,fileToSave,colnum,rownum,style,TBBUr.TotSum);
-			end;
-		EndRow(sheetnum,fileToSave,rownum);
+			EndRow(sheetnum,fileToSave,rownum);
+		end else begin
+			colnum = 2;
+			BeginRow(sheetnum,fileToSave,rownum,false,blankval);
+				style = 53;
+				mergeCell[qtyMergeCell] = GetStringCellNum(colnum,rownum);
+				StringCell(sheetnum,fileToSave,colnum,rownum,style,"ИТОГО:",SharedStrings,numOfUniqueSharedStrings,numOfSharedStrings);
+				style = 54;
+				qtyOfEmpStr = 2;
+				EmptyCell(sheetnum,fileToSave,colnum,rownum,style,qtyOfEmpStr);
+				mergeCell[qtyMergeCell] = mergeCell[qtyMergeCell] & ":" & GetStringCellNum(colnum-1,rownum);
+				qtyMergeCell = qtyMergeCell + 1;
+				if (ifDifferentCurrency) then begin
+					style = 36;
+					NumericCell(sheetnum,fileToSave,colnum,rownum,style,TBBUr.TotSum);
+					style = 31;
+					NumericCell(sheetnum,fileToSave,colnum,rownum,style,TBBUr.ClientTotSum);
+				end else begin
+					style = 31;
+					NumericCell(sheetnum,fileToSave,colnum,rownum,style,TBBUr.TotSum);
+				end;
+			EndRow(sheetnum,fileToSave,rownum);
+		end;
 		colnum = 2;
 		BeginRow(sheetnum,fileToSave,rownum,false,blankval);
 			style = 47;
